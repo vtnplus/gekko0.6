@@ -2,7 +2,7 @@
 // Settings
 //   optInTimePeriod: SMA Time Period;
 
-var SMA = require("../SMA");
+var SMA = require("./SMA");
 
 var Indicator = function(settings) {
     this.input = 'price';
