@@ -1,4 +1,8 @@
 <template lang='pug'>
+div
+  div.slider
+    h1.text-center Start a new live Gekko
+    router-link.btn.btn-outline-primary.btn-lg(to='/live-gekkos/new') Start a new Task!
   .container
     h3 Market watchers
     .text(v-if='!watchers.length')
@@ -6,13 +10,13 @@
     table.table.table-hover(v-if='watchers.length')
       thead
         tr
-          th exchange
-          th currency
-          th asset
-          th status
-          th started at
-          th last update
-          th duration
+          th Exchange
+          th Currency
+          th Asset
+          th Status
+          th Started at
+          th Last update
+          th Duration
       tbody
         tr.clickable(v-for='gekko in watchers', v-on:click='$router.push({path: `/live-gekkos/${gekko.id}`})')
           td {{ gekko.config.watch.exchange }}
@@ -31,15 +35,15 @@
     table.table.table-hover(v-if='stratrunners.length')
       thead
         tr
-          th exchange
-          th currency
-          th asset
-          th status
-          th duration
-          th strategy
+          th Exchange
+          th Currency
+          th Asset
+          th Status
+          th Duration
+          th Strategy
           th PnL
-          th type
-          th trades
+          th Type
+          th Trades
       tbody
         tr.clickable(v-for='gekko in stratrunners', v-on:click='$router.push({path: `/live-gekkos/${gekko.id}`})')
           td {{ gekko.config.watch.exchange }}
@@ -56,9 +60,8 @@
           td
             template(v-if='!gekko.events.tradeCompleted') 0
             template(v-if='gekko.events.tradeCompleted') {{ gekko.events.tradeCompleted.length }}
-    .hr
-    h2 Start a new live Gekko
-    router-link.btn.btn-primary(to='/live-gekkos/new') Start a new live Gekko!
+   
+    
 </template>
 
 <script>

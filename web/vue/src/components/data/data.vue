@@ -1,10 +1,10 @@
 <template lang='pug'>
-  .contain
+  .container
     .text(v-html='intro')
     .hr
     h2 Available datasets
     .txt--center.my2(v-if='datasetScanstate === "idle"')
-      a.w100--s.btn--primary.scan-btn(href='#', v-on:click.prevent='scan') Scan available data
+      a.btn.btn-primary.scan-btn(href='#', v-on:click.prevent='scan') Scan available data
     .txt--center.my2(v-if='datasetScanstate === "scanning"')
       spinner
     .my2(v-if='datasetScanstate === "scanned"')
@@ -15,7 +15,7 @@
           .mx2(v-for='market in unscannableMakets')
             | - {{ market.exchange }}:{{ market.currency }}:{{ market.asset }}
       template(v-if='datasets.length')
-        table.full.data
+        table.table.table-hover
           thead
             tr
               th exchange
@@ -37,7 +37,7 @@
     .my2
       h2 Import more data
       p.text You can easily import more market data directly from exchanges using the importer.
-      router-link.btn--primary(to='/data/importer') Go to the importer!
+      router-link.btn.btn-primary(to='/data/importer') Go to the importer!
 </template>
 
 <script>

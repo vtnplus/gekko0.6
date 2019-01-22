@@ -1,3 +1,6 @@
+# Validate Prices By
+# (0 = disabled)
+valPrices = 0
 [SMA]
 long = 1000.0
 short = 50.0

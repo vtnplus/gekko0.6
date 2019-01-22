@@ -26,10 +26,10 @@ div
   template(v-if='tab === "manual"')
     div
       label(for='from') From:
-      input(v-model='from')
+      input.form-control(v-model='from')
     div
       label(for='to') To:
-      input(v-model='to')
+      input.form-control(v-model='to')
     p.txt--center
     em
       a(href='#', v-on:click.prevent='tab = "scan"') Or scan for a daterange

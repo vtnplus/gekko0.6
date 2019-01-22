@@ -6,13 +6,15 @@ div
     .col
       h3 Exchange
       exchange-picker(v-on:exchange='updateExchange', only-tradable='true')
+      br
+      a.btn.btn-primary(href='#', v-on:click.prevent='upload') Add Config
     .col
       h3 Credentials
       template(v-for='cred in requires')
         label {{ cred }}
-        input(v-model='credentials[cred]')
+        input.form-control(v-model='credentials[cred]')
   
-      a.btn.btn-primary(href='#', v-on:click.prevent='upload') Add Config
+    
 </template>
 
 <script>

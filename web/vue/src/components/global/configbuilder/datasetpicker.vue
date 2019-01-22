@@ -38,10 +38,10 @@ div
       template(v-if='rangeVisible')
         div
           label(for='customFrom') From:
-          input(v-model='customFrom')
+          input.form-control(v-model='customFrom')
         div
           label(for='customTo') To:
-          input(v-model='customTo')
+          input.form-control(v-model='customTo')
 
     em(v-else) No Data found 
       a(href='#/data/importer') Lets add some

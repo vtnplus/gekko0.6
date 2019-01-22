@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.contain.my2
+  div.container
     div.text(v-html='intro')
     .hr
     h3 Currently running imports
@@ -11,9 +11,8 @@
     .hr
     h3 Start a new import
     import-config-builder(v-on:config='updateConfig')
-    .hr
-    .txt--center
-      a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='run') Import
+    br
+    a.btn.btn-primary(href='#', v-on:click.prevent='run') Start Import
 </template>
 
 <script>

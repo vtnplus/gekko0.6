@@ -25,7 +25,10 @@
 // req's
 var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
-
+var candlesOffset = {
+	buy : 0,
+	sell : 0
+}
 // strategy
 var strat = {
 	
@@ -152,6 +155,15 @@ var strat = {
 		var zone = 'none';
 		var priceUpperBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.upperThreshold;
 		var priceLowerBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.lowerThreshold;
+
+
+		var allowPrices = true;
+
+		if(this.settings.valPrices > 0 && this.candle.close < candlesOffset.buy){
+			allowPrices = false;
+		}
+
+
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
@@ -201,7 +213,7 @@ var strat = {
 		}
 
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) this.long();
-		else if( rsi > rsi_hi && price >= priceUpperBB) this.short();
+		else if( rsi > rsi_hi && price >= priceUpperBB && allowPrices) this.short();
 		
 		// add adx low/high if debug
 		if( this.debug ) this.lowHigh( adx, 'adx');
@@ -217,6 +229,8 @@ var strat = {
 			this.resetTrend();
 			this.trend.direction = 'up';
 			this.advice('long');
+			candlesOffset.buy = this.candle.close;
+			log.info('Going Long at: ' + candlesOffset.sell);
 			if( this.debug ) log.info('Going long at: ' + this.candle.close);
 		}
 		
@@ -237,6 +251,8 @@ var strat = {
 			this.resetTrend();
 			this.trend.direction = 'down';
 			this.advice('short');
+			candlesOffset.sell = this.candle.close;
+			log.info('Going short at: ' + candlesOffset.sell);
 			if( this.debug ) log.info('Going short at: ' + this.candle.close);
 		}
 		

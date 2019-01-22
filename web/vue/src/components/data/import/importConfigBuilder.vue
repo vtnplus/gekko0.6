@@ -1,10 +1,9 @@
 <template lang='pug'>
-.grd.contain
-  .grd-row
-    .grd-row-col-3-6.mx1
-      h3 Market
+div
+  .row
+    .col
       market-picker(v-on:market='updateMarketConfig', only-importable='true')
-    .grd-row-col-3-6.mx1
+    .col
       range-creator(v-on:range='updateRange')
 </template>
 

@@ -1,15 +1,19 @@
 <template lang='pug'>
+div
+  div.slider
+    h1 Backtest
+    a.btn.btn-outline-primary.btn-lg(href='#', v-if='backtestState !== "fetching"', v-on:click.prevent='run') Backtest
+
   div.container
-    h2 Backtest
-    .hr
+   
     config-builder(v-on:config='check')
-    div(v-if='backtestable')
-      .txt--center
-        a.w100--s.my1.btn--primary(href='#', v-if='backtestState !== "fetching"', v-on:click.prevent='run') Backtest
-        div(v-if='backtestState === "fetching"').scan-btn
-          p Running backtest..
-          spinner
-    result(v-if='backtestResult && backtestState === "fetched"', :result='backtestResult')
+  div(v-if='backtestable')
+    .txt--center
+      a.btn.btn-primary(href='#', v-if='backtestState !== "fetching"', v-on:click.prevent='run') Backtest
+      div(v-if='backtestState === "fetching"').scan-btn
+        p Running backtest..
+        spinner
+  result(v-if='backtestResult && backtestState === "fetched"', :result='backtestResult')
 </template>
 
 <script>

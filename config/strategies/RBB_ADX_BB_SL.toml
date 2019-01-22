@@ -6,6 +6,9 @@ activateShorts = 0
 # Trailing stop loss in % 
 # (0 = disabled)
 stopLoss = 0
+# Validate Prices By
+# (0 = disabled)
+valPrices = 0
 
 [ADX]
 adx = 3.0
