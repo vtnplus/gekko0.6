@@ -1,9 +1,9 @@
 <template lang='pug'>
-  .contain.py2
+  .container
     h3 Market watchers
     .text(v-if='!watchers.length')
       p You don't have any market watchers.
-    table.full.clickable(v-if='watchers.length')
+    table.table.table-hover(v-if='watchers.length')
       thead
         tr
           th exchange
@@ -28,7 +28,7 @@
     h3 Strat runners
     .text(v-if='!stratrunners.length')
       p You don't have any stratrunners.
-    table.full(v-if='stratrunners.length')
+    table.table.table-hover(v-if='stratrunners.length')
       thead
         tr
           th exchange
@@ -58,7 +58,7 @@
             template(v-if='gekko.events.tradeCompleted') {{ gekko.events.tradeCompleted.length }}
     .hr
     h2 Start a new live Gekko
-    router-link.btn--primary(to='/live-gekkos/new') Start a new live Gekko!
+    router-link.btn.btn-primary(to='/live-gekkos/new') Start a new live Gekko!
 </template>
 
 <script>

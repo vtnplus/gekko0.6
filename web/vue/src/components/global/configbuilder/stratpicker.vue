@@ -1,33 +1,32 @@
 <template lang='pug'>
-.grd
-  .grd-row
-    .grd-row-col-3-6.px1
+  .row
+    .col
       h3 Strategy
       div
         label(for='strat').wrapper Strategy:
-        .custom-select.button
-          select(v-model='strategy')
-            option(v-for='strat in strategies') {{ strat.name }}
+        select.form-control(v-model='strategy')
+          option(v-for='strat in strategies') {{ strat.name }}
       div
-        label(for='candleSize') Candle Size
-        .grd-row
-          .grd-row-col-3-6
-            input(v-model='rawCandleSize')
-          .grd-row-col-3-6.align
-            .custom-select.button
-              select(v-model='candleSizeUnit')
-                option minutes
-                option hours
-                option days
+        
+        .row
+          .col
+            label(for='candleSize') Candle Size
+            input.form-control(v-model='rawCandleSize')
+          .col
+            label(for='candleSizeUnit') Candle Unit
+            select.form-control(v-model='candleSizeUnit')
+              option minutes
+              option hours
+              option days
       div
         label(for='historySize') Warmup period (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
-        input(v-model='historySize')
+        input.form-control(v-model='historySize')
         em.label-like (will use {{ humanizeDuration(candleSize * historySize * 1000 * 60) }} of data as history)
-    .grd-row-col-3-6.px1
+    .col
       div
         h3 Parameters
-        p {{ strategy }} Parameters:
-        textarea.params(v-model='rawStratParams')
+        label {{ strategy }} Parameters:
+        textarea.form-control(v-model='rawStratParams', rows=8)
         p.bg--red.p1(v-if='rawStratParamsError') {{ rawStratParamsError.message }}
 </template>
 
@@ -41,7 +40,7 @@ export default {
     return {
       strategies: [],
 
-      candleSizeUnit: 'hours',
+      candleSizeUnit: 'minutes',
       rawCandleSize: 1,
 
       strategy: 'MACD',
@@ -128,18 +127,4 @@ export default {
   }
 }
 </script>
-<style>
-.align .custom-select select {
-  padding: 0.4em 1.2em .3em .8em;
-}
 
-.label-like {
-  display: block;
-  font-size: 0.9em;
-  color: #777;
-}
-
-.align {
-  padding-left: 1em;
-}
-</style>

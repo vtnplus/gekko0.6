@@ -1,6 +1,6 @@
 <template lang='pug'>
-  div
-    h2.contain Backtest
+  div.container
+    h2 Backtest
     .hr
     config-builder(v-on:config='check')
     div(v-if='backtestable')

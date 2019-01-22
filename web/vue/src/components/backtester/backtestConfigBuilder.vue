@@ -1,11 +1,12 @@
 <template lang='pug'>
   div
-    dataset-picker.my2(v-on:dataset='updateDataset').contain
-    .hr
-    strat-picker.my2(v-on:stratConfig='updateStrat').contain
-    .hr
-    paper-trader(v-on:settings='updatePaperTrader').contain
-    .hr
+    
+    strat-picker.my2(v-on:stratConfig='updateStrat')
+    br
+    dataset-picker.my2(v-on:dataset='updateDataset')
+    br
+    paper-trader(v-on:settings='updatePaperTrader')
+    
 </template>
 
 <script>

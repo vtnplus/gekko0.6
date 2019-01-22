@@ -8,7 +8,7 @@ div
   .my2(v-if='datasetScanstate === "scanned"')
 
     div(v-if='datasets.length != 0')
-      table.full
+      table.table.table-hover
         thead
           tr
             th 

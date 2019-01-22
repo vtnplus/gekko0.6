@@ -1,10 +1,10 @@
 <template lang='pug'>
-.grd.contain
-  .grd-row
-    .grd-row-col-3-6.mx1
+div
+  .row
+    .col
       h3 Market
       market-picker(v-on:market='updateMarketConfig', :only-tradable='isTradebot')
-    .grd-row-col-3-6.mx1
+    .col
       type-picker(v-on:type='updateType')
   template(v-if='type !== "market watcher"')
     .hr

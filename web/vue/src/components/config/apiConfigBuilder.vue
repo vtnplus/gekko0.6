@@ -1,18 +1,18 @@
 <template lang='pug'>
-.grd.contain
+div
   h3 Add an API key
   p Make sure that the API key has the permissions to create and cancel orders and view balances.
-  .grd-row
-    .grd-row-col-3-6.mx1
+  .row
+    .col
       h3 Exchange
       exchange-picker(v-on:exchange='updateExchange', only-tradable='true')
-    .grd-row-col-3-6.mx1
+    .col
       h3 Credentials
       template(v-for='cred in requires')
         label {{ cred }}
         input(v-model='credentials[cred]')
-  .txt--center
-    a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='upload') Add
+  
+      a.btn.btn-primary(href='#', v-on:click.prevent='upload') Add Config
 </template>
 
 <script>

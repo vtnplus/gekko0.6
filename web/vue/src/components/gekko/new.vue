@@ -1,10 +1,10 @@
 <template lang='pug'>
-  div.contain.my2
+  div.container
     h3 Start a new gekko
     gekko-config-builder(v-on:config='updateConfig')
     .hr
     .txt--center(v-if='config.valid')
-      a.w100--s.my1.btn--primary(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Start
+      a.btn.btn-primary(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Start
       spinner(v-if='pendingStratrunner')
 </template>
 
