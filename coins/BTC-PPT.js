@@ -126,6 +126,149 @@ config.eventLogger = {
   // whitelist: ['portfolioChange', 'portfolioValueChange']
 }
 
+
+config.pushover = {
+  enabled: false,
+  sendPushoverOnStart: false,
+  muteSoft: true, // disable advice printout if it's soft
+  tag: '[GEKKO]',
+  key: '',
+  user: ''
+}
+
+
+config.campfire = {
+  enabled: false,
+  emitUpdates: false,
+  nickname: 'Gordon',
+  roomId: null,
+  apiKey: '',
+  account: ''
+}
+
+config.redisBeacon = {
+  enabled: false,
+  port: 6379, // redis default
+  host: '127.0.0.1', // localhost
+  // On default Gekko broadcasts
+  // events in the channel with
+  // the name of the event, set
+  // an optional prefix to the
+  // channel name.
+  channelPrefix: '',
+  broadcast: [
+    'candle'
+  ]
+}
+
+config.slack = {
+  enabled: false,
+  token: '',
+  sendMessageOnStart: true,
+  muteSoft: true,
+  channel: '' // #tradebot
+}
+
+config.ifttt = {
+  enabled: false,
+  eventName: 'gekko',
+  makerKey: '',
+  muteSoft: true,
+  sendMessageOnStart: true
+}
+
+config.candleWriter = {
+  enabled: true
+}
+
+config.adviceWriter = {
+  enabled: false,
+  muteSoft: true,
+}
+
+config.backtestResultExporter = {
+  enabled: false,
+  writeToDisk: false,
+  data: {
+    stratUpdates: false,
+    portfolioValues: true,
+    stratCandles: true,
+    roundtrips: true,
+    trades: true
+  }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING ADAPTER
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.adapter = 'sqlite';
+
+config.sqlite = {
+  path: 'plugins/sqlite',
+
+  dataDirectory: 'history',
+  version: 0.1,
+
+  journalMode: require('./web/isWindows.js') ? 'DELETE' : 'WAL',
+
+  dependencies: []
+}
+
+// Postgres adapter example config (please note: requires postgres >= 9.5):
+config.postgresql = {
+  path: 'plugins/postgresql',
+  version: 0.1,
+  connectionString: 'postgres://user:pass@localhost:5432', // if default port
+  database: null, // if set, we'll put all tables into a single database.
+  schema: 'public',
+  dependencies: [{
+    module: 'pg',
+    version: '7.4.3'
+  }]
+}
+
+// Mongodb adapter, requires mongodb >= 3.3 (no version earlier tested)
+config.mongodb = {
+  path: 'plugins/mongodb',
+  version: 0.1,
+  connectionString: 'mongodb://localhost/gekko', // connection to mongodb server
+  dependencies: [{
+    module: 'mongojs',
+    version: '2.4.0'
+  }]
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING BACKTESTING
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Note that these settings are only used in backtesting mode, see here:
+// @link: https://gekko.wizb.it/docs/commandline/backtesting.html
+
+config.backtest = {
+  daterange: 'scan',
+  // daterange: {
+  //   from: "2018-03-01",
+  //   to: "2018-04-28"
+  //},
+  batchSize: 50
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                       CONFIGURING IMPORTING
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+config.importer = {
+  daterange: {
+    // NOTE: these dates are in UTC
+    from: "2017-11-01 00:00:00",
+    to: "2017-11-20 00:00:00"
+  }
+}
+
+
+
 // set this to true if you understand that Gekko will
 // invest according to how you configured the indicators.
 // None of the advice in the output is Gekko telling you
