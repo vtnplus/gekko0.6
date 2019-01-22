@@ -136,6 +136,15 @@ var strat = {
 		}
 	},
 	
+
+	valPriceCheck : function(nowPrice, buyPrice){
+		if(buyPrice == 0) return true;
+		var checkPrice = buyPrice + ((buyPrice * this.settings.valPricesPlus) / 100)
+		if(this.settings.valPrices > 0 && nowPrice > checkPrice){
+			return true;
+		}
+		return false;
+	},
 	
 	/* CHECK */
 	check: function()
@@ -159,7 +168,7 @@ var strat = {
 
 		var allowPrices = true;
 
-		if(this.settings.valPrices > 0 && this.candle.close < candlesOffset.buy){
+		if(!this.valPriceCheck(this.candle.close,candlesOffset.buy)){
 			allowPrices = false;
 		}
 

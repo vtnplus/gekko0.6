@@ -5,6 +5,6 @@ adapter = 'sqlite'
 
 [watch]
 exchange = 'binance'
-currency = 'USDT'
-asset = 'BTC'
+currency = 'BTC'
+asset = 'USDT'
 
