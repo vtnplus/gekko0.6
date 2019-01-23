@@ -83,6 +83,7 @@ router.get('/api/info', require(ROUTE('info')));
 router.get('/api/strategies', require(ROUTE('strategies')));
 router.get('/api/configPart/:part', require(ROUTE('configPart')));
 router.get('/api/apiKeys', apiKeys.get);
+router.get('/api/pm2', require(ROUTE('pm2')));
 
 const listWraper = require(ROUTE('list'));
 router.get('/api/imports', listWraper('imports'));
