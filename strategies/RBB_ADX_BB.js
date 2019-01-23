@@ -45,7 +45,7 @@ var strat = {
 		
 		// performance
 		config.backtest.batchSize = 1000; // increase performance
-		config.silent = true; // NOTE: You may want to set this to 'false' @ live
+		config.silent = false; // NOTE: You may want to set this to 'false' @ live
 		config.debug = false;
 		
 		// SMA

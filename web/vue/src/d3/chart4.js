@@ -33,7 +33,7 @@ export default function(_data, _trades, _height) {
 
   svg.attr("width", window.innerWidth - 20);
 
-  var margin = {top: 20, right: 20, bottom: 110, left: 40};
+  var margin = {top: 20, right: 40, bottom: 110, left: 60};
   var height = _height - margin.top - margin.bottom;
   var margin2 = {top: _height - 70, right: 20, bottom: 30, left: 40};
   var width = +svg.attr("width") - margin.left - margin.right;
