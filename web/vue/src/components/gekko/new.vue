@@ -1,10 +1,14 @@
 <template lang='pug'>
+div
+  div.slider
+    h1 Start a new Task
+    .txt-center(v-if='config.valid')
+      a.btn.btn-outline-primary.btn-lg(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Create Task
   div.container
-    h3 Start a new gekko
     gekko-config-builder(v-on:config='updateConfig')
-    .hr
-    .txt--center(v-if='config.valid')
-      a.btn.btn-primary(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Start
+    br
+    div(v-if='config.valid')
+      a.btn.btn-primary(href='#', v-on:click.prevent='start', v-if="!pendingStratrunner") Create Task
       spinner(v-if='pendingStratrunner')
 </template>
 

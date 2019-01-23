@@ -3,8 +3,8 @@
   .col
     h3 Paper trader
       span.text-small Settings
-    a.btn.btn-primary(href='#', v-on:click.prevent='switchToggle', v-if='toggle === "closed"') Change paper trader settings
-    template(v-if='toggle === "open"')
+    
+    template()
      
       textarea.form-control(v-model='rawPaperTraderParams', rows=8)
       p.bg-red.p1(v-if='rawPaperTraderParamsError') {{ rawPaperTraderParamsError.message }}

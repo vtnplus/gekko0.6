@@ -18,7 +18,7 @@ config.watch = {
   // see https://gekko.wizb.it/docs/introduction/supported_exchanges.html
   exchange: 'binance',
   currency: 'BTC',
-  asset: 'PPT',
+  asset: 'LUN',
 
   // You can set your own tickrate (refresh rate).
   // If you don't set it, the defaults are 2 sec for
@@ -92,8 +92,8 @@ config.paperTrader = {
   // start balance, on what the current balance is compared with
   simulationBalance: {
     // these are in the unit types configured in the watcher.
-    asset: 316,
-    currency: 0,
+    asset: 0,
+    currency: 0.1,
   },
   // how much fee in % does each trade cost?
   feeMaker: 0.075,
@@ -125,6 +125,7 @@ config.eventLogger = {
   // the eventLogger will log _all_ events.
   // whitelist: ['portfolioChange', 'portfolioValueChange']
 }
+
 
 
 config.pushover = {
@@ -266,7 +267,6 @@ config.importer = {
     to: "2017-11-20 00:00:00"
   }
 }
-
 
 
 // set this to true if you understand that Gekko will
