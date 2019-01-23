@@ -267,6 +267,15 @@ config.importer = {
   }
 }
 
+config.vtnplus = {
+  enabled: true,
+  sendMessageOnStart : true,
+  host : 'http://localhost/trader/api/report/gekko',
+  username : '',
+  password : '',
+  discord : false,
+  discord_hook_url : ""
+}
 
 
 // set this to true if you understand that Gekko will

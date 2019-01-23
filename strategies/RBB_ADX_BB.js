@@ -21,7 +21,7 @@
 			Sells if price is also above BBtrend.upperThreshold.
 
 */
-
+var request = require('request');
 // req's
 var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
@@ -145,6 +145,25 @@ var strat = {
 		}
 		return false;
 	},
+
+	mail : function(){
+		var options = {
+	      body: `{"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"con bo"}`,
+	      headers: {
+	        'Content-Type': 'application/json'
+	      },
+	      method: 'POST',
+	      url: config.vtnplus.host
+	    }
+
+	    request(options, (error, response, body) => {
+	        if (!error) {
+	            log.info('Vtnplus message sent')
+	        } else {
+	            log.debug(`Vtnplus Error`)
+	        }
+	    })
+	},
 	
 	/* CHECK */
 	check: function()
@@ -172,6 +191,7 @@ var strat = {
 			allowPrices = false;
 		}
 
+		
 
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
