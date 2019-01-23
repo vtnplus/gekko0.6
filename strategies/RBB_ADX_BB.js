@@ -41,12 +41,12 @@ var strat = {
 		this.resetTrend();
 		
 		// debug? set to false to disable all logging/messages/stats (improves performance in backtests)
-		this.debug = false;
+		this.debug = true;
 		
 		// performance
 		config.backtest.batchSize = 1000; // increase performance
-		config.silent = false; // NOTE: You may want to set this to 'false' @ live
-		config.debug = false;
+		//config.silent = false; // NOTE: You may want to set this to 'false' @ live
+		config.debug = true;
 		
 		// SMA
 		this.addIndicator('maSlow', 'SMA', this.settings.SMA.long );
