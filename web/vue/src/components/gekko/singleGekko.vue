@@ -120,8 +120,11 @@
                   strong Profit
                 .col {{ round(report.profit) }} {{ config.watch.currency }} ({{ round(report.relativeProfit) }} %)
               .row
-                .col Alpha
+                .col 
+                  strong Alpha
                 .col {{ round(report.alpha) }} {{ config.watch.currency }}
+                .col
+                .col 
         
       template(v-if='!isLoading')
         roundtrips(v-if='isStratrunner', :roundtrips='roundtrips')
