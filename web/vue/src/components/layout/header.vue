@@ -13,7 +13,9 @@
               li.nav-item
                 router-link(to='/home').nav-link Home
               li.nav-item
-                router-link(to='/live-gekkos').nav-link Tasks
+                router-link(to='/live-gekkos').nav-link Tasks UI
+              li.nav-item
+                router-link(to='/pm2').nav-link Screen Monitor
               li.nav-item
                 router-link(to='/backtest').nav-link Backtest
               li.nav-item

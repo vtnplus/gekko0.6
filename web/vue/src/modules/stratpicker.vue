@@ -43,8 +43,8 @@ export default {
       candleSizeUnit: 'minutes',
       rawCandleSize: 1,
 
-      strategy: 'MACD',
-      historySize: 10,
+      strategy: 'RBB_ADX_BB',
+      historySize: 60,
 
       rawStratParams: '',
       rawStratParamsError: false,
