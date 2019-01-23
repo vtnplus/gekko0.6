@@ -4,32 +4,7 @@ div
     h1.text-center Start a new live Gekko
     router-link.btn.btn-outline-primary.btn-lg(to='/live-gekkos/new') Start a new Task!
   .container
-    h3 Market watchers
-    .text(v-if='!watchers.length')
-      p You don't have any market watchers.
-    table.table.table-hover(v-if='watchers.length')
-      thead
-        tr
-          th Exchange
-          th Currency
-          th Asset
-          th Status
-          th Started at
-          th Last update
-          th Duration
-      tbody
-        tr.clickable(v-for='gekko in watchers', v-on:click='$router.push({path: `/live-gekkos/${gekko.id}`})')
-          td {{ gekko.config.watch.exchange }}
-          td {{ gekko.config.watch.currency }}
-          td {{ gekko.config.watch.asset }}
-          td {{ status(gekko) }}
-          td
-            template(v-if='gekko.events.initial.candle') {{ fmt(gekko.events.initial.candle.start) }}
-          td
-            template(v-if='gekko.events.latest.candle') {{ fmt(gekko.events.latest.candle.start) }}
-          td
-            template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
-    h3 Strat runners
+    h3 Task runners
     .text(v-if='!stratrunners.length')
       p You don't have any stratrunners.
     table.table.table-hover(v-if='stratrunners.length')
