@@ -1,6 +1,8 @@
 # Activate longs & shorts 
 # (1 = yes, 0 = no)
+# Start Long = Sell
 activateLongs = 1
+# Start Short = Buy
 activateShorts = 0
 
 # Trailing stop loss in % 
@@ -8,8 +10,8 @@ activateShorts = 0
 stopLoss = 0
 # Validate Prices By
 # (0 = disabled)
-valPrices = 0
-
+valPrices = 1
+valProfit = 0.5
 [ADX]
 adx = 3.0
 high = 70.0

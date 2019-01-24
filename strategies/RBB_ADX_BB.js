@@ -45,7 +45,7 @@ var strat = {
 		
 		// performance
 		config.backtest.batchSize = 1000; // increase performance
-		//config.silent = false; // NOTE: You may want to set this to 'false' @ live
+		config.silent = true; // NOTE: You may want to set this to 'false' @ live
 		config.debug = true;
 		
 		// SMA
@@ -137,13 +137,27 @@ var strat = {
 	},
 	
 
-	valPriceCheck : function(nowPrice, buyPrice){
-		if(buyPrice == 0) return true;
-		var checkPrice = buyPrice + ((buyPrice * this.settings.valPricesPlus) / 100)
-		if(this.settings.valPrices > 0 && nowPrice > checkPrice){
-			return true;
+	valPriceCheck : function(){
+
+		var canRun = false;
+		var price = this.candle.close;
+		var buyPrices = candlesOffset.buy;
+		var profit = this.settings.valPricesPlus;
+		var _targetPrice = ((buyPrices * profit) / 100) + buyPrices;
+		
+		if(this.settings.valPrices == 0 || buyPrices == 0 || buyPrices == undefined){
+			canRun = true;
+		}else{
+			if(price > _targetPrice){
+				canRun = true;
+				//console.log("Close : "+price);
+				console.log("Buy : "+buyPrices +" Sell : "+price);
+				//console.log("TargetPrice : "+_targetPrice);
+			}
 		}
-		return false;
+		
+		return canRun;
+
 	},
 
 	mail : function(){
@@ -185,13 +199,8 @@ var strat = {
 		var priceLowerBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.lowerThreshold;
 
 
-		var allowPrices = true;
-
-		if(!this.valPriceCheck(this.candle.close,candlesOffset.buy)){
-			allowPrices = false;
-		}
-
 		
+
 
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
@@ -242,7 +251,7 @@ var strat = {
 		}
 
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) this.long();
-		else if( rsi > rsi_hi && price >= priceUpperBB && allowPrices) this.short();
+		else if( rsi > rsi_hi && price >= priceUpperBB && this.valPriceCheck()) this.short();
 		
 		// add adx low/high if debug
 		if( this.debug ) this.lowHigh( adx, 'adx');
@@ -259,7 +268,7 @@ var strat = {
 			this.trend.direction = 'up';
 			this.advice('long');
 			candlesOffset.buy = this.candle.close;
-			log.info('Going Long at: ' + candlesOffset.sell);
+			
 			if( this.debug ) log.info('Going long at: ' + this.candle.close);
 		}
 		
@@ -280,8 +289,8 @@ var strat = {
 			this.resetTrend();
 			this.trend.direction = 'down';
 			this.advice('short');
-			candlesOffset.sell = this.candle.close;
-			log.info('Going short at: ' + candlesOffset.sell);
+			candlesOffset.buy = 0;
+			
 			if( this.debug ) log.info('Going short at: ' + this.candle.close);
 		}
 		

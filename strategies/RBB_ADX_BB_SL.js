@@ -24,7 +24,11 @@
 // req's
 var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
-
+var targetPrices = {
+	buy : 0,
+	sell : 0
+};
+var canStart = true;
 // strategy
 var strat = {
 	
@@ -60,7 +64,7 @@ var strat = {
 		this.inAShort = false;
 
 		this.stopLoss = this.settings.stopLoss;
-
+		
 		// Long & Short activation
 		if (this.settings.activateLongs == 1) {
 			this.activateLongs = true;
@@ -157,10 +161,35 @@ var strat = {
 		}
 	},
 	
+
+	validatePrices : function(){
+		var canRun = false;
+		var price = this.candle.close;
+		var buyPrices = this.entryPrice;
+		var profit = this.settings.valProfit;
+		var _targetPrice = ((buyPrices * profit) / 100) + buyPrices;
+		
+		if(this.settings.valPrices == 0 || buyPrices == 0 || buyPrices == undefined){
+			canRun = true;
+		}else{
+			if(price > _targetPrice){
+				canRun = true;
+				//console.log("Close : "+price);
+				console.log("Buy : "+buyPrices +" Sell : "+price);
+				//console.log("TargetPrice : "+_targetPrice);
+			}
+		}
+		
+		return canRun;
+	},
 	
 	/* CHECK */
 	check: function()
 	{
+		if(canStart == false){
+			console.log("Program Stop");
+			return;
+		}
 		// Debug profit estimation
 		if( this.debug ) {
 			if (!this.initialized){
@@ -214,6 +243,7 @@ var strat = {
 				if (((this.lastHigh - this.candle.close) / this.lastHigh * 100) > this.stopLoss){
 					this.advice('short');
 					this.inALong = false;
+					canStart = false;
 					if( this.debug ) {
 						log.info('Closing long (stop loss');
 						this.profit = this.profit + this.profit * ((this.candle.close - this.entryPrice) / this.entryPrice - this.trxCommission / 100);
@@ -225,6 +255,7 @@ var strat = {
 				if (((this.candle.close - this.lastLow) / this.lastLow * 100) > this.stopLoss){
 					this.advice('long');
 					this.inAShort = false;
+					canStart = false;
 					if( this.debug ) {
 						log.info('Closing short (stop loss)');
 						this.profit = this.profit + this.profit * ((this.entryPrice - this.candle.close) / this.entryPrice - this.trxCommission / 100);
@@ -268,9 +299,11 @@ var strat = {
 
 		// We are in a long
 		if (this.inALong){ 
-			if ( rsi > this.rsi_hi){ // close long ?
+			if ( rsi > this.rsi_hi && this.validatePrices()){ // close long ?
 				this.advice('short');
 				this.inALong = false;
+				
+				
 				if( this.debug ) {
 					log.info('Closing long at:' + this.candle.close);
 					this.profit = this.profit + this.profit * ((this.candle.close - this.entryPrice) / this.entryPrice - this.trxCommission / 100);
@@ -290,6 +323,7 @@ var strat = {
 			if ( rsi < this.rsi_low){	// close short ?
 				this.advice('long');
 				this.inAShort = false;
+				
 				if( this.debug ) {
 					log.info('Closing short at:' + this.candle.close);
 					this.profit = this.profit + this.profit * ((this.entryPrice - this.candle.close) / this.entryPrice - this.trxCommission / 100);
@@ -305,30 +339,33 @@ var strat = {
 		}
 		
 		// We are not in a position
-		else if ( rsi < this.rsi_low && this.BBtrend.zone == 'bottom' && this.BBtrend.duration >= this.settings.BBtrend.lowerPersistence && this.activateLongs ){	// open long
+		else if ( rsi < this.rsi_low && this.BBtrend.zone == 'bottom' && this.BBtrend.duration >= this.settings.BBtrend.lowerPersistence && this.activateLongs){	// open long
 			this.advice('long');
 			this.inALong = true;
 			this.lastHigh = this.candle.close;
 			this.resetTrend();
 			this.trend.direction = 'up';
+			
+			
 			if( this.debug ) {
 				log.info('Opening long at:' + this.candle.close);
 				this.entryPrice = this.candle.close;
 			}
 
-		}else if ( rsi > this.rsi_hi && this.BBtrend.zone == 'top' && this.BBtrend.duration >= this.settings.BBtrend.upperPersistence && this.activateShorts ){	// open short
+		}else if ( rsi > this.rsi_hi && this.BBtrend.zone == 'top' && this.BBtrend.duration >= this.settings.BBtrend.upperPersistence && this.activateShorts && this.validatePrices()){	// open short
 			this.advice('short');
 			this.inAShort = true;
 			this.lastLow = this.candle.close;
 			this.resetTrend();
 			this.trend.direction = 'down';
+			
 			if( this.debug ) {
 				log.info('Opening short at:' + this.candle.close);
 				this.entryPrice = this.candle.close;
 			}
 		}
 
-
+	/*
 		console.log('BB.upper:' + BB.upper);
 		console.log('BB.priceTop:' + priceTop);
 		console.log('Price:' + price);
@@ -336,6 +373,7 @@ var strat = {
 		console.log('BB.lower:' + BB.lower);
 		console.log('BB zone:' + this.BBtrend.zone);
 		console.log('BB duration:' + this.BBtrend.duration);
+	*/
 
 	}, // check()
 
