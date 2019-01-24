@@ -19,6 +19,12 @@ const cache = require('./state/cache');
 
 const nodeCommand = _.last(process.argv[1].split('/'));
 const isDevServer = nodeCommand === 'server' || nodeCommand === 'server.js';
+var auth = require('http-auth');
+var basic = auth.basic({
+  realm: "Restricted",
+  file: __dirname + "/.htpasswd"
+});
+app.use(auth.koa(basic));
 
 wss.on('connection', ws => {
   ws.isAlive = true;
