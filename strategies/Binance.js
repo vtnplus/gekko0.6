@@ -9,6 +9,7 @@ var strat = {
 	init: function()
 	{
 		this.name = 'Binance Method';
+		config.debug = true;
 		this.resetTrend();
 		// SMA
 		this.addIndicator('maSlow', 'SMA', this.settings.SMA.long );
@@ -115,6 +116,7 @@ var strat = {
 			
 
 		}
+		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) {
 			
 			this.long();// Buy
