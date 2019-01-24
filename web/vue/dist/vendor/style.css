@@ -15,6 +15,9 @@ footer{
 .minChart{
 	min-height: 500px;
 }
+.minChartTop{
+	margin-top: -30px;
+}
 .slider{
 	padding: 50px;
 	margin-bottom: 30px;

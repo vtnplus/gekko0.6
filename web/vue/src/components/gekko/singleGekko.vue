@@ -4,7 +4,7 @@
       h1 Unknown Gekko instance
       p Gekko doesn't know what gekko this is...
     div(v-if='data')
-      div.minChart
+      div.minChart.minChartTop
         template(v-if='!isLoading')
           spinner(v-if='candleFetch === "fetching"')
           template(v-if='candleFetch === "fetched"')
@@ -386,4 +386,5 @@ export default {
 </script>
 
 <style>
+
 </style>

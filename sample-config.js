@@ -32,7 +32,7 @@ config.watch = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'MACD',
+  method: 'RBB_ADX_BB',
   candleSize: 60,
   historySize: 10,
 }
@@ -60,6 +60,44 @@ config.MACD = {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                       CONFIGURING PLUGINS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+config.RBB_ADX_BB = {
+  
+  valPrices : 1,
+  valPricesPlus : 0.5,
+  SMA : {
+    long : 1000.0,
+    short : 50.0
+  },
+  BULL : {
+    high : 85.6,
+    low : 42.3,
+    mod_high : 3.2,
+    mod_low : -9,
+    rsi : 14.6
+  },
+  BEAR : {
+    high : 60.4,
+    low : 28.2,
+    mod_high : 1.4,
+    mod_low : -1.5,
+    rsi : 10.5
+  },
+  ADX : {
+    adx : 3.0,
+    high : 70.0,
+    low : 50.0
+  },
+  BBands : {
+    NbDevDn : 2.0,
+    NbDevUp : 2.0,
+    TimePeriod : 20.0
+  },
+  BBtrend : {
+    upperThreshold : 50,
+    lowerThreshold : 50,
+    persistence : 15
+  }
+};
 
 // do you want Gekko to simulate the profit of the strategy's own advice?
 config.paperTrader = {
@@ -69,12 +107,12 @@ config.paperTrader = {
   // start balance, on what the current balance is compared with
   simulationBalance: {
     // these are in the unit types configured in the watcher.
-    asset: 1,
-    currency: 100,
+    asset: 0,
+    currency: 0.1,
   },
   // how much fee in % does each trade cost?
-  feeMaker: 0.15,
-  feeTaker: 0.25,
+  feeMaker: 0.075,
+  feeTaker: 0.075,
   feeUsing: 'maker',
   // how much slippage/spread should Gekko assume per trade?
   slippage: 0.05,
