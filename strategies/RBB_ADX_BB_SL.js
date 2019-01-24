@@ -37,7 +37,7 @@ var strat = {
 		this.resetTrend();
 
 		// debug? set to false to disable all logging/messages/stats (improves performance in backtests)
-		this.debug = false;
+		this.debug = true;
 
 		// Global commision for a roundtrip - For estimation for Long + Short
 		if( this.debug ) this.trxCommission = 0.30;
@@ -328,13 +328,14 @@ var strat = {
 			}
 		}
 
-/*		log.info('BB.upper:' + BB.upper);
-		log.info('BB.priceTop:' + priceTop);
-		log.info('Price:' + price);
-		log.info('BB.priceBottom:' + priceBottom);
-		log.info('BB.lower:' + BB.lower);
-		log.info('BB zone:' + this.BBtrend.zone);
-		log.info('BB duration:' + this.BBtrend.duration);*/
+
+		console.log('BB.upper:' + BB.upper);
+		console.log('BB.priceTop:' + priceTop);
+		console.log('Price:' + price);
+		console.log('BB.priceBottom:' + priceBottom);
+		console.log('BB.lower:' + BB.lower);
+		console.log('BB zone:' + this.BBtrend.zone);
+		console.log('BB duration:' + this.BBtrend.duration);
 
 	}, // check()
 
