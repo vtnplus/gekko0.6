@@ -41,12 +41,12 @@ var strat = {
 		this.resetTrend();
 		
 		// debug? set to false to disable all logging/messages/stats (improves performance in backtests)
-		this.debug = true;
+		this.debug = false;
 		
 		// performance
 		config.backtest.batchSize = 1000; // increase performance
 		config.silent = true; // NOTE: You may want to set this to 'false' @ live
-		config.debug = true;
+		config.debug = false;
 		
 		// SMA
 		this.addIndicator('maSlow', 'SMA', this.settings.SMA.long );
@@ -160,24 +160,6 @@ var strat = {
 
 	},
 
-	mail : function(){
-		var options = {
-	      body: `{"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"con bo"}`,
-	      headers: {
-	        'Content-Type': 'application/json'
-	      },
-	      method: 'POST',
-	      url: config.vtnplus.host
-	    }
-
-	    request(options, (error, response, body) => {
-	        if (!error) {
-	            log.info('Vtnplus message sent')
-	        } else {
-	            log.debug(`Vtnplus Error`)
-	        }
-	    })
-	},
 	
 	/* CHECK */
 	check: function()
