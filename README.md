@@ -31,7 +31,7 @@ install command
 # Create Password admin
 	goto http://www.htaccesstools.com/htpasswd-generator/
 	enter user and password
-	nano vue/.htpasswd
+	nano web/.htpasswd
 	pate your password form htpasswd-generator
 # Start
 	node gekko.js --ui
