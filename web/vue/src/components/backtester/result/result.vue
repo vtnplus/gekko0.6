@@ -1,6 +1,7 @@
 <template lang='pug'>
 div
   chart(:data='candles', height='500')
+
   .container
     
     h3 Backtest result
@@ -12,6 +13,7 @@ div
 <script>
 import resultSummary from './summary.vue'
 import chart from './chartWrapper.vue'
+
 import roundtripTable from './roundtripTable.vue'
 
 export default {
