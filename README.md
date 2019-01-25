@@ -28,6 +28,11 @@ install command
 	    port: 8000,
 	    path: '/'
 	  },
+# Create Password admin
+	goto http://www.htaccesstools.com/htpasswd-generator/
+	enter user and password
+	nano vue/.htpasswd
+	pate your password form htpasswd-generator
 # Start
 	node gekko.js --ui
 
