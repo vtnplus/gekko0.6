@@ -43,7 +43,7 @@ export default {
       candleSizeUnit: 'minutes',
       rawCandleSize: 1,
 
-      strategy: 'RBB_ADX_BB',
+      strategy: 'BNB-Trader',
       historySize: 60,
 
       rawStratParams: '',

@@ -1,8 +1,8 @@
 <template lang='pug'>
 .row
   .col
-    h3 Paper trader
-      span.text-small Settings
+    h3 Paper trader settings
+      
     
     template()
      

@@ -1,7 +1,7 @@
 # Validate Prices By
 # (0 = disabled)
 valPrices = 1
-valPricesPlus = 0.5
+valPricesPlus = 0.75
 [SMA]
 long = 1000.0
 short = 50.0
