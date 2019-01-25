@@ -1,6 +1,8 @@
 #GEKKO MOD BOT
 
-	install command 
+System VPS Ubuntu >= 16.04 
+install command
+
 	apt install curl git
 	curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
 	apt install nodejs
@@ -10,7 +12,7 @@
 	cd exchange
 	npm install
 	cd ..
-	
+
 # config URL
 	nano web/vue/dist/UIconfig.js
 
