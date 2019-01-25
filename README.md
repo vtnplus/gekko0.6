@@ -1,4 +1,5 @@
 #GEKKO MOD BOT
+
 	install command 
 	apt install curl git
 	curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
@@ -9,6 +10,7 @@
 	cd exchange
 	npm install
 	cd ..
+	
 # config URL
 	nano web/vue/dist/UIconfig.js
 
