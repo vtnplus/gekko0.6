@@ -50,3 +50,4 @@ private-*.toml
 SECRET-api-keys.json
 exchange/nusadua
 docs/*
+strategies/test.js

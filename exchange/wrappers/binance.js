@@ -47,7 +47,7 @@ const Trader = function(config) {
     key: this.key,
     secret: this.secret,
     timeout: 15000,
-    recvWindow,
+    recvWindow : recvWindow,
     disableBeautification: false,
     handleDrift: true,
   });
@@ -328,6 +328,9 @@ Trader.prototype.addOrder = function(tradeType, amount, price, callback) {
     timestamp: new Date().getTime()
   };
 
+  console.log("addOrder");
+  console.log(reqData);
+  //const handler = cb => this.binance.testOrder(reqData, this.handleResponse('addOrder', cb));
   const handler = cb => this.binance.newOrder(reqData, this.handleResponse('addOrder', cb));
   retry(undefined, handler, setOrder);
 };
