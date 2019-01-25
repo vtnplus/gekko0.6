@@ -10,7 +10,13 @@ var strat = {
 	{
 		this.name = 'Binance Method';
 		config.debug = true;
+		// performance
+		config.backtest.batchSize = 1000; // increase performance
+		config.silent = true; // NOTE: You may want to set this to 'false' @ live
+
+
 		this.resetTrend();
+		
 		// SMA
 		this.addIndicator('maSlow', 'SMA', this.settings.SMA.long );
 		this.addIndicator('maFast', 'SMA', this.settings.SMA.short );
@@ -87,7 +93,7 @@ var strat = {
 		  }
 		}  		
 
-		var target = "";
+		
 		if( maFast < maSlow )
 		{
 			rsi = ind.BEAR_RSI.result;
@@ -147,6 +153,8 @@ var strat = {
 		}else{
 			canSell = true;
 		}
+
+
 
 		if(this.trend.direction !== "down" && canSell){
 			this.resetTrend();

@@ -7,11 +7,14 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "echarts": "^4.2.0-rc.2",
     "http-auth": "^3.2.3",
     "marked": "^0.4.0",
     "superagent": "^3.8.3",
     "superagent-no-cache": "github:uditalias/superagent-no-cache",
     "vue": "^2.5.16",
+    "vue-echarts": "^4.0.1",
+    "vue-json-excel": "^0.2.96",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
