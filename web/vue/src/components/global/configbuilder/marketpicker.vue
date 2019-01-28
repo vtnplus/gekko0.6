@@ -3,16 +3,16 @@ div
   div
     label(for='exchange').wrapper Exchange:
     select.form-control(v-model='exchange')
-      option(v-for='(market, e) in exchanges') {{ e }}
+        option(v-for='(market, e) in exchanges') {{ e }}
   .row
     .col
       label(for='currency') Currency:
       select.form-control(v-model='currency')
-        option(v-for='cur in currencies') {{ cur }}
+          option(v-for='cur in currencies') {{ cur }}
     .col
       label(for='asset') Asset:
       select.form-control(v-model='asset')
-        option(v-for='asst in assets') {{ asst }}
+          option(v-for='asst in assets') {{ asst }}
 </template>
 
 <script>
@@ -27,9 +27,9 @@ export default {
   data: () => {
     return {
       // defaults:
-      exchange: 'poloniex',
-      currency: 'USDT',
-      asset: 'BTC',
+      exchange: 'binance',
+      currency: 'BTC',
+      asset: '',
     };
   },
   created: function() {

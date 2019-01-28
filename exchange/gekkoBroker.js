@@ -134,6 +134,7 @@ class Broker {
   }
 
   createOrder(type, side, amount, parameters, handler) {
+    console.log("Create Order gekkoBroker");
     if(!this.config.private)
       throw new Error('Client not authenticated');
 
@@ -168,6 +169,7 @@ class Broker {
   }
 
   createTrigger({type, onTrigger, props}) {
+    console.log("createTrigger gekkoBroker");
     return new Trigger({
       api: this.api,
       type,

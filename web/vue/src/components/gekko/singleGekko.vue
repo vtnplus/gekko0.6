@@ -1,16 +1,11 @@
 <template lang='pug'>
-  div.my2
-    .contain(v-if='!data')
+  div
+    div(v-if='!data')
       h1 Unknown Gekko instance
       p Gekko doesn't know what gekko this is...
-    div(v-if='data')
-      div.minChart.minChartTop
-        template(v-if='!isLoading')
-          spinner(v-if='candleFetch === "fetching"')
-          template(v-if='candleFetch === "fetched"')
-            chart(:data='chartData', :height='500')
+    
 
-    .container
+    div
       br
       h2.contain AI {{ type }}
       div(v-if='isArchived', class='contain brdr--mid-gray p1 bg--orange')
@@ -87,6 +82,14 @@
                       .col 
                         strong History size
                       .col {{ config.tradingAdvisor.historySize }}
+      div(v-if='data')
+        br
+        div.minChart.minChartTop
+          template(v-if='!isLoading')
+            spinner(v-if='candleFetch === "fetching"')
+            template(v-if='candleFetch === "fetched"')
+              chart(:data='chartData', :height='500')
+
         div(v-if='warmupRemaining', class='contain brdr--mid-gray p1 bg--orange')
           | This stratrunner is still warming up for the next 
           i {{ warmupRemaining.replace(',', ' and ') }}
@@ -386,5 +389,4 @@ export default {
 </script>
 
 <style>
-
 </style>

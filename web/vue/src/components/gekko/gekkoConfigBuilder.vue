@@ -1,5 +1,5 @@
 <template lang='pug'>
-div
+.grd.contain
   .row
     .col
       h3 Market

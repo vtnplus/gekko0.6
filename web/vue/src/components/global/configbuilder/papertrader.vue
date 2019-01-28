@@ -1,13 +1,8 @@
 <template lang='pug'>
-.row
-  .col
-    h3 Paper trader settings
-      
-    
-    template()
-     
-      textarea.form-control(v-model='rawPaperTraderParams', rows=8)
-      p.bg-red.p1(v-if='rawPaperTraderParamsError') {{ rawPaperTraderParamsError.message }}
+div
+    h3 Paper trader
+    textarea.form-control.params(v-model='rawPaperTraderParams', rows=8)
+    div.alert.alert-danger(v-if='rawPaperTraderParamsError') {{ rawPaperTraderParamsError.message }}
 </template>
 
 <script>

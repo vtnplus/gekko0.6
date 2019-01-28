@@ -1,18 +1,42 @@
 <template lang='pug'>
 div
-  div.slider
-    h1.text-center Start a new live Gekko
-    router-link.btn.btn-outline-primary.btn-lg(to='/live-gekkos/new') Start a new Task!
-  .container
-    h3 Task runners
-    .text(v-if='!stratrunners.length')
-      p You don't have any stratrunners.
-    table.table.table-hover(v-if='stratrunners.length')
-      thead
+  div.slider.text-center
+    h1 Start a new live Gekko
+    router-link.btn.btn-outline-primary.btn-lg(to='/live-gekkos/new') Start a new task!
+  div
+    h3 Market watchers
+    .text(v-if='!watchers.length')
+      p You don't have any market watchers.
+    table.table.table-hover.table-striped(v-if='watchers.length')
+      thead.thead-dark.bg-primary
         tr
           th Exchange
           th Currency
           th Asset
+          th Status
+          th Started at
+          th Last update
+          th Duration
+      tbody
+        tr(v-for='gekko in watchers', v-on:click='$router.push({path: `/live-gekkos/${gekko.id}`})')
+          td {{ gekko.config.watch.exchange }}
+          td {{ gekko.config.watch.currency }}
+          td {{ gekko.config.watch.asset }}
+          td {{ status(gekko) }}
+          td
+            template(v-if='gekko.events.initial.candle') {{ fmt(gekko.events.initial.candle.start) }}
+          td
+            template(v-if='gekko.events.latest.candle') {{ fmt(gekko.events.latest.candle.start) }}
+          td
+            template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
+    h3 Strat runners
+    .text(v-if='!stratrunners.length')
+      p You don't have any stratrunners.
+    table.table.table-hover.table-striped(v-if='stratrunners.length')
+      thead.thead-dark.bg-primary
+        tr
+          th Exchange
+          th Currency/Asset
           th Status
           th Duration
           th Strategy
@@ -20,10 +44,10 @@ div
           th Type
           th Trades
       tbody
-        tr.clickable(v-for='gekko in stratrunners', v-on:click='$router.push({path: `/live-gekkos/${gekko.id}`})')
+        tr(v-for='gekko in stratrunners', v-on:click='$router.push({path: `/live-gekkos/${gekko.id}`})')
           td {{ gekko.config.watch.exchange }}
-          td {{ gekko.config.watch.currency }}
-          td {{ gekko.config.watch.asset }}
+          td {{ gekko.config.watch.currency }} / {{ gekko.config.watch.asset }}
+            
           td {{ status(gekko) }}
           td
             template(v-if='gekko.events.initial.candle && gekko.events.latest.candle') {{ timespan(gekko.events.latest.candle.start, gekko.events.initial.candle.start) }}
@@ -35,7 +59,6 @@ div
           td
             template(v-if='!gekko.events.tradeCompleted') 0
             template(v-if='gekko.events.tradeCompleted') {{ gekko.events.tradeCompleted.length }}
-   
     
 </template>
 

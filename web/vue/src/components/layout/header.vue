@@ -2,8 +2,7 @@
   div
     #top
     header
-      nav.navbar.navbar-expand-lg.navbar-light.bg-light
-        div.container
+      nav.navbar.navbar-expand-lg.navbar-dark.bg-primary.navbar-theme
           a.navbar-brand AI BOTS
           button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
             span.navbar-toggler-icon
@@ -14,8 +13,6 @@
                 router-link(to='/home').nav-link Home
               li.nav-item
                 router-link(to='/live-gekkos').nav-link Tasks UI
-              li.nav-item
-                router-link(to='/pm2').nav-link Screen Monitor
               li.nav-item
                 router-link(to='/backtest').nav-link Backtest
               li.nav-item
@@ -37,4 +34,3 @@
 <script>
 export default {}
 </script>
-

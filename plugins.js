@@ -127,7 +127,7 @@ var plugins = [
     description: 'Follows the advice and create real orders.',
     slug: 'trader',
     async: true,
-    modes: ['realtime'],
+    modes: ['realtime', 'backtest'],
     emits: true,
     path: config => 'trader/trader.js',
   },
@@ -199,13 +199,6 @@ var plugins = [
       module: '@slack/client',
       version: '3.13.0'
     }]
-  },
-  {
-    name: 'IFTTT',
-    description: 'Sends trades to IFTTT webhook.',
-    slug: 'ifttt',
-    async: false,
-    modes: ['realtime']
   },
   {
     name: 'Event logger',

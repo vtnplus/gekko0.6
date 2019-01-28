@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.container
+  div.contain.my2
     div(v-if='data && !data.done')
       h2 Importing data..
       .grd

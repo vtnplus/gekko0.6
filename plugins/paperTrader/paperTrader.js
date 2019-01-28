@@ -115,6 +115,7 @@ PaperTrader.prototype.now = function() {
 }
 
 PaperTrader.prototype.processAdvice = function(advice) {
+
   let action;
   if(advice.recommendation === 'short') {
     action = 'sell';
@@ -153,7 +154,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
   }
 
   this.tradeId = 'trade-' + (++this.propogatedTrades);
-
+  
   this.deferredEmit('tradeInitiated', {
     id: this.tradeId,
     adviceId: advice.id,
@@ -167,7 +168,7 @@ PaperTrader.prototype.processAdvice = function(advice) {
 
   this.relayPortfolioChange();
   this.relayPortfolioValueChange();
-
+  
   this.deferredEmit('tradeCompleted', {
     id: this.tradeId,
     adviceId: advice.id,

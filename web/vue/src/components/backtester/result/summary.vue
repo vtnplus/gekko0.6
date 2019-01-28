@@ -36,6 +36,7 @@ div
 
 </template>
 
+
 <script>
 
 import paperTradeSummary from '../../global/paperTradeSummary.vue'

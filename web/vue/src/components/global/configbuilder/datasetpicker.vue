@@ -8,7 +8,7 @@ div
   .my2(v-if='datasetScanstate === "scanned"')
 
     div(v-if='datasets.length != 0')
-      table.table.table-hover
+      table.full
         thead
           tr
             th 
@@ -38,10 +38,10 @@ div
       template(v-if='rangeVisible')
         div
           label(for='customFrom') From:
-          input.form-control(v-model='customFrom')
+          input(v-model='customFrom')
         div
           label(for='customTo') To:
-          input.form-control(v-model='customTo')
+          input(v-model='customTo')
 
     em(v-else) No Data found 
       a(href='#/data/importer') Lets add some

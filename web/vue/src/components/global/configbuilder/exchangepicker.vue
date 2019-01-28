@@ -1,8 +1,10 @@
 <template lang='pug'>
 div
+  .mx1
     label(for='exchange').wrapper Exchange:
-    select.form-control(v-model='exchange')
-      option(v-for='(market, e) in exchanges') {{ e }}
+    .custom-select.button
+      select(v-model='exchange')
+        option(v-for='(market, e) in exchanges') {{ e }}
 </template>
 
 <script>
@@ -16,7 +18,7 @@ export default {
   props: ['onlyTradable', 'onlyImportable'],
   data: () => {
     return {
-      exchange: 'poloniex',
+      exchange: 'binance',
     };
   },
   created: function() {

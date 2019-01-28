@@ -3,10 +3,10 @@ div
   h3 Type
   template
     label(for='type').wrapper What do you want to do with gekko?
-    
-    div.form-group.form-check(v-for='(type, i) in types')
-      input.form-check-input(type='radio', :value='i', v-model='selectedTypeIndex', :id='i')
-      label.form-check-label(:for='i') {{ type }}
+    form.radio.grd
+      div.grd-row(v-for='(type, i) in types').m1
+        input.grd-row-col-1-6(type='radio', :value='i', v-model='selectedTypeIndex')
+        label.grd-row-col-5-6(:for='i') {{ type }}
 </template>
 
 <script>

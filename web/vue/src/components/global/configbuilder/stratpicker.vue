@@ -1,23 +1,22 @@
 <template lang='pug'>
+.grd
   .row
     .col
       h3 Strategy
       div
         label(for='strat').wrapper Strategy:
         select.form-control(v-model='strategy')
-          option(v-for='strat in strategies') {{ strat.name }}
+            option(v-for='strat in strategies') {{ strat.name }}
       div
-        
+        label(for='candleSize') Candle Size
         .row
           .col
-            label(for='candleSize') Candle Size
-            input.form-control(v-model='rawCandleSize')
+            input(v-model='rawCandleSize')
           .col
-            label(for='candleSizeUnit') Candle Unit
             select.form-control(v-model='candleSizeUnit')
-              option minutes
-              option hours
-              option days
+                option minutes
+                option hours
+                option days
       div
         label(for='historySize') Warmup period (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
         input.form-control(v-model='historySize')
@@ -25,9 +24,9 @@
     .col
       div
         h3 Parameters
-        label {{ strategy }} Parameters:
-        textarea.form-control(v-model='rawStratParams', rows=8)
-        p.bg--red.p1(v-if='rawStratParamsError') {{ rawStratParamsError.message }}
+        p {{ strategy }} Parameters:
+        textarea.form-control.params(v-model='rawStratParams', rows=8)
+        p.alert.alert-danger(v-if='rawStratParamsError') {{ rawStratParamsError.message }}
 </template>
 
 <script>
@@ -127,4 +126,18 @@ export default {
   }
 }
 </script>
+<style>
+.align .custom-select select {
+  padding: 0.4em 1.2em .3em .8em;
+}
 
+.label-like {
+  display: block;
+  font-size: 0.9em;
+  color: #777;
+}
+
+.align {
+  padding-left: 1em;
+}
+</style>

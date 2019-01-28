@@ -18,8 +18,7 @@ import gekkoList from './components/gekko/list.vue'
 import newGekko from './components/gekko/new.vue'
 import singleGekko from './components/gekko/singleGekko.vue'
 import { connect as connectWS } from './components/global/ws'
-import makeconfig from './modules/makeconfig.vue'
-import screenmonitor from './modules/screenmonitor.vue'
+
 const router = new VueRouter({
   mode: 'hash',
   base: __dirname,
@@ -34,8 +33,6 @@ const router = new VueRouter({
     { path: '/live-gekkos', component: gekkoList },
     { path: '/live-gekkos/new', component: newGekko },
     { path: '/live-gekkos/:id', component: singleGekko },
-    { path: '/makeconfig', component: makeconfig },
-    { path: '/pm2', component: screenmonitor },
   ]
 });
 

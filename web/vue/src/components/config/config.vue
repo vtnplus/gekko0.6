@@ -1,5 +1,5 @@
 <template lang='pug'>
-div.container
+div.contain
   h2 Config
   .hr
   h3 Available API keys
@@ -9,7 +9,7 @@ div.container
     li(v-for='exchange in apiKeySets') {{ exchange }} (
       a(href='#', v-on:click.prevent='removeApiKey(exchange)') remove
       | )
-  a.btn.btn-primary(href='#', v-if='!addApiToggle', v-on:click.prevent='openAddApi') Add an API key
+  a.btn--primary(href='#', v-if='!addApiToggle', v-on:click.prevent='openAddApi') Add an API key
   template(v-if='addApiToggle')
     .hr
     apiConfigBuilder

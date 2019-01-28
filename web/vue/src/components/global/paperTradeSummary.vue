@@ -39,11 +39,34 @@ export default {
   computed: {
     profitClass: function() {
       if(this.report.relativeProfit > 0)
-        return 'text-success'
+        return 'profit'
       else
-        return 'text-danger'
+        return 'loss'
     }
   }
 }
 </script>
 
+<style>
+.summary td {
+  text-align: right;
+}
+
+.big {
+  font-size: 1.3em;
+  width: 80%;
+}
+
+.summary table {
+  width: 80%;
+}
+
+.price.profit {
+  color: #7FFF00;
+}
+
+.price.loss {
+  color: red;
+}
+
+</style>

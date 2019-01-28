@@ -1,31 +1,28 @@
-header{
-	margin-bottom: 30px;
-}
-footer{
-	margin-top:50px; 
-	padding-top: 50px
-	padding-bottom:50px;
-	background-color: #333;
+.leftSlider{
+	position: fixed;
+	width: 250px;
+	height: 100%;
+	background-color: #111;
 	color: #FFF;
-	min-height: 300px;
+	overflow-y: auto;
 }
-#chartWrapper{
-	position: static;
+.leftSlider + main{
+	margin-left: 250px;
+}
+.navbar-theme{
+	background-color: rgb(86, 61, 124) !important;
+	margin-left: -15px;
+	margin-right: -15px;
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.05),inset 0 -1px 0 rgba(0,0,0,.1);
+}
+.slider{
+	margin-left: -15px;
+	margin-right: -15px;
+	padding: 30px;
+	background-color: #f6f6f6;
 }
 .minChart{
 	min-height: 500px;
-}
-.minChartTop{
-	margin-top: -30px;
-}
-.slider{
-	padding: 50px;
-	margin-bottom: 30px;
-	text-align: center;
-	background-color: #f6f6f6; 
-	margin-top: -30px;
-}
-.bg-light{
-	background-color:rgb(86, 61, 124);
-	box-shadow: rgba(0, 0, 0, 0.05) 0px 8px 16px 0px, rgba(0, 0, 0, 0.1) 0px -1px 0px 0px inset;
+	margin-left: -15px;
+	margin-right: -15px;
 }

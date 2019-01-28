@@ -3,9 +3,9 @@ div
   h3 Daterange
   template(v-if='tab === "scan"')
     .txt--center(v-if='!scanned')
-      a.btn.btn-primary(href='#', v-on:click.prevent='scan') Scan available data
+      a.w100--s.btn--primary.scan-btn(href='#', v-on:click.prevent='scan') Scan available data
     .txt--center(v-if='scanned == "fetching"')
-      p.btn.btn-outline-primary Scanning..
+      p.scan-btn Scanning..
     template(v-if='scanned == true')
       template(v-if='ranges.length === 0')
         p
@@ -26,10 +26,10 @@ div
   template(v-if='tab === "manual"')
     div
       label(for='from') From:
-      input.form-control(v-model='from')
+      input(v-model='from')
     div
       label(for='to') To:
-      input.form-control(v-model='to')
+      input(v-model='to')
     p.txt--center
     em
       a(href='#', v-on:click.prevent='tab = "scan"') Or scan for a daterange

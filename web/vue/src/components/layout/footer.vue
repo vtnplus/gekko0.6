@@ -1,8 +1,5 @@
 <template lang='pug'>
-  footer
-    .container
-      p AI MOD By VTN PLUS Co.,Ltd
-      p Using Gekko v{{ version.gekko }} and Gekko UI v{{ version.ui }}.
+  footer Using Gekko v{{ version.gekko }} and Gekko UI v{{ version.ui }}.
 </template>
 
 <script>

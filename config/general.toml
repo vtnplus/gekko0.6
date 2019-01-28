@@ -1,10 +1,10 @@
 debug = true
 
 # what database should Gekko use?
-adapter = 'sqlite'
-
+# adapter = 'sqlite'
+adapter = 'mysql'
 [watch]
 exchange = 'binance'
-currency = 'BTC'
-asset = 'USDT'
+currency = 'USDT'
+asset = 'BTC'
 
