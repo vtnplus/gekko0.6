@@ -1,17 +1,20 @@
 <template lang='pug'>
 div
-  div
+  .mx1
     label(for='exchange').wrapper Exchange:
-    select.form-control(v-model='exchange')
+    .custom-select.button
+      select(v-model='exchange')
         option(v-for='(market, e) in exchanges') {{ e }}
-  .row
-    .col
+  .grd-row
+    .grd-row-col-3-6.mx1
       label(for='currency') Currency:
-      select.form-control(v-model='currency')
+      .custom-select.button
+        select(v-model='currency')
           option(v-for='cur in currencies') {{ cur }}
-    .col
+    .grd-row-col-3-6.mx1
       label(for='asset') Asset:
-      select.form-control(v-model='asset')
+      .custom-select.button
+        select(v-model='asset')
           option(v-for='asst in assets') {{ asst }}
 </template>
 
@@ -27,9 +30,9 @@ export default {
   data: () => {
     return {
       // defaults:
-      exchange: 'binance',
-      currency: 'BTC',
-      asset: '',
+      exchange: 'poloniex',
+      currency: 'USDT',
+      asset: 'BTC',
     };
   },
   created: function() {

@@ -1,8 +1,8 @@
 enabled = true
 
-candleSize = 1
-historySize = 60
-method = "BNB-Trader"
+candleSize = 60
+historySize = 25
+method = "MACD"
 
 [talib]
 enabled = false

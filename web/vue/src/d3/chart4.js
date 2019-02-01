@@ -31,11 +31,11 @@ export default function(_data, _trades, _height) {
 
   var svg = d3.select("#chart");
 
-  svg.attr("width", window.innerWidth - 240);
+  svg.attr("width", window.innerWidth - 20);
 
-  var margin = {top: 20, right: 80, bottom: 110, left: 80};
+  var margin = {top: 20, right: 20, bottom: 110, left: 40};
   var height = _height - margin.top - margin.bottom;
-  var margin2 = {top: _height - 70, right: 80, bottom: 30, left: 80};
+  var margin2 = {top: _height - 70, right: 20, bottom: 30, left: 40};
   var width = +svg.attr("width") - margin.left - margin.right;
   var height2 = _height - margin2.top - margin2.bottom;
 

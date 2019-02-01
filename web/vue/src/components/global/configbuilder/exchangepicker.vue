@@ -18,7 +18,7 @@ export default {
   props: ['onlyTradable', 'onlyImportable'],
   data: () => {
     return {
-      exchange: 'binance',
+      exchange: 'poloniex',
     };
   },
   created: function() {

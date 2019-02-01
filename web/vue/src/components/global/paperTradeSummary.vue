@@ -1,30 +1,22 @@
 <template lang='pug'>
-div
-  table.table.table-hover
+.grd-row-col-3-6
+  table.p1
     tr
-      td.w-25 
-        strong Amount of trades
-      td.w-25 {{ report.trades }}
-    
-      td.w-25 
-        strong Sharpe ratio
-      td.w-25 {{ round2(report.sharpe) }}
+      th amount of trades
+      td {{ report.trades }}
     tr
-      td 
-        strong Start balance
+      th sharpe ratio
+      td {{ round2(report.sharpe) }}
+    tr
+      th start balance
       td {{ round(report.startBalance) }} {{ report.currency }}
-    
-      td 
-        strong Final balance
+    tr
+      th final balance
       td {{ round(report.balance) }} {{ report.currency }}
     tr
-      td 
-        strong Simulated profit
-      td 
-        a(:class='profitClass') {{ round(report.relativeProfit) }}%
-      td Strategy
-      td Candles
-  
+      th simulated profit
+
+  .big.txt--right.price(:class='profitClass') {{ round(report.relativeProfit) }}%
 
 </template>
 

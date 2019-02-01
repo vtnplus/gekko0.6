@@ -1,41 +1,31 @@
 <template lang='pug'>
-div
+div.contain
 
-  .row
-    .col
-      table.table.table-hover
+  .grd-row.summary
+    .grd-row-col-3-6
+      table.p1
         tr
-          td.w-25 
-            strong Start time
-          td.w-25 {{ report.startTime }}
-        
-          td.w-25 
-            strong End time
-          td.w-25 {{ report.endTime }}
+          th start time
+          td {{ report.startTime }}
         tr
-          
-       
-          td 
-            strong Start price
+          th end time
+          td {{ report.endTime }}
+        tr
+          th timespan
+          td {{ report.timespan }}
+        tr
+          th start price
           td {{ round(report.startPrice) }} {{ report.currency }}
-
-          td 
-            strong End price
+        tr
+          th end price
           td {{ round(report.endPrice) }} {{ report.currency }}
         tr
-          
-          td 
-            strong Timespan
-          td {{ report.timespan }}
-
-          td 
-            strong Market
+          th market
           td {{ round(report.market) }}%
 
-  paperTradeSummary(:report='report')
+    paperTradeSummary(:report='report')
 
 </template>
-
 
 <script>
 

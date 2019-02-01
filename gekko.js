@@ -19,14 +19,18 @@
   it is working.
 
 */
-const figlet = require('figlet');
- 
-console.log(figlet.textSync('AI TRADER!', {
-    font: 'Ghost',
-    horizontalLayout: 'default',
-    verticalLayout: 'default'
-}));
 
+console.log(`
+    ______   ________  __    __  __    __   ______
+   /      \\ /        |/  |  /  |/  |  /  | /      \\
+  /$$$$$$  |$$$$$$$$/ $$ | /$$/ $$ | /$$/ /$$$$$$  |
+  $$ | _$$/ $$ |__    $$ |/$$/  $$ |/$$/  $$ |  $$ |
+  $$ |/    |$$    |   $$  $$<   $$  $$<   $$ |  $$ |
+  $$ |$$$$ |$$$$$/    $$$$$  \\  $$$$$  \\  $$ |  $$ |
+  $$ \\__$$ |$$ |_____ $$ |$$  \\ $$ |$$  \\ $$ \\__$$ |
+  $$    $$/ $$       |$$ | $$  |$$ | $$  |$$    $$/ 
+   $$$$$$/  $$$$$$$$/ $$/   $$/ $$/   $$/  $$$$$$/
+`);
 
 const util = require(__dirname + '/core/util');
 

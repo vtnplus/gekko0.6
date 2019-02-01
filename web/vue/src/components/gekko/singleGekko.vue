@@ -1,135 +1,104 @@
 <template lang='pug'>
-  div
-    div(v-if='!data')
+  div.my2
+    .contain(v-if='!data')
       h1 Unknown Gekko instance
       p Gekko doesn't know what gekko this is...
-    
-
-    div
-      br
-      h2.contain AI {{ type }}
+    div(v-if='data')
+      h2.contain Gekko {{ type }}
       div(v-if='isArchived', class='contain brdr--mid-gray p1 bg--orange')
         | This is an archived Gekko, it is currently not running anymore.
       div(v-if='data.errorMessage', class='contain brdr--mid-gray p1 bg--orange')
         | This is Gekko crashed with the following error: {{ data.errorMessage }}
-
       .grd.contain
-        .row
-          .col
-            .card
-              .card-header Market
-              .card-body
-                .row
-                  .col 
-                    strong Exchange
-                  .col {{ config.watch.exchange }}
-                .row
-                  .col 
-                    strong Currency
-                  .col {{ config.watch.currency }}
-                .row
-                  .col 
-                    strong Asset
-                  .col {{ config.watch.asset }}
-                .row
-                  .col 
-                    strong Type
-                  .col {{ type }}
-                .row(v-if='type != "watcher"')
-                  .col 
-                    strong Strategy
-                  .col {{ stratName }}
-                .row(v-if='type != "watcher"')
-                  .col-lg-12.text-right
-                    div(v-if='isStratrunner && !watcher && !isArchived') WARNING: stale gekko, not attached to a watcher, please report 
-                      a(href='https://github.com/askmike/gekko/issues') here
-                      | .
-                    div(v-if='!isArchived')
-                      button(v-on:click='stopGekko', class='btn btn-danger btn-sm') Stop Gekko
-                    div(v-if='isArchived')
-                      button(v-on:click='deleteGekko', class='btn btn-danger btn-sm') Delete Gekko
-                    
-                      
-
-          .col
-            .card
-              .card-header Runtime
-              .card-body
-                spinner(v-if='isLoading')
-                template(v-if='!isLoading')
-                  .row(v-if='initialEvents.candle')
-                    .col 
-                      strong Watching since
-                    .col {{ fmt(initialEvents.candle.start) }}
-                  .row(v-if='latestEvents.candle')
-                    .col 
-                      strong Received data until
-                    .col {{ fmt(latestEvents.candle.start) }}
-                  .row(v-if='latestEvents.candle')
-                    .col 
-                      strong Data spanning
-                    .col {{ humanizeDuration(moment(latestEvents.candle.start).diff(moment(initialEvents.candle.start))) }}
-                  template(v-if='isStratrunner')
-                    .row
-                      .col 
-                        strong Amount of trades
-                      .col {{ trades.length }}
-                    .row
-                      .col 
-                        strong Candle size
-                      .col {{ config.tradingAdvisor.candleSize }}
-                    .row
-                      .col 
-                        strong History size
-                      .col {{ config.tradingAdvisor.historySize }}
-      div(v-if='data')
-        br
-        div.minChart.minChartTop
-          template(v-if='!isLoading')
-            spinner(v-if='candleFetch === "fetching"')
-            template(v-if='candleFetch === "fetched"')
-              chart(:data='chartData', :height='500')
-
+        .grd-row
+          .grd-row-col-3-6
+            h3 Market
+            .grd-row
+              .grd-row-col-3-6 Exchange
+              .grd-row-col-3-6 {{ config.watch.exchange }}
+            .grd-row
+              .grd-row-col-3-6 Currency
+              .grd-row-col-3-6 {{ config.watch.currency }}
+            .grd-row
+              .grd-row-col-3-6 Asset
+              .grd-row-col-3-6 {{ config.watch.asset }}
+            .grd-row
+              .grd-row-col-3-6 Type
+              .grd-row-col-3-6 {{ type }}
+          .grd-row-col-3-6
+            h3 Runtime
+            spinner(v-if='isLoading')
+            template(v-if='!isLoading')
+              .grd-row(v-if='initialEvents.candle')
+                .grd-row-col-2-6 Watching since
+                .grd-row-col-4-6 {{ fmt(initialEvents.candle.start) }}
+              .grd-row(v-if='latestEvents.candle')
+                .grd-row-col-2-6 Received data until
+                .grd-row-col-4-6 {{ fmt(latestEvents.candle.start) }}
+              .grd-row(v-if='latestEvents.candle')
+                .grd-row-col-2-6 Data spanning
+                .grd-row-col-4-6 {{ humanizeDuration(moment(latestEvents.candle.start).diff(moment(initialEvents.candle.start))) }}
+              template(v-if='isStratrunner')
+                .grd-row
+                  .grd-row-col-2-6 Amount of trades
+                  .grd-row-col-4-6 {{ trades.length }}
+                .grd-row
+                  .grd-row-col-2-6 Candle size
+                  .grd-row-col-4-6 {{ config.tradingAdvisor.candleSize }}
+                .grd-row
+                  .grd-row-col-2-6 History size
+                  .grd-row-col-4-6 {{ config.tradingAdvisor.historySize }}
         div(v-if='warmupRemaining', class='contain brdr--mid-gray p1 bg--orange')
           | This stratrunner is still warming up for the next 
           i {{ warmupRemaining.replace(',', ' and ') }}
           | , it will not trade until it is warmed up.
-
-        p(v-if='isStratrunner && watcher && !isArchived')
-          em This gekko gets market data from 
-            router-link(:to='"/live-gekkos/" + watcher.id') this market watcher
-
-        .row(v-if='isStratrunner')
-          
-          .col
+        .grd-row(v-if='isStratrunner')
+          .grd-row-col-3-6
+            h3 Strategy
+            .grd-row
+              .grd-row-col-3-6 Name
+              .grd-row-col-3-6
+                strong {{ stratName }}
+            | Parameters
+            pre {{ stratParams }}
+          .grd-row-col-3-6
             h3 Profit report
             template(v-if='!report')
               p
                 em(v-if='isArchived') This Gekko never executed a trade..
                 em(v-if='!isArchived') Waiting for at least one trade..
             template(v-if='report')
-              .row
-                .col 
-                  strong Start balance
-                .col {{ round(report.startBalance) }}
-                .col 
-                  strong Current balance
-                .col {{ round(report.balance) }}
-              .row
-                .col 
-                  strong Market
-                .col {{round(report.market / 100 * report.startPrice)}} {{ config.watch.currency }} ({{ round(report.market) }} %)
-                .col 
-                  strong Profit
-                .col {{ round(report.profit) }} {{ config.watch.currency }} ({{ round(report.relativeProfit) }} %)
-              .row
-                .col 
-                  strong Alpha
-                .col {{ round(report.alpha) }} {{ config.watch.currency }}
-                .col
-                .col 
-        
+              .grd-row
+                .grd-row-col-3-6 Start balance
+                .grd-row-col-3-6 {{ round(report.startBalance) }}
+              .grd-row
+                .grd-row-col-3-6 Current balance
+                .grd-row-col-3-6 {{ round(report.balance) }}
+              .grd-row
+                .grd-row-col-3-6 Market
+                .grd-row-col-3-6 {{round(report.market / 100 * report.startPrice)}} {{ config.watch.currency }} ({{ round(report.market) }} %)
+              .grd-row
+                .grd-row-col-3-6 Profit
+                .grd-row-col-3-6 {{ round(report.profit) }} {{ config.watch.currency }} ({{ round(report.relativeProfit) }} %)
+              .grd-row
+                .grd-row-col-3-6 Alpha
+                .grd-row-col-3-6 {{ round(report.alpha) }} {{ config.watch.currency }}
+        p(v-if='isStratrunner && !watcher && !isArchived') WARNING: stale gekko, not attached to a watcher, please report 
+          a(href='https://github.com/askmike/gekko/issues') here
+          | .
+        p(v-if='!isArchived')
+          a(v-on:click='stopGekko', class='w100--s my1 btn--red') Stop Gekko
+        p(v-if='isArchived')
+          a(v-on:click='deleteGekko', class='w100--s my1 btn--red') Delete Gekko
+        p(v-if='isStratrunner && watcher && !isArchived')
+          em This gekko gets market data from 
+            router-link(:to='"/live-gekkos/" + watcher.id') this market watcher
+          | .
       template(v-if='!isLoading')
+        h3.contain Market graph
+        spinner(v-if='candleFetch === "fetching"')
+        template(v-if='candleFetch === "fetched"')
+          chart(:data='chartData', :height='300')
         roundtrips(v-if='isStratrunner', :roundtrips='roundtrips')
 </template>
 

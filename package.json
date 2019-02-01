@@ -16,9 +16,9 @@
   "author": "Mike van Rossum <mike@mvr.me>",
   "dependencies": {
     "async": "2.1.2",
+    "bitfinex-api-node": "^1.2.1",
     "co-fs": "^1.2.0",
     "commander": "^2.13.0",
-    "figlet": "^1.2.1",
     "gekko": "0.0.9",
     "humanize-duration": "^3.10.0",
     "koa": "^1.2.0",
@@ -29,7 +29,6 @@
     "koa-static": "^2.0.0",
     "lodash": "2.x",
     "moment": "^2.20.1",
-    "mysql2": "^1.6.4",
     "opn": "^4.0.2",
     "promisify-node": "^0.5.0",
     "prompt-lite": "0.1.1",

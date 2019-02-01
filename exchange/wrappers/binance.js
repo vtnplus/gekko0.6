@@ -47,7 +47,7 @@ const Trader = function(config) {
     key: this.key,
     secret: this.secret,
     timeout: 15000,
-    recvWindow : 60000,
+    recvWindow,
     disableBeautification: false,
     handleDrift: true,
   });

@@ -1,32 +1,34 @@
 <template lang='pug'>
 .grd
-  .row
-    .col
+  .grd-row
+    .grd-row-col-3-6.px1
       h3 Strategy
       div
         label(for='strat').wrapper Strategy:
-        select.form-control(v-model='strategy')
+        .custom-select.button
+          select(v-model='strategy')
             option(v-for='strat in strategies') {{ strat.name }}
       div
         label(for='candleSize') Candle Size
-        .row
-          .col
+        .grd-row
+          .grd-row-col-3-6
             input(v-model='rawCandleSize')
-          .col
-            select.form-control(v-model='candleSizeUnit')
+          .grd-row-col-3-6.align
+            .custom-select.button
+              select(v-model='candleSizeUnit')
                 option minutes
                 option hours
                 option days
       div
         label(for='historySize') Warmup period (in {{ rawCandleSize }} {{ singularCandleSizeUnit }} candles):
-        input.form-control(v-model='historySize')
+        input(v-model='historySize')
         em.label-like (will use {{ humanizeDuration(candleSize * historySize * 1000 * 60) }} of data as history)
-    .col
+    .grd-row-col-3-6.px1
       div
         h3 Parameters
         p {{ strategy }} Parameters:
-        textarea.form-control.params(v-model='rawStratParams', rows=8)
-        p.alert.alert-danger(v-if='rawStratParamsError') {{ rawStratParamsError.message }}
+        textarea.params(v-model='rawStratParams')
+        p.bg--red.p1(v-if='rawStratParamsError') {{ rawStratParamsError.message }}
 </template>
 
 <script>
@@ -39,11 +41,11 @@ export default {
     return {
       strategies: [],
 
-      candleSizeUnit: 'minutes',
+      candleSizeUnit: 'hours',
       rawCandleSize: 1,
 
-      strategy: 'BNB-Trader',
-      historySize: 60,
+      strategy: 'MACD',
+      historySize: 10,
 
       rawStratParams: '',
       rawStratParamsError: false,
