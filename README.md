@@ -1,5 +1,7 @@
 #Install
+
 	#Ubuntu System
+
 		apt install curl git screen
 		curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
 		apt-get install -y nodejs
@@ -10,6 +12,7 @@
 		npm install
 		cd ../
 		npm start
+
 	#Default install run with UI
 	You can run muti with screen
 
