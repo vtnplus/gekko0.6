@@ -49,7 +49,7 @@ const mode = util.gekkoMode();
 
 if(
   config.trader.enabled &&
-  !config['I understand that Gekko only automates MY OWN trading strategies']
+  !config['autostart']
 )
   util.die('Do you understand what Gekko will do with your money? Read this first:\n\nhttps://github.com/askmike/gekko/issues/201');
 
