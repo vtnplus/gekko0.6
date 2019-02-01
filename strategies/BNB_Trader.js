@@ -9,7 +9,7 @@ var strat = {
 	init: function()
 	{
 		this.name = 'Binance Method';
-		config.debug = true;
+		config.debug = false;
 		// performance
 		config.backtest.batchSize = 1000; // increase performance
 		config.silent = true; // NOTE: You may want to set this to 'false' @ live
@@ -61,8 +61,8 @@ var strat = {
 	},
 	check : function(){
 		let ind = this.indicators,
-			maSlow = ind.maSlow.result.toFixed(16),
-			maFast = ind.maFast.result.toFixed(16),
+			maSlow = ind.maSlow.result.toFixed(8),
+			maFast = ind.maFast.result.toFixed(8),
 			rsi,
 			adx = ind.ADX.result,
 			BB = ind.BB;
@@ -129,6 +129,7 @@ var strat = {
 		}else if( rsi > rsi_hi && price >= priceUpperBB) {
 			this.short();// Sell
 		}
+		console.log('RSI : '+rsi);
 	},
 	long : function(){
 		if(this.trend.direction !== "up"){
