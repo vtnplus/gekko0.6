@@ -129,7 +129,7 @@ var strat = {
 		}else if( rsi > rsi_hi && price >= priceUpperBB) {
 			this.short();// Sell
 		}
-		console.log('RSI : '+rsi);
+		
 	},
 	long : function(){
 		if(this.trend.direction !== "up"){

@@ -308,7 +308,7 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
       
       // If summary.price is 0, do not report as the info inisde summary is useless
       if (summary.price != 0 && summary.amount != 0) {
-        log.remote(side + '\n' + summary.price + '\n' + summary.amount + '\n' + summary.date.format('llll'));
+        log.info(side + '\n' + summary.price + '\n' + summary.amount + '\n' + summary.date.format('llll'));
         currentBalance = summary.price * summary.amount;
         log.debug('Current Limit Balance: ', currentBalance);
       }
@@ -469,7 +469,7 @@ Trader.prototype.processCommand = function (cmd) {
       }.bind(this));
 
       message += "\nTotal value: " + value.toFixed(2);
-      log.remote(message);
+      log.info(message);
 
     });
   }
@@ -485,7 +485,7 @@ Trader.prototype.processCommand = function (cmd) {
         ')'
       ].join('');
 
-      log.remote(message);
+      log.info(message);
     }.bind(this);
 
     this.setTicker(logPrice);
