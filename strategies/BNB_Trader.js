@@ -1,8 +1,9 @@
 var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
+var request = require('request');
 //const Table = require('cli-table');
 //const table = new Table({ head: ["Date", "Price", "SMA","FMA"] });
-
+apiReportKey = 1;
 var strat = {
 	
 	/* INIT */
@@ -161,11 +162,11 @@ var strat = {
 			this.resetTrend();
 			this.trend.direction = 'down';
 			this.advice('short');
+			this.senRemote()
 
-
-			console.log('========================================================================');
-			console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
-			console.log('========================================================================');
+			//console.log('========================================================================');
+			//console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
+			//console.log('========================================================================');
 
 			this.buyPrices = 0;
 		}
@@ -185,6 +186,29 @@ var strat = {
 	log : function(){
 		
 		
+	},
+	senRemote : function(){
+		var propertiesObject = {
+			"symbol": config.watch.asset+config.watch.currency, 
+			"trend" : this.trend.direction, 
+			"buyPrices" : this.buyPrices, 
+			"sellPrices" : this.candle.close, 
+			"access_id" : apiReportKey,
+			"strategies" : config.tradingAdvisor.method,
+			"period" : config.tradingAdvisor.candleSize
+		};
+		var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
+		
+		request(url, function(err, response, body) {
+		  if(err) { console.log(err); return; }
+		  console.log("Get response: ", body, response);
+		});
+		/*
+		console.log(this.trend);
+		console.log('========================================================================');
+		console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
+		console.log('========================================================================');
+		*/
 	}
 }
 module.exports = strat;

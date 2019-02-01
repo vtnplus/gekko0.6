@@ -15,7 +15,7 @@ TimePeriod = 20.0
 [BBtrend]
 upperThreshold = 50
 lowerThreshold = 50
-persistence = 15
+persistence = 5
 
 [BULL]
 high = 85.6
