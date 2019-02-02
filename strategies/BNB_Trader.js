@@ -1,9 +1,11 @@
 var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
-var request = require('request');
+var rp = require('request-promise');
+var _ = require('lodash');
 //const Table = require('cli-table');
 //const table = new Table({ head: ["Date", "Price", "SMA","FMA"] });
 apiReportKey = 1;
+var data;
 var strat = {
 	
 	/* INIT */
@@ -43,6 +45,8 @@ var strat = {
 		//console.log(table.toString());
 		this.startTime = new Date();
 		this.buyPrices = 0;
+		this.data24h = []
+		config.ticket24h = this.settings.ticket24h
 	},
 	/* RESET TREND */
 	resetTrend: function()
@@ -60,6 +64,45 @@ var strat = {
 	update : function(){
 
 	},
+	ticket24h : function(){
+		
+		
+		var options = {
+		    uri: 'https://api.binance.com/api/v1/ticker/24hr',
+		    
+		    headers: {
+		        'User-Agent': 'Request-Promise'
+		    },
+		    json: true // Automatically parses the JSON string in the response
+		};
+		etf = this;
+		rp(options).then(function (body) {
+	        data = _.first(_.filter(body, {symbol: config.watch.asset+config.watch.currency}));
+	        
+	        openPrice = data.openPrice;
+	        calPrice = (etf.candle.close * 100 / data.openPrice)
+	        
+	        if(data.priceChangePercent < config.ticket24h){
+	        	//if(etf.trend.direction !== "up"){
+					etf.resetTrend();
+					etf.trend.direction = 'up';
+					//etf.advice('long');
+					etf.buyPrices = this.candle.close;
+					
+				//}
+	        }else{
+	        	
+	        	console.log("Ready Pump Stop Buy")
+	        }
+	    })
+	    .catch(function (err) {
+	        console.log(err);
+	    });
+
+		//console.log(data);
+		
+	},
+	
 	check : function(){
 		let ind = this.indicators,
 			maSlow = ind.maSlow.result.toFixed(8),
@@ -74,7 +117,7 @@ var strat = {
 		var zone = 'none';
 		var priceUpperBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.upperThreshold;
 		var priceLowerBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.lowerThreshold;
-
+		
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
@@ -123,6 +166,8 @@ var strat = {
 			
 
 		}
+		
+
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) {
 			
@@ -133,13 +178,50 @@ var strat = {
 		
 	},
 	long : function(){
-		if(this.trend.direction !== "up"){
-			this.resetTrend();
-			this.trend.direction = 'up';
-			this.advice('long');
-			this.buyPrices = this.candle.close;
-			
+		if(this.settings.ticket24h != 0){
+			etf = this;
+			var options = {
+			    uri: 'https://api.binance.com/api/v1/ticker/24hr',
+			    
+			    headers: {
+			        'User-Agent': 'Request-Promise'
+			    },
+			    json: true // Automatically parses the JSON string in the response
+			};
+
+			rp(options).then(function (body) {
+		        data = _.first(_.filter(body, {symbol: config.watch.asset+config.watch.currency}));
+	        	openPrice = data.openPrice;
+		        calPrice = (etf.candle.close * 100) / data.openPrice
+		        
+		        if(data.priceChangePercent < config.ticket24h){
+		        	if(etf.trend.direction !== "up"){
+						etf.resetTrend();
+						etf.trend.direction = 'up';
+						etf.advice('long');
+						etf.buyPrices = etf.candle.close;
+						
+					}
+		        }else{
+		        	
+		        	console.log("Ready Pump Stop Buy")
+		        }
+		        
+		    })
+		    .catch(function (err) {
+		        console.log(err);
+		    });
+		    
+		}else{
+			if(this.trend.direction !== "up"){
+				this.resetTrend();
+				this.trend.direction = 'up';
+				this.advice('long');
+				this.buyPrices = this.candle.close;
+				
+			}
 		}
+
 	},
 	short : function(){
 		var canSell = false;
@@ -162,7 +244,7 @@ var strat = {
 			this.resetTrend();
 			this.trend.direction = 'down';
 			this.advice('short');
-			this.senRemote()
+			//this.senRemote()
 
 			//console.log('========================================================================');
 			//console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
