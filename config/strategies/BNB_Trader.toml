@@ -4,6 +4,7 @@ valPrices = 1
 valProfit = 0.75
 #validate ticket 24h pumd
 ticket24h=10
+cloud=""
 [SMA]
 long = 1000.0
 short = 50.0

@@ -65,6 +65,21 @@ var strat = {
 
 	},
 	
+	getData : function (){
+		var options = {
+			    uri: 'https://api.binance.com/api/v1/ticker/24hr',
+			    "method":"GET", 
+			    headers: {
+			        'User-Agent': 'Request-Promise'
+			    },
+			    json: true // Automatically parses the JSON string in the response
+			};
+
+		return rp(options);
+	},
+	cloundApi : function(){
+
+	},
 	
 	check : function(){
 		let ind = this.indicators,
@@ -100,7 +115,8 @@ var strat = {
 		  }
 		}  		
 
-		
+		console.log(this.getData());
+
 		if( maFast < maSlow )
 		{
 			rsi = ind.BEAR_RSI.result;
@@ -134,9 +150,9 @@ var strat = {
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) {
 			
-			this.long();// Buy
+			//this.long();// Buy
 		}else if( rsi > rsi_hi && price >= priceUpperBB) {
-			this.short();// Sell
+			//this.short();// Sell
 		}
 		
 	},
