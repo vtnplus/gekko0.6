@@ -64,44 +64,7 @@ var strat = {
 	update : function(){
 
 	},
-	ticket24h : function(){
-		
-		
-		var options = {
-		    uri: 'https://api.binance.com/api/v1/ticker/24hr',
-		    
-		    headers: {
-		        'User-Agent': 'Request-Promise'
-		    },
-		    json: true // Automatically parses the JSON string in the response
-		};
-		etf = this;
-		rp(options).then(function (body) {
-	        data = _.first(_.filter(body, {symbol: config.watch.asset+config.watch.currency}));
-	        
-	        openPrice = data.openPrice;
-	        calPrice = (etf.candle.close * 100 / data.openPrice)
-	        
-	        if(data.priceChangePercent < config.ticket24h){
-	        	//if(etf.trend.direction !== "up"){
-					etf.resetTrend();
-					etf.trend.direction = 'up';
-					//etf.advice('long');
-					etf.buyPrices = this.candle.close;
-					
-				//}
-	        }else{
-	        	
-	        	console.log("Ready Pump Stop Buy")
-	        }
-	    })
-	    .catch(function (err) {
-	        console.log(err);
-	    });
-
-		//console.log(data);
-		
-	},
+	
 	
 	check : function(){
 		let ind = this.indicators,
