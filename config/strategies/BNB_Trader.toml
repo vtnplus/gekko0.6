@@ -1,10 +1,10 @@
 # Validate Prices By
 # (0 = disabled)
 valPrices = 1
-valProfit = 0.75
+valProfit = 1.75
 #validate ticket 24h pumd
-ticket24h=10
-cloud=""
+ticket24h=0
+cloud=0
 [SMA]
 long = 1000.0
 short = 50.0
@@ -20,7 +20,7 @@ lowerThreshold = 50
 persistence = 5
 
 [BULL]
-high = 85.6
+high = 80.6
 low = 42.3
 mod_high = 3.2
 mod_low = -9

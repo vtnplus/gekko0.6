@@ -23,6 +23,7 @@ var strat = {
 		// SMA
 		this.addIndicator('maSlow', 'SMA', this.settings.SMA.long );
 		this.addIndicator('maFast', 'SMA', this.settings.SMA.short );
+		
 		this.addIndicator('BB', 'BBANDS', this.settings.BBands);
 		this.BBtrend = {
 	      zone: 'none',  // none, middle, high, low
@@ -45,6 +46,8 @@ var strat = {
 		//console.log(table.toString());
 		this.startTime = new Date();
 		this.buyPrices = 0;
+		this.nextBuy = 0;
+
 		this.data24h = []
 		config.ticket24h = this.settings.ticket24h
 	},
@@ -115,7 +118,6 @@ var strat = {
 		  }
 		}  		
 
-		console.log(this.getData());
 
 		if( maFast < maSlow )
 		{
@@ -150,13 +152,107 @@ var strat = {
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) {
 			
-			//this.long();// Buy
+			this.long();// Buy
 		}else if( rsi > rsi_hi && price >= priceUpperBB) {
-			//this.short();// Sell
+			this.short();// Sell
 		}
 		
 	},
 	long : function(){
+		var canBuy = false;
+		if(this.nextBuy == 0){
+			canBuy = true;
+		}else{
+			if(this.candle.close < this.nextBuy){
+				canBuy = true;
+			}else if(this.candle.close >= this.nextBuy){
+				canBuy = false;
+			}
+		}
+		
+		if(this.trend.direction !== "up" && canBuy){
+			this.resetTrend();
+			this.trend.direction = 'up';
+			this.advice('long');
+			this.buyPrices = this.candle.close;
+			this.nextBuy = 0;
+		}
+
+	},
+	short : function(){
+		var canSell = false;
+		if(this.settings.valPrices > 0){
+			
+			var commiss = ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
+
+			if(this.candle.close > commiss && this.buyPrices > 0){
+				canSell = true;
+			}else{
+				canSell = false;
+			}
+		}else{
+			canSell = true;
+		}
+
+
+
+		if(this.trend.direction !== "down" && canSell){
+			this.resetTrend();
+			this.trend.direction = 'down';
+			this.advice('short');
+			this.senRemote()
+
+			//console.log('========================================================================');
+			//console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
+			//console.log('========================================================================');
+
+			this.buyPrices = 0;
+			this.nextBuy = this.candle.close - ((this.candle.close*1.5)/100);
+		}
+	},
+	end: function()
+	{
+		let seconds = ((new Date()- this.startTime)/1000),
+			minutes = seconds/60,
+			str;
+			
+		minutes < 1 ? str = seconds.toFixed(2) + ' seconds' : str = minutes.toFixed(2) + ' minutes';
+		
+		console.log('====================================');
+		console.log('Finished in ' + str);
+		console.log('====================================');
+	},
+	log : function(){
+		
+		
+	},
+	senRemote : function(){
+		var propertiesObject = {
+			"symbol": config.watch.asset+config.watch.currency, 
+			"trend" : this.trend.direction, 
+			"buyPrices" : this.buyPrices, 
+			"sellPrices" : this.candle.close, 
+			"access_id" : apiReportKey,
+			"strategies" : config.tradingAdvisor.method,
+			"period" : config.tradingAdvisor.candleSize
+		};
+		var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
+		
+		request(url, function(err, response, body) {
+		  if(err) { console.log(err); return; }
+		  console.log("Get response: ", body, response);
+		});
+		/*
+		console.log(this.trend);
+		console.log('========================================================================');
+		console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
+		console.log('========================================================================');
+		*/
+	}
+}
+module.exports = strat;
+/*
+long : function(){
 		if(this.settings.ticket24h != 0){
 			etf = this;
 			var options = {
@@ -202,74 +298,4 @@ var strat = {
 		}
 
 	},
-	short : function(){
-		var canSell = false;
-		if(this.settings.valPrices > 0){
-			
-			var commiss = ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
-
-			if(this.candle.close > commiss && this.buyPrices > 0){
-				canSell = true;
-			}else{
-				canSell = false;
-			}
-		}else{
-			canSell = true;
-		}
-
-
-
-		if(this.trend.direction !== "down" && canSell){
-			this.resetTrend();
-			this.trend.direction = 'down';
-			this.advice('short');
-			//this.senRemote()
-
-			//console.log('========================================================================');
-			//console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
-			//console.log('========================================================================');
-
-			this.buyPrices = 0;
-		}
-	},
-	end: function()
-	{
-		let seconds = ((new Date()- this.startTime)/1000),
-			minutes = seconds/60,
-			str;
-			
-		minutes < 1 ? str = seconds.toFixed(2) + ' seconds' : str = minutes.toFixed(2) + ' minutes';
-		
-		console.log('====================================');
-		console.log('Finished in ' + str);
-		console.log('====================================');
-	},
-	log : function(){
-		
-		
-	},
-	senRemote : function(){
-		var propertiesObject = {
-			"symbol": config.watch.asset+config.watch.currency, 
-			"trend" : this.trend.direction, 
-			"buyPrices" : this.buyPrices, 
-			"sellPrices" : this.candle.close, 
-			"access_id" : apiReportKey,
-			"strategies" : config.tradingAdvisor.method,
-			"period" : config.tradingAdvisor.candleSize
-		};
-		var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
-		
-		request(url, function(err, response, body) {
-		  if(err) { console.log(err); return; }
-		  console.log("Get response: ", body, response);
-		});
-		/*
-		console.log(this.trend);
-		console.log('========================================================================');
-		console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
-		console.log('========================================================================');
-		*/
-	}
-}
-module.exports = strat;
+*/
