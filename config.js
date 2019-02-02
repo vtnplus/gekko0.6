@@ -59,8 +59,8 @@ config.paperTrader = {
   // start balance, on what the current balance is compared with
   simulationBalance: {
     // these are in the unit types configured in the watcher.
-    asset: 1,
-    currency: 100,
+    asset: 0,
+    currency: 0.1,// Add custom balance
   },
   // how much fee in % does each trade cost?
   feeMaker: 0.15,
