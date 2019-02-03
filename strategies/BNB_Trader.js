@@ -1,12 +1,14 @@
-var log = require('../core/log.js');
-var config = require('../core/util.js').getConfig();
-var rp = require('request-promise');
-var _ = require('lodash');
+const log = require('../core/log.js');
+const config = require('../core/util.js').getConfig();
+const rp = require('request-promise');
+const _ = require('lodash');
+const request = require('request');
+const fs = require('fs');
 //const Table = require('cli-table');
 //const table = new Table({ head: ["Date", "Price", "SMA","FMA"] });
 apiReportKey = 1;
-var data;
-var strat = {
+
+const strat = {
 	
 	/* INIT */
 	init: function()
@@ -48,8 +50,9 @@ var strat = {
 		this.buyPrices = 0;
 		this.nextBuy = 0;
 
-		this.data24h = []
-		config.ticket24h = this.settings.ticket24h
+		this.dirMarkets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
+
+		this.checkNumber = 0
 	},
 	/* RESET TREND */
 	resetTrend: function()
@@ -68,20 +71,16 @@ var strat = {
 
 	},
 	
-	getData : function (){
-		var options = {
-			    uri: 'https://api.binance.com/api/v1/ticker/24hr',
-			    "method":"GET", 
-			    headers: {
-			        'User-Agent': 'Request-Promise'
-			    },
-			    json: true // Automatically parses the JSON string in the response
-			};
-
-		return rp(options);
-	},
+	
 	cloundApi : function(){
+		
 
+		if(this.checkNumber > 2){
+
+			console.log("")
+			this.checkNumber = 0;
+		}
+		console.log(__dirname);
 	},
 	
 	check : function(){
@@ -102,6 +101,13 @@ var strat = {
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
+		
+		/*
+		Load Cloud
+		*/
+		this.checkNumber = this.checkNumber+1;
+		this.cloundApi()
+
 
 		if (this.BBtrend.zone == zone) {
 		  this.BBtrend = {
@@ -148,7 +154,7 @@ var strat = {
 
 		}
 		
-
+		
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) {
 			
