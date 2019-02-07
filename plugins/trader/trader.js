@@ -61,7 +61,8 @@ util.makeEventEmitter(Trader);
 
 Trader.prototype.sync = function(next) {
   log.debug("Validate Price : " + config.valPrices);
-  log.debug("Validate Profit : " + config.valProfit);
+  log.debug("Validate Profit : " + config.valProfit+"% ");
+  log.debug("Limit Balance : " + currentBalance + " "+config.watch.currency);
   
   log.debug('syncing private data');
   this.broker.syncPrivateData(() => {
