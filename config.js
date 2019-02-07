@@ -36,8 +36,8 @@ config.tradingAdvisor = {
 
 config.BNB_Trader = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
 
-config.BNB_Trader.valPrices = 1;
-config.BNB_Trader.valProfit = 1.75;// Default 1.75
+config.valPrices = 1;
+config.valProfit = 1.75;// Default 1.75
 config.TradeLimit = 0.1;
 
 config.apiReportKey = 1; // API KEY Cloud Server

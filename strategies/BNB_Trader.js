@@ -43,6 +43,13 @@ const strat = {
 		this.BEAR_MOD_high = this.settings.BEAR.mod_high;
 		this.BEAR_MOD_low = this.settings.BEAR.mod_low;
 
+		if(config.valPrices){
+			this.settings.valPrices = config.valPrices;
+		}
+
+		if(config.valProfit){
+			this.settings.valProfit = config.valProfit;
+		}
 
 		this.addIndicator('ADX', 'ADX', this.settings.ADX.adx );
 		//console.log(table.toString());
@@ -53,6 +60,8 @@ const strat = {
 		this.dirMarkets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
 
 		this.checkNumber = 0
+		console.log("Validate Prices : ", this.settings.valPrices);
+		console.log("Validate Profit : ", this.settings.valProfit);
 	},
 	/* RESET TREND */
 	resetTrend: function()
@@ -98,7 +107,7 @@ const strat = {
 		var priceUpperBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.upperThreshold;
 		var priceLowerBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.lowerThreshold;
 		
-		console.log(config);
+		
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
