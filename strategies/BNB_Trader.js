@@ -60,8 +60,7 @@ const strat = {
 		this.dirMarkets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
 
 		this.checkNumber = 0
-		console.log("Validate Prices : ", this.settings.valPrices);
-		console.log("Validate Profit : ", this.settings.valProfit);
+		
 	},
 	/* RESET TREND */
 	resetTrend: function()

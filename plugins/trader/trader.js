@@ -449,6 +449,8 @@ Trader.prototype.cancelOrder = function(id, advice, next) {
 }
 
 Trader.prototype.processCommand = function (cmd) {
+  log.info("Validate Price : " + config.valPrices);
+  log.info("Validate Profit : " + config.valProfit);
   
   if (cmd.command == 'portfolio') {
     cmd.handled = true;
