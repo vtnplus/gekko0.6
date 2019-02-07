@@ -60,10 +60,10 @@ const Trader = function(next) {
 util.makeEventEmitter(Trader);
 
 Trader.prototype.sync = function(next) {
-  log.debug("Validate Price : " + config.valPrices);
-  log.debug("Validate Profit : " + config.valProfit+"% ");
-  log.debug("Limit Balance : " + currentBalance + " "+config.watch.currency);
-  log.debug("Clund ID : " + config.apiReportKey);
+  log.debug("\tValidate Price : " + (config.valPrices > 0 ? "Yes" : "No"));
+  log.debug("\tValidate Profit : " + config.valProfit+"% ");
+  log.debug("\tLimit Balance : " + currentBalance + " "+config.watch.currency);
+  log.debug("\tClund ID : " + config.apiReportKey);
   
   log.debug('syncing private data');
   this.broker.syncPrivateData(() => {
