@@ -60,6 +60,9 @@ const Trader = function(next) {
 util.makeEventEmitter(Trader);
 
 Trader.prototype.sync = function(next) {
+  log.debug("Validate Price : " + config.valPrices);
+  log.debug("Validate Profit : " + config.valProfit);
+  
   log.debug('syncing private data');
   this.broker.syncPrivateData(() => {
     if(!this.price) {
@@ -449,9 +452,8 @@ Trader.prototype.cancelOrder = function(id, advice, next) {
 }
 
 Trader.prototype.processCommand = function (cmd) {
-  log.info("Validate Price : " + config.valPrices);
-  log.info("Validate Profit : " + config.valProfit);
   
+
   if (cmd.command == 'portfolio') {
     cmd.handled = true;
 
