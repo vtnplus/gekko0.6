@@ -18,17 +18,9 @@ config.debug = true; // for additional logging / debugging
 
 
 config.watch = {
-
-  // see https://gekko.wizb.it/docs/introduction/supported_exchanges.html
   exchange: 'binance',
   currency: 'BTC',
   asset: 'LUN',
-  
-
-  // You can set your own tickrate (refresh rate).
-  // If you don't set it, the defaults are 2 sec for
-  // okcoin and 20 sec for all other exchanges.
-  // tickrate: 20
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,6 +35,10 @@ config.tradingAdvisor = {
 }
 
 config.BNB_Trader = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
+
+config.BNB_Trader.valPrices = 1;
+config.BNB_Trader.valProfit = 1.75;// Default 1.75
+config.TradeLimit = 0.1;
 
 // settings for other strategies can be found at the bottom, note that only
 // one strategy is active per gekko, the other settings are ignored.

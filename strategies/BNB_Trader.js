@@ -98,6 +98,7 @@ const strat = {
 		var priceUpperBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.upperThreshold;
 		var priceLowerBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.lowerThreshold;
 		
+		console.log(config);
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
@@ -105,8 +106,8 @@ const strat = {
 		/*
 		Load Cloud
 		*/
-		this.checkNumber = this.checkNumber+1;
-		this.cloundApi()
+		//this.checkNumber = this.checkNumber+1;
+		//this.cloundApi()
 
 
 		if (this.BBtrend.zone == zone) {
@@ -164,6 +165,7 @@ const strat = {
 		}
 		
 	},
+
 	long : function(){
 		var canBuy = false;
 		if(this.nextBuy == 0){

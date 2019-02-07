@@ -9,7 +9,7 @@ const log = require(dirs.core + 'log');
 const Broker = require(dirs.broker + '/gekkoBroker');
 
 var headerset = '';
-var currentBalance = (config.paperTrader.simulationBalance.currency < 0.2 ? config.paperTrader.simulationBalance.currency : 0.1);
+var currentBalance = (config.TradeLimit < 0.2 ? config.TradeLimit : 0.1);
 
 require(dirs.gekko + '/exchange/dependencyCheck');
 
