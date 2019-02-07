@@ -240,7 +240,7 @@ const strat = {
 			"trend" : this.trend.direction, 
 			"buyPrices" : this.buyPrices, 
 			"sellPrices" : this.candle.close, 
-			"access_id" : apiReportKey,
+			"access_id" : config.apiReportKey,
 			"strategies" : config.tradingAdvisor.method,
 			"period" : config.tradingAdvisor.candleSize
 		};

@@ -40,6 +40,7 @@ config.BNB_Trader.valPrices = 1;
 config.BNB_Trader.valProfit = 1.75;// Default 1.75
 config.TradeLimit = 0.1;
 
+config.apiReportKey = 1; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only
 // one strategy is active per gekko, the other settings are ignored.
 
