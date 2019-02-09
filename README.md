@@ -11,10 +11,16 @@
 		cd ./exchange
 		npm install
 		cd ../
-		npm start
+		npm install pm2 -g
+		screen -S CloudService
+		node cloud-server.js
 
-	#Default install run with UI
-	You can run muti with screen
+		Ctrl +A + D
 
-		screen -S "Coin1"
-		node gekko.js -c "your config.js"
+	# Config
+		Goto http://smartweb.live register new account
+		Goto http://smartweb.live/trader create API
+		Goto http://smartweb.live/trader/member/keys enter server IP + Coind Trade
+		Click config settings you Method
+		Save and CLick Start
+		
