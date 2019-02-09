@@ -6,7 +6,34 @@ const request = require('request');
 const fs = require('fs');
 //const Table = require('cli-table');
 //const table = new Table({ head: ["Date", "Price", "SMA","FMA"] });
-apiReportKey = 1;
+
+const download = (url, dest, cb) => {
+    const file = fs.createWriteStream(dest);
+    const sendReq = request.get(url);
+
+    // verify response code
+    sendReq.on('response', (response) => {
+        if (response.statusCode !== 200) {
+            return cb('Response status was ' + response.statusCode);
+        }
+
+        sendReq.pipe(file);
+    });
+
+    // close() is async, call cb after close completes
+    file.on('finish', () => file.close(cb));
+
+    // check for request errors
+    sendReq.on('error', (err) => {
+        fs.unlink(dest);
+        return cb(err.message);
+    });
+
+    file.on('error', (err) => { // Handle errors
+        fs.unlink(dest); // Delete the file async. (But we don't check the result)
+        return cb(err.message);
+    });
+};
 
 const strat = {
 	
@@ -57,7 +84,7 @@ const strat = {
 		this.buyPrices = 0;
 		this.nextBuy = 0;
 
-		this.dirMarkets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
+		
 
 		this.checkNumber = 0
 		
@@ -76,20 +103,11 @@ const strat = {
 		this.trend = trend;
 	},
 	update : function(){
-
-	},
-	
-	
-	cloundApi : function(){
 		
-
-		if(this.checkNumber > 2){
-
-			console.log("")
-			this.checkNumber = 0;
-		}
-		console.log(__dirname);
 	},
+	
+	
+	
 	
 	check : function(){
 		let ind = this.indicators,
@@ -106,17 +124,11 @@ const strat = {
 		var priceUpperBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.upperThreshold;
 		var priceLowerBB = BB.lower + (BB.upper - BB.lower) / 100 * this.settings.BBtrend.lowerThreshold;
 		
-		
+		var buy24h = this.getMarkets()
+
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
-		
-		/*
-		Load Cloud
-		*/
-		//this.checkNumber = this.checkNumber+1;
-		//this.cloundApi()
-
 
 		if (this.BBtrend.zone == zone) {
 		  this.BBtrend = {
@@ -164,8 +176,9 @@ const strat = {
 		}
 		
 		
+		
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
-		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence ) {
+		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence && buy24h) {
 			
 			this.long();// Buy
 		}else if( rsi > rsi_hi && price >= priceUpperBB) {
@@ -173,7 +186,20 @@ const strat = {
 		}
 		
 	},
+	getMarkets : function(){
+		if(config.market24h === true){
+			
+			var markets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
+			data = _.first(_.filter(markets, {symbol : config.watch.asset+config.watch.currency}));
+			if(data.status !== "Stopbuy"){
+				return true;
+			}
+			return false;
+		}
+		
+		return true;
 
+	},
 	long : function(){
 		var canBuy = false;
 		if(this.nextBuy == 0){

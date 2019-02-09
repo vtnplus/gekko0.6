@@ -30,8 +30,8 @@ config.watch = {
 config.tradingAdvisor = {
   enabled: true,
   method: '{method}',
-  candleSize: 1,
-  historySize: 60,
+  candleSize: {size},
+  historySize: {history},
 }
 
 config.{method} = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
@@ -39,7 +39,7 @@ config.{method} = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+c
 config.valPrices = {valPrices};
 config.valProfit = {valProfit};// Default 1.75
 config.TradeLimit = {TradeLimit};
-
+config.market24h = {market24h};
 config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only
 // one strategy is active per gekko, the other settings are ignored.
@@ -175,7 +175,7 @@ config.sqlite = {
   dataDirectory: 'history',
   version: 0.1,
 
-  journalMode: require('./web/isWindows.js') ? 'DELETE' : 'WAL',
+  journalMode: 'WAL',
 
   dependencies: []
 }

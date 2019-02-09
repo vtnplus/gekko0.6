@@ -38,6 +38,7 @@
     "replace-string": "^2.0.0",
     "retry": "^0.10.1",
     "semver": "5.4.1",
+    "shelljs": "^0.8.3",
     "sqlite3": "^4.0.4",
     "stats-lite": "^2.0.4",
     "tiny-promisify": "^0.1.1",
