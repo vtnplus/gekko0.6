@@ -50,7 +50,7 @@ SECRET-api-keys.json
 exchange/nusadua
 docs
 logs
-test
+test.back/
 test.js
 web.back/
 *-config.js
