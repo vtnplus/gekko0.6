@@ -65,21 +65,22 @@ app.post('/task', function (req, res) {
 
    if(cmd === "start"){
       if(shell.exec('pm2 start gekko.js -n "'+asset+currency+'" -- -c '+fileConfig).code !== 0){
-
+         res.send(JSON.stringify({status: true}));
       }
    }else if(cmd === "restart"){
       if(shell.exec('pm2 restart "'+asset+currency+'"').code !== 0){
-
+         res.send(JSON.stringify({status: true}));
       }
    }else if(cmd === "stop"){
       if(shell.exec('pm2 delete "'+asset+currency+'"').code !== 0){
-
+         res.send(JSON.stringify({status: true}));
       }
    }else if(cmd === "market24h"){
       if(shell.exec('pm2 start markets.js -n "MARKETS"').code !== 0){
-
+         res.send(JSON.stringify({status: true}));
       }
    }
+   res.end("");
 });
 
 app.post('/apikeys', function (req, res) {
