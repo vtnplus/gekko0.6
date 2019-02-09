@@ -19,8 +19,8 @@ config.debug = true; // for additional logging / debugging
 
 config.watch = {
   exchange: 'binance',
-  currency: 'BTC',
-  asset: 'LUN',
+  currency: '{currency}',
+  asset: '{asset}',
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,18 +29,18 @@ config.watch = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: 'BNB_Trader',
+  method: '{method}',
   candleSize: 1,
   historySize: 60,
 }
 
-config.BNB_Trader = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
+config.{method} = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
 
-config.valPrices = 1;
-config.valProfit = 1.75;// Default 1.75
-config.TradeLimit = 0.1;
+config.valPrices = {valPrices};
+config.valProfit = {valProfit};// Default 1.75
+config.TradeLimit = {TradeLimit};
 
-config.apiReportKey = 1; // API KEY Cloud Server
+config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only
 // one strategy is active per gekko, the other settings are ignored.
 

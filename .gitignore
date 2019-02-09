@@ -52,4 +52,6 @@ docs
 logs
 test
 test.js
-web
+web.back/
+*-config.js
+package-lock.json
