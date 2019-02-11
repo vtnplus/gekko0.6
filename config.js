@@ -40,6 +40,9 @@ config.valPrices = {valPrices};
 config.valProfit = {valProfit};// Default 1.75
 config.TradeLimit = {TradeLimit};
 config.market24h = {market24h};
+config.detachbuy = {detachbuy};
+config.stoplost = {stoplost};
+
 config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only
 // one strategy is active per gekko, the other settings are ignored.

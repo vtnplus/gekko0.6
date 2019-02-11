@@ -7,33 +7,6 @@ const fs = require('fs');
 //const Table = require('cli-table');
 //const table = new Table({ head: ["Date", "Price", "SMA","FMA"] });
 
-const download = (url, dest, cb) => {
-    const file = fs.createWriteStream(dest);
-    const sendReq = request.get(url);
-
-    // verify response code
-    sendReq.on('response', (response) => {
-        if (response.statusCode !== 200) {
-            return cb('Response status was ' + response.statusCode);
-        }
-
-        sendReq.pipe(file);
-    });
-
-    // close() is async, call cb after close completes
-    file.on('finish', () => file.close(cb));
-
-    // check for request errors
-    sendReq.on('error', (err) => {
-        fs.unlink(dest);
-        return cb(err.message);
-    });
-
-    file.on('error', (err) => { // Handle errors
-        fs.unlink(dest); // Delete the file async. (But we don't check the result)
-        return cb(err.message);
-    });
-};
 
 const strat = {
 	
@@ -72,6 +45,14 @@ const strat = {
 
 		if(config.valPrices){
 			this.settings.valPrices = config.valPrices;
+			var filecache = __dirname + "/../markets/savedata/" + config.watch.asset+config.watch.currency.".json";
+			if (fs.existsSync(filecache)) {
+			    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+			    if(readCache.buyPrices){
+			    	this.buyPrices = readCache.buyPrices;
+			    }
+			}
+
 		}
 
 		if(config.valProfit){
@@ -201,10 +182,20 @@ const strat = {
 
 	},
 	long : function(){
+
+		var filecache = __dirname + "/../markets/savedata/" + config.watch.asset+config.watch.currency.".json";
+		if (fs.existsSync(filecache)) {
+		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+		    if(readCache.stopbuy === true){
+		    	console.log("Detach Stop Buy");
+		    	return false;
+		    }
+		}
+
 		var canBuy = false;
 		if(this.nextBuy == 0){
 			canBuy = true;
-		}else{
+		}else if(config.detachbuy === true){
 			if(this.candle.close < this.nextBuy){
 				canBuy = true;
 			}else if(this.candle.close >= this.nextBuy){
@@ -217,17 +208,43 @@ const strat = {
 			this.trend.direction = 'up';
 			this.advice('long');
 			this.buyPrices = this.candle.close;
+
+			var dataSave = '{"buyPrices" : "'+this.buyPrices+'"}';
+			if (fs.existsSync(filecache)) {
+				
+				readCache.buyPrices = this.buyPrices;
+				dataSave = JSON.stringify(readCache);
+			}
+
+			
+			fs.writeFile(cachefile, '{"buyPrices" : "'+this.buyPrices+'"}', function (err) {
+			    if (err) 
+			        return console.log(err);
+			    console.log('Save Cache Buy');
+			});
+
 			this.nextBuy = 0;
 		}
 
 	},
 	short : function(){
+		var filecache = __dirname + "/../markets/savedata/" + config.watch.asset+config.watch.currency.".json";
+		if (fs.existsSync(filecache)) {
+		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+		    if(readCache.stopsell === true){
+		    	console.log("Detach Stop Sell");
+		    	return false;
+		    }
+		}
+
 		var canSell = false;
 		if(this.settings.valPrices > 0){
 			
 			var commiss = ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
 
 			if(this.candle.close > commiss && this.buyPrices > 0){
+				canSell = true;
+			}else if(this.buyPrices == 0){
 				canSell = true;
 			}else{
 				canSell = false;

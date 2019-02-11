@@ -24,11 +24,14 @@ app.post('/genconfig', function (req, res) {
    var history = (req.body.history !== undefined ? req.body.history : "60");
 
    var valPrices = (req.body.valPrices !== undefined ? req.body.valPrices : '1');
-   var valProfit = (req.body.valProfit != undefined ? req.body.valProfit : '1.75');
-   var TradeLimit = (req.body.TradeLimit != undefined ? req.body.TradeLimit : '0.1');
+   var valProfit = (req.body.valProfit !== undefined ? req.body.valProfit : '1.75');
+   var TradeLimit = (req.body.TradeLimit !== undefined ? req.body.TradeLimit : '0.1');
    var apiReportKey = (req.body.apiReportKey !== undefined ? req.body.apiReportKey : "");
    var method = (req.body.methodAI !== undefined ? req.body.methodAI : "BNB_Trader");
-   var market24h = (req.body.market24h !== undefined ? "true" : "false");
+   var market24h = (req.body.market24h !== undefined && req.body.market24h > 0 ? "true" : "false");
+   var detachbuy = (req.body.detachbuy !== undefined && req.body.detachbuy > 0 ? "true" : "false");
+   var stoplost = (req.body.stoplost !== undefined ? req.body.stoplost : "0");
+
    //var data = JSON.stringify(config);
    //console.log(valPrices);
    configReadData = replaceString(configReadData,"{currency}",currency);
@@ -36,6 +39,9 @@ app.post('/genconfig', function (req, res) {
    configReadData = replaceString(configReadData,'{size}',size);
    configReadData = replaceString(configReadData,'{history}',history);
    configReadData = replaceString(configReadData,'{market24h}',market24h);
+   configReadData = replaceString(configReadData,'{detachbuy}',detachbuy);
+   configReadData = replaceString(configReadData,'{stoplost}',stoplost);
+
 
    configReadData = replaceString(configReadData,'{method}',method);
    configReadData = replaceString(configReadData,'{valPrices}',valPrices);
@@ -72,6 +78,10 @@ app.post('/task', function (req, res) {
          res.send(JSON.stringify({status: true}));
       }
    }else if(cmd === "stop"){
+      if(shell.exec('pm2 stop "'+asset+currency+'"').code !== 0){
+         res.send(JSON.stringify({status: true}));
+      }
+   }else if(cmd === "delete"){
       if(shell.exec('pm2 delete "'+asset+currency+'"').code !== 0){
          res.send(JSON.stringify({status: true}));
       }
@@ -92,6 +102,61 @@ app.post('/apikeys', function (req, res) {
    });
 
    res.end("");
+});
+
+app.post("/setstatus", function(req, res){
+   var cmd = req.body.cmd;
+   var currency = req.body.currency;
+   var asset = req.body.asset;
+
+   var filecache = __dirname + "/markets/savedata/" + asset+currency.".json";
+   if (fs.existsSync(filecache)) {
+       var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+       if(cmd == "restartbuy"){
+         readCache.stopbuy == false;
+       }
+
+       if(cmd == "restartsell"){
+         readCache.stopsell == false;
+       }
+
+       if(cmd == "stopbuy"){
+         readCache.stopbuy == true;
+       }
+
+       if(cmd == "stopsell"){
+         readCache.stopsell == true;
+       }
+
+       fs.writeFile(filecache, JSON.stringify(readCache), function (err) {
+          if (err) 
+              return console.log(err);
+          console.log('Write api-keys');
+      });
+
+      res.send(JSON.stringify({status: true}));
+   }
+});
+
+app.post("/status", function(req, res){
+   var cmd = req.body.cmd;
+   var currency = req.body.currency;
+   var asset = req.body.asset;
+
+   if(cmd == "on"){
+      var filecache = __dirname + "/markets/savedata/" + asset+currency.".json";
+      if (fs.existsSync(filecache)) {
+          res.send(fs.readFileSync(filecache,"utf8"));
+      }
+      res.send(JSON.stringify({status: false}));
+   }
+
+
+   if(cmd == "log"){
+      res.send(JSON.stringify({status: true}));
+   }
+
+
 });
 
 var server = app.listen(port, function () {
