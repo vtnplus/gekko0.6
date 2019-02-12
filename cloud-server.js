@@ -205,17 +205,17 @@ app.get("/status", function(req, res, next){
               
               res.send(makeData);
 
-              //res.end("");
+              res.end("");
               //next();
               //res.render(makeData);
-              pm2.disconnect();
+              //pm2.disconnect();
            }).catch(function(e){
 
            });
           
       });
-      res.send("ok");
-      res.end();
+      //res.send("ok");
+      //res.end();
 });
 
 /*
