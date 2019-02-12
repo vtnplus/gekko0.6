@@ -118,7 +118,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
 
     if (fsw.existsSync(filecache)) {
         var readJson = fsw.readFileSync(filecache,"utf8");
-        readCache = JSON.parse(readJson ? readJson : '{}');
+        readCache = JSON.parse(readJson !== '' ? readJson : '{}');
 
         if(type === "balance"){
           readCache.asset = this.portfolio.asset;

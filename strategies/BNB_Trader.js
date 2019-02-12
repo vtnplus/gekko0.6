@@ -48,7 +48,7 @@ const strat = {
 			var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 			if (fs.existsSync(filecache)) {
 				var readJson = fs.readFileSync(filecache,"utf8");
-			    var readCache = JSON.parse((readJson ? readJson : '{}'));
+			    var readCache = JSON.parse((readJson !== '' ? readJson : '{}'));
 			    if(readCache.buyPrices){
 			    	this.buyPrices = readCache.buyPrices;
 			    }
