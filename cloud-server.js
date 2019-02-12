@@ -138,6 +138,7 @@ app.post("/setstatus", function(req, res){
       });
 
       res.send(JSON.stringify({status: true}));
+      res.end();
    }
 });
 app.post("/status", function(req, res){
@@ -195,10 +196,12 @@ app.post("/status", function(req, res){
               });
               
               res.send(makeData);
+              res.end();
            });
           
       });
       res.send("ok");
+      res.end();
 });
 
 /*
