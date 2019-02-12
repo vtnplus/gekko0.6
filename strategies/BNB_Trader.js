@@ -45,7 +45,7 @@ const strat = {
 
 		if(config.valPrices){
 			this.settings.valPrices = config.valPrices;
-			var filecache = __dirname + "/../markets/savedata/" + config.watch.asset+config.watch.currency+".json";
+			var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 			if (fs.existsSync(filecache)) {
 			    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
 			    if(readCache.buyPrices){
@@ -183,7 +183,7 @@ const strat = {
 	},
 	long : function(){
 
-		var filecache = __dirname + "/../markets/savedata/" + config.watch.asset+config.watch.currency+".json";
+		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 		if (fs.existsSync(filecache)) {
 		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
 		    if(readCache.stopbuy === true){
@@ -228,7 +228,7 @@ const strat = {
 
 	},
 	short : function(){
-		var filecache = __dirname + "/../markets/savedata/" + config.watch.asset+config.watch.currency+".json";
+		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 		if (fs.existsSync(filecache)) {
 		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
 		    if(readCache.stopsell === true){
@@ -259,7 +259,7 @@ const strat = {
 			this.resetTrend();
 			this.trend.direction = 'down';
 			this.advice('short');
-			this.senRemote()
+			//this.senRemote()
 
 			//console.log('========================================================================');
 			//console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);

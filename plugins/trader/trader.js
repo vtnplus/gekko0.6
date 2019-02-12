@@ -7,6 +7,7 @@ const fsw = require('fs');
 
 const log = require(dirs.core + 'log');
 const Broker = require(dirs.broker + '/gekkoBroker');
+const request = require('request');
 
 var headerset = '';
 var currentBalance = (config.TradeLimit < 0.2 ? config.TradeLimit : 0.1);
@@ -104,6 +105,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
       readCache.buyPrice = price;
       readCache.buyAmount = amount;
       readCache.buyGtdate = gtdate;
+      readCache.amount = amount;
     }
 
     if(type === "sell"){
@@ -111,6 +113,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
       readCache.sellPrice = price;
       readCache.sellAmount = amount;
       readCache.sellGtdate = gtdate;
+      readCache.amount = 0;
     }
 
     if (fsw.existsSync(filecache)) {
@@ -119,6 +122,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
         if(type === "balance"){
           readCache.asset = this.portfolio.asset;
           readCache.currency = this.portfolio.currency;
+          readCache.amount = this.portfolio.asset;
         }
 
     }else{
@@ -130,7 +134,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
 
     }
 
-    
+
     fsw.writeFile(filecache, JSON.stringify(readCache), function (err) {
         if (err) 
             return console.log(err);
@@ -412,8 +416,10 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
 
         if(side === "buy"){
             this.writeCacheTrader("buy",summary.price, summary.amount, grreadtime);
+            this.senRemote(0,summary.price,summary.amount, "buy",grreadtime,advice.id)
         }else if(side === "sell"){
             this.writeCacheTrader("sell",summary.price, summary.amount, grreadtime);
+            this.senRemote(0,summary.price,summary.amount, "sell",grreadtime,advice.id)
         }
         
 
@@ -556,6 +562,32 @@ Trader.prototype.processCommand = function (cmd) {
 
     this.setTicker(logPrice);
   }
+}
+
+Trader.prototype.senRemote = function(sellPrice,buyPrices,amount,trend, gdate, genderid){
+    var propertiesObject = {
+      "symbol": config.watch.asset+config.watch.currency, 
+      "trend" : trend, 
+      "buyPrices" : buyPrices, 
+      "sellPrices" : price, 
+      "access_id" : config.apiReportKey,
+      "strategies" : config.tradingAdvisor.method,
+      "period" : config.tradingAdvisor.candleSize,
+      "gdate" : gdate,
+      "genderid" : genderid
+    };
+    var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
+    
+    request(url, function(err, response, body) {
+      if(err) { console.log(err); return; }
+      console.log("Get response: ", body, response);
+    });
+    /*
+    console.log(this.trend);
+    console.log('========================================================================');
+    console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
+    console.log('========================================================================');
+    */
 }
 
 module.exports = Trader;
