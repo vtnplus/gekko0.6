@@ -149,7 +149,7 @@ app.post("/setstatus", function(req, res){
       res.end();
    }
 });
-app.get("/status", function(req, res){
+app.get("/status", function(req, res, next){
       var data = [];
       pm2.connect(function(err) {
         
@@ -202,8 +202,11 @@ app.get("/status", function(req, res){
                 //console.log(value.name);
                 makeData.push(value)
               });
-              res.end();
-              return res.send(makeData);
+              
+              res.send(makeData);
+
+              res.end("");
+              next();
               //res.render(makeData);
               
            }).catch(function(e){
