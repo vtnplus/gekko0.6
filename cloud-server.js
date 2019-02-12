@@ -212,7 +212,7 @@ app.get("/status", function(req, res, next){
            }).catch(function(e){
 
            });
-          
+          pm2.disconnect();
       });
       //res.send("ok");
       //res.end();
