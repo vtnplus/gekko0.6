@@ -149,7 +149,7 @@ app.post("/setstatus", function(req, res){
       res.end();
    }
 });
-app.get("/status", function(req, res, next){
+app.post("/status", function(req, res, next){
       var data = [];
       pm2.connect(function(err) {
         
