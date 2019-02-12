@@ -81,7 +81,7 @@ app.post('/task', function (req, res) {
    var fileConfig = asset+currency+"-config.js";
 
    if(cmd === "start"){
-      if(shell.exec('pm2 start gekko.js -n "'+asset+currency+'" -- -c '+fileConfig).code !== 0){
+      if(shell.exec('pm2 start gekko.js -n "'+asset+currency+'" --max-memory-restart 500M -- -c '+fileConfig).code !== 0){
          res.send(JSON.stringify({status: true}));
       }
    }else if(cmd === "restart"){
