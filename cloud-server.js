@@ -202,10 +202,12 @@ app.get("/status", function(req, res){
                 //console.log(value.name);
                 makeData.push(value)
               });
-              
-              res.send(makeData);
-              //res.render(makeData);
               res.end();
+              return res.send(makeData);
+              //res.render(makeData);
+              
+           }).catch(function(e){
+
            });
           
       });
