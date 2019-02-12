@@ -196,6 +196,7 @@ app.post("/status", function(req, res){
               });
               
               res.send(makeData);
+              res.render(makeData);
               res.end();
            });
           
