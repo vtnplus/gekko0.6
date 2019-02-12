@@ -47,6 +47,12 @@ const Trader = function(next) {
       this.exposed ? 'yes' : 'no',
       `(${(this.exposure * 100).toFixed(2)}%)`
     );
+
+    log.debug("\tValidate Price : " + (config.valPrices > 0 ? "Yes" : "No"));
+    log.debug("\tValidate Profit : " + config.valProfit+"% ");
+    log.debug("\tLimit Balance : " + currentBalance + " "+config.watch.currency);
+    log.debug("\tClund ID : " + config.apiReportKey);
+
     next();
   });
 
@@ -60,11 +66,7 @@ const Trader = function(next) {
 util.makeEventEmitter(Trader);
 
 Trader.prototype.sync = function(next) {
-  log.debug("\tValidate Price : " + (config.valPrices > 0 ? "Yes" : "No"));
-  log.debug("\tValidate Profit : " + config.valProfit+"% ");
-  log.debug("\tLimit Balance : " + currentBalance + " "+config.watch.currency);
-  log.debug("\tClund ID : " + config.apiReportKey);
-  
+
   log.debug('syncing private data');
   this.broker.syncPrivateData(() => {
     if(!this.price) {
@@ -83,10 +85,57 @@ Trader.prototype.sync = function(next) {
     // balance is relayed every minute
     // no need to do it here.
 
+    this.writeCacheTrader("balance");
+
     if(next) {
       next();
     }
   });
+}
+
+Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
+    /*
+    Write Cache Balance
+    */
+    var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
+    var readCache = {};
+
+    if(type === "buy"){
+      readCache.buyPrice = price;
+      readCache.buyAmount = amount;
+      readCache.buyGtdate = gtdate;
+    }
+
+    if(type === "sell"){
+      readCache.buyPrice = 0;
+      readCache.sellPrice = price;
+      readCache.sellAmount = amount;
+      readCache.sellGtdate = gtdate;
+    }
+
+    if (fsw.existsSync(filecache)) {
+        readCache = JSON.parse(fsw.readFileSync(filecache,"utf8"));
+
+        if(type === "balance"){
+          readCache.asset = this.portfolio.asset;
+          readCache.currency = this.portfolio.currency;
+        }
+
+    }else{
+
+      if(type === "balance"){
+        readCache.asset = 0;
+        readCache.currency = 0;
+      }
+
+    }
+
+    
+    fsw.writeFile(filecache, JSON.stringify(readCache), function (err) {
+        if (err) 
+            return console.log(err);
+        console.log('Save Cache Buy');
+    });
 }
 
 Trader.prototype.relayPortfolioChange = function() {
@@ -356,6 +405,17 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
           fsw.appendFileSync("blotter.csv", outtxt, encoding='utf8');
 
         outtxt = "";
+
+        /*
+        Write Cache Trader
+        */
+
+        if(side === "buy"){
+            this.writeCacheTrader("buy",summary.price, summary.amount, grreadtime);
+        }else if(side === "sell"){
+            this.writeCacheTrader("sell",summary.price, summary.amount, grreadtime);
+        }
+        
 
         this.deferredEmit('tradeCompleted', {
           id,

@@ -144,7 +144,7 @@ app.post("/status", function(req, res){
    var asset = req.body.asset;
 
    if(cmd == "on"){
-      var filecache = __dirname + "/markets/savedata/" + asset+currency + ".json";
+      var filecache = __dirname + "/markets/" + asset+currency + ".json";
       if (fs.existsSync(filecache)) {
           res.send(fs.readFileSync(filecache,"utf8"));
       }
