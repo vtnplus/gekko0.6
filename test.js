@@ -10,8 +10,8 @@ pm2.connect(function(err) {
 			obj = {
 				pid : processDescriptionList.pid,
 				name : processDescriptionList.name,
-				status : processDescriptionList.pm2_env.status,
-				starttime : processDescriptionList.pm2_env.created_at
+				//status : processDescriptionList.pm2_env.status,
+				//starttime : processDescriptionList.pm2_env.created_at
 			}
 			data.push(obj)
 			
