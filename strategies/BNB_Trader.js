@@ -209,20 +209,6 @@ const strat = {
 			this.advice('long');
 			this.buyPrices = this.candle.close;
 
-			var dataSave = '{"buyPrices" : "'+this.buyPrices+'"}';
-			if (fs.existsSync(filecache)) {
-				
-				readCache.buyPrices = this.buyPrices;
-				dataSave = JSON.stringify(readCache);
-			}
-
-			
-			fs.writeFile(cachefile, '{"buyPrices" : "'+this.buyPrices+'"}', function (err) {
-			    if (err) 
-			        return console.log(err);
-			    console.log('Save Cache Buy');
-			});
-
 			this.nextBuy = 0;
 		}
 
@@ -284,29 +270,6 @@ const strat = {
 	log : function(){
 		
 		
-	},
-	senRemote : function(){
-		var propertiesObject = {
-			"symbol": config.watch.asset+config.watch.currency, 
-			"trend" : this.trend.direction, 
-			"buyPrices" : this.buyPrices, 
-			"sellPrices" : this.candle.close, 
-			"access_id" : config.apiReportKey,
-			"strategies" : config.tradingAdvisor.method,
-			"period" : config.tradingAdvisor.candleSize
-		};
-		var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
-		
-		request(url, function(err, response, body) {
-		  if(err) { console.log(err); return; }
-		  console.log("Get response: ", body, response);
-		});
-		/*
-		console.log(this.trend);
-		console.log('========================================================================');
-		console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
-		console.log('========================================================================');
-		*/
 	}
 }
 module.exports = strat;
