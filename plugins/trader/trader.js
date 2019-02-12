@@ -570,7 +570,7 @@ Trader.prototype.senRemote = function(sellPrice,buyPrices,amount,trend, gdate, g
       "symbol": config.watch.asset+config.watch.currency, 
       "trend" : trend, 
       "buyPrices" : buyPrices, 
-      "sellPrices" : price, 
+      "sellPrices" : sellPrice, 
       "access_id" : config.apiReportKey,
       "strategies" : config.tradingAdvisor.method,
       "period" : config.tradingAdvisor.candleSize,
