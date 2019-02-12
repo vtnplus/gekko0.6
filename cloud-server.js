@@ -12,6 +12,8 @@ const async = require('async');
 const moment = require('moment');
 var configRead = fs.readFileSync('./config.js','utf8');
 const replaceString = require('replace-string');
+const pm2 = require("pm2");
+
 app.use(express.json());
 
 app.post('/genconfig', function (req, res) {
