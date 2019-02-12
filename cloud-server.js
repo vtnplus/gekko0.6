@@ -16,6 +16,14 @@ const pm2 = require("pm2");
 
 var pm2list = []
 app.use(express.json());
+app.use((req, res, next) => {
+     res.setHeader('Access-Control-Allow-Origin', '*');
+     res.setHeader('Access-Control-Allow-Credentials', 'true');
+     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
+     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
+     res.setHeader('Cache-Control', 'no-cache');
+     next();
+ });
 
 app.post('/genconfig', function (req, res) {
    
@@ -196,7 +204,7 @@ app.get("/status", function(req, res){
               });
               
               res.send(makeData);
-              res.render(makeData);
+              //res.render(makeData);
               res.end();
            });
           
