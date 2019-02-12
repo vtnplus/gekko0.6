@@ -51,7 +51,6 @@ exchange/nusadua
 docs
 logs
 test.back/
-test.js
 web.back/
 *-config.js
 package-lock.json
