@@ -183,7 +183,7 @@ app.get("/status", function(req, res, next){
                   
                 });
                 
-                pm2.disconnect();
+                //pm2.disconnect();
 
                 return obj;
 
@@ -205,8 +205,8 @@ app.get("/status", function(req, res, next){
               
               res.send(makeData);
 
-              res.end("");
-              next();
+              //res.end("");
+              //next();
               //res.render(makeData);
               
            }).catch(function(e){
