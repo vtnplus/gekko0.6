@@ -6,15 +6,27 @@ pm2.connect(function(err) {
             return;
 		}
 		var data = []
-		pm2.list(function(err, processDescriptionList){
-			obj = {
-				pid : processDescriptionList.pid,
-				name : processDescriptionList.name,
-				//status : processDescriptionList.pm2_env.status,
-				//starttime : processDescriptionList.pm2_env.created_at
-			}
-			data.push(obj)
-			
+		data.push(new Promise(function (resolve, reject) {
+			pm2.list(function(err, processDescriptionList){
+				obj = {
+					pid : processDescriptionList.pid,
+					name : processDescriptionList.name,
+					//status : processDescriptionList.pm2_env.status,
+					//starttime : processDescriptionList.pm2_env.created_at
+				}
+				//data.push(obj)
+				resolve(obj);
+			});
 		});
+
+		Promise.all(data).then(function(result){
+			console.log(result);
+		}).catch(function (err) {
+		    console.log(err);
+		           
+		});
+
+		console.log("Start Log data");
 		console.log(data);
+		pm2.disconnect();
 });
