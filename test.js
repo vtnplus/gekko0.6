@@ -17,7 +17,7 @@ pm2.connect(function(err) {
 				//data.push(obj)
 				resolve(obj);
 			});
-		});
+		}));
 
 		Promise.all(data).then(function(result){
 			console.log(result);
