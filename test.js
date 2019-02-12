@@ -5,7 +5,16 @@ pm2.connect(function(err) {
             process.exit(0);
             return;
 		}
+		var data = []
 		pm2.list(function(err, processDescriptionList){
-			console.log(processDescriptionList);
+			obj = {
+				pid : processDescriptionList.pid,
+				name : processDescriptionList.name,
+				status : processDescriptionList.pm2_env.status,
+				starttime : processDescriptionList.pm2_env.created_at
+			}
+			data.push(obj)
+			
 		});
+		console.log(data);
 });
