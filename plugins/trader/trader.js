@@ -98,8 +98,20 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
     /*
     Write Cache Balance
     */
-    var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
     var readCache = {};
+    var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
+    if (fsw.existsSync(filecache)) {
+        var readJson = fsw.readFileSync(filecache,"utf8");
+        if(readJson.length > 10){
+          readJson = _.replace(readJson,new RegExp('{}','g'),'{');
+        }
+        if(readJson !== '' && readJson.length > 4){
+          readCache = JSON.parse(readJson);
+        }
+        
+    }
+
+    
 
     if(type === "buy"){
       readCache.buyPrice = price;
@@ -116,23 +128,11 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
       readCache.amount = 0;
     }
 
-    if (fsw.existsSync(filecache)) {
-        var readJson = fsw.readFileSync(filecache,"utf8");
-        readCache = JSON.parse(readJson !== '' ? readJson : '{}');
 
-        if(type === "balance"){
+    if(type === "balance"){
           readCache.asset = this.portfolio.asset;
           readCache.currency = this.portfolio.currency;
           readCache.amount = this.portfolio.asset;
-        }
-
-    }else{
-
-      if(type === "balance"){
-        readCache.asset = 0;
-        readCache.currency = 0;
-      }
-
     }
 
 
