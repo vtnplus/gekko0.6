@@ -104,6 +104,31 @@ app.post('/task', function (req, res) {
    res.end("");
 });
 
+app.post('/system', function (req, res) {
+  var cmd = req.body.cmd;
+    if(cmd === "update"){
+      if(shell.exec('git pull').code !== 0){
+         res.send(JSON.stringify({status: true}));
+      }
+    }
+
+    if(cmd === "killpm2"){
+      if(shell.exec('pm2 delete all').code !== 0){
+         res.send(JSON.stringify({status: true}));
+      }
+    }
+
+    if(cmd === "market24h"){
+      if(shell.exec('pm2 start markets.js -n "MARKETS"').code !== 0){
+         res.send(JSON.stringify({status: true}));
+      }
+   }
+
+   res.end("");
+
+});
+
+
 app.post('/apikeys', function (req, res) {
    var data = '{"binance":{"key":"'+req.body.keys+'","secret":"'+req.body.secret+'"}}';
    fs.writeFile('SECRET-api-keys.json', data, function (err) {
