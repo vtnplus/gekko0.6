@@ -49,7 +49,7 @@ const strat = {
 			if (fs.existsSync(filecache)) {
 				var readJson = fs.readFileSync(filecache,"utf8");
 				if(readJson.length > 10){
-					readJson = _.replace(readJson,new RegExp('{}','g'),'{');
+					readJson = _.replace(readJson,new RegExp('{}asset','g'),'{"asset');
 				}
 				
 				if(readJson !== '' && readJson.length > 4){
