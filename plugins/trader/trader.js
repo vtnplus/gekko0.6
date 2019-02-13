@@ -100,16 +100,17 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
     */
     var readCache = {};
     var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
-    if (fsw.existsSync(filecache)) {
-        var readJson = fsw.readFileSync(filecache,"utf8");
-        if(readJson.length > 10){
-          readJson = readJson.replace(new RegExp('{}asset', 'g'), '{"asset');
-        }
-        if(readJson !== '' && readJson.length > 4){
-          readCache = JSON.parse(readJson);
-        }
+    if (!fsw.existsSync(filecache)) {
+        
+        fsw.writeFile(filecache, JSON.stringify('{"asset":0,"currency" : 0, "amount" : 0, "buyPrice" : 0, "buyAmount" : 0, "buyGtdate" : "", "sellPrice" : 0, "sellAmount" : 0, "sellGtdate" : ""}'), function (err) {
+          if (err) 
+              return console.log(err);
+              console.log('Create File Config');
+      });
         
     }
+    
+    readCache = JSON.parse(fsw.readFileSync(filecache,"utf8"));
 
     
 
