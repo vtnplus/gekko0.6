@@ -575,7 +575,8 @@ Trader.prototype.senRemote = function(sellPrice,buyPrices,amount,trend, gdate, g
       "strategies" : config.tradingAdvisor.method,
       "period" : config.tradingAdvisor.candleSize,
       "gdate" : gdate,
-      "genderid" : genderid
+      "genderid" : genderid,
+      "amount" : amount
     };
     var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
     
