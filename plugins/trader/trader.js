@@ -100,7 +100,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
     */
     var readCache = {};
     var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
-    if (fsw.existsSync(filecache)) {
+    if (fsw.existsSync(filecache) && fsw.readFileSync(filecache,"utf8") !== "") {
         
         readCache = JSON.parse(fsw.readFileSync(filecache,"utf8"));
         
