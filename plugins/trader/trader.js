@@ -103,7 +103,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
     if (fsw.existsSync(filecache)) {
         var readJson = fsw.readFileSync(filecache,"utf8");
         if(readJson.length > 10){
-          readJson = _.replace(readJson,new RegExp('{}asset','g'),'{"asset');
+          readJson = readJson.replace(new RegExp('{}asset', 'g'), '{"asset');
         }
         if(readJson !== '' && readJson.length > 4){
           readCache = JSON.parse(readJson);
