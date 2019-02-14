@@ -48,14 +48,7 @@ const strat = {
 			var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 			if (fs.existsSync(filecache)) {
 				var readJson = fs.readFileSync(filecache,"utf8");
-				if(readJson.length > 10){
-					readJson = readJson.replace(new RegExp('{}asset', 'g'), '{"asset');
-				}
-				
-				if(readJson !== '' && readJson.length > 4){
-					var readCache = JSON.parse(readJson);
-				}
-
+				var readCache = JSON.parse(readJson);
 			    
 			    if(readCache.buyPrices){
 			    	this.buyPrices = readCache.buyPrices;
@@ -202,7 +195,7 @@ const strat = {
 		}
 
 		var canBuy = false;
-		if(this.nextBuy == 0){
+		if(this.nextBuy === 0){
 			canBuy = true;
 		}else if(config.detachbuy === true){
 			if(this.candle.close < this.nextBuy){
@@ -216,7 +209,7 @@ const strat = {
 			this.resetTrend();
 			this.trend.direction = 'up';
 			this.advice('long');
-			this.buyPrices = this.candle.close;
+			//this.buyPrices = this.candle.close;
 
 			this.nextBuy = 0;
 		}
@@ -230,6 +223,7 @@ const strat = {
 		    	console.log("Detach Stop Sell");
 		    	return false;
 		    }
+		    this.buyPrices = readCache.buyPrices;
 		}
 
 		var canSell = false;
@@ -261,7 +255,7 @@ const strat = {
 			//console.log('========================================================================');
 
 			this.buyPrices = 0;
-			this.nextBuy = this.candle.close - ((this.candle.close*1.5)/100);
+			this.nextBuy = this.candle.close - ((this.candle.close*1.75)/100);
 		}
 	},
 	end: function()
