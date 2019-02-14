@@ -233,6 +233,7 @@ const strat = {
 		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 		if (fs.existsSync(filecache)) {
 		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+		    console.log(readCache);
 		    if(readCache.stopsell === true){
 		    	console.log("Detach Stop Sell");
 		    	return false;
