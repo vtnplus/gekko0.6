@@ -43,23 +43,7 @@ const strat = {
 		this.BEAR_MOD_high = this.settings.BEAR.mod_high;
 		this.BEAR_MOD_low = this.settings.BEAR.mod_low;
 
-		if(config.valPrices){
-			this.settings.valPrices = config.valPrices;
-			var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
-			if (fs.existsSync(filecache)) {
-				var readJson = fs.readFileSync(filecache,"utf8");
-				var readCache = JSON.parse(readJson);
-			    
-			    if(readCache.buyPrices){
-			    	this.buyPrices = readCache.buyPrices;
-			    }
-			}
-
-		}
-
-		if(config.valProfit){
-			this.settings.valProfit = config.valProfit;
-		}
+		
 
 		this.addIndicator('ADX', 'ADX', this.settings.ADX.adx );
 		//console.log(table.toString());
@@ -70,6 +54,31 @@ const strat = {
 		
 
 		this.checkNumber = 0
+
+		if(config.valPrices){
+			this.settings.valPrices = config.valPrices;
+			var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
+			if (fs.existsSync(filecache)) {
+				var readJson = fs.readFileSync(filecache,"utf8");
+				var readCache = JSON.parse(readJson);
+			    
+			    if(readCache.buyPrices > 0){
+			    	this.buyPrices = readCache.buyPrices;
+			    }
+
+			    if(readCache.sellPrice > 0){
+			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
+			    }
+			   
+
+			}
+
+		}
+
+		if(config.valProfit){
+			this.settings.valProfit = config.valProfit;
+		}
+
 		
 	},
 	/* RESET TREND */
@@ -192,6 +201,10 @@ const strat = {
 		    	console.log("Detach Stop Buy");
 		    	return false;
 		    }
+
+		    if(readCache.sellPrice > 0){
+		    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
+		    }
 		}
 
 		var canBuy = false;
@@ -223,7 +236,9 @@ const strat = {
 		    	console.log("Detach Stop Sell");
 		    	return false;
 		    }
-		    this.buyPrices = readCache.buyPrices;
+		    if(readCache.buyPrices > 0){
+			    this.buyPrices = readCache.buyPrices;
+			}
 		}
 
 		var canSell = false;
