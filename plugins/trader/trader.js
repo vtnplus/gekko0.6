@@ -87,7 +87,7 @@ Trader.prototype.sync = function(next) {
     // no need to do it here.
 
     this.writeCacheTrader("balance",0,0);
-
+    console.info("Write Cacte balance Start");
     if(next) {
       next();
     }
