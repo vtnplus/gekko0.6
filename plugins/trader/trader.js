@@ -139,7 +139,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
       makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : 0, "buyPrice" : 0, "sellPrice" : '+price.toFixed(8)+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     }else if(type === "balance"){
       
-      makeJson = '{"asset":'+this.portfolio.asset+',"currency" : '+this.portfolio.currency+', "amount" : '+this.portfolio.asset+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
+      makeJson = '{"asset":'+this.portfolio.asset+',"currency" : '+this.portfolio.currency+', "amount" : '+this.portfolio.asset+', "buyPrice" : '+(this.portfolio.asset < 0.0001 ? 0 : readCache.buyPrice)+', "sellPrice" : '+(this.portfolio.asset < 0.0001 ? 0 : readCache.sellPrice)+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
 
     }
     //makeJson = makeJson.replace(/undefined/g,'false');
