@@ -149,11 +149,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
     }
     //makeJson = makeJson.replace(/undefined/g,'false');
     //var makeJson = JSON.stringify(newJson);
-    fsw.writeFile(filecache, makeJson, function (err) {
-        if (err) 
-            return console.log(err);
-        console.log('Save Cache Buy');
-    });
+    fsw.writeFileSync(filecache, makeJson);
 }
 
 Trader.prototype.relayPortfolioChange = function() {
