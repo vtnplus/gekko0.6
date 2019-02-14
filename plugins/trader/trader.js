@@ -118,7 +118,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
     
 
     
-    var makeJson = '{}';
+    var makeJson = '';
     
     makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+readCache.amount+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     if(type === "buy"){
