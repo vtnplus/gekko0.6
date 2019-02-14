@@ -122,6 +122,13 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
     readCache.stopbuy = (readCache.stopbuy === true ? "true" : "false");
     readCache.stopsell = (readCache.stopsell === true ? "true" : "false");
 
+    if(readCache.sellPrice === undefined){
+      readCache.sellPrice = 0;
+    }
+    if(readCache.buyPrice === undefined){
+      readCache.buyPrice = 0;
+    }
+    
     makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+readCache.amount+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     if(type === "buy"){
       
