@@ -103,7 +103,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
     if (fsw.existsSync(filecache)) {
         var data = fsw.readFileSync(filecache,"utf8");
         if(data.length > 10){
-          defaultData = data;
+          defaultData = data.replace(/undefined/g,'false');
         }else{
           defaultData = '{"asset":0,"currency" : 0, "amount" : 0, "buyPrice" : 0, "sellPrice" : 0, "stopbuy" : false, "stopsell" : false}';
         }
