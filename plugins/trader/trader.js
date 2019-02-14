@@ -138,7 +138,7 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
       makeJson = '{"asset":'+this.portfolio.asset+',"currency" : '+this.portfolio.currency+', "amount" : '+this.portfolio.asset+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
 
     }
-
+    makeJson = makeJson.replace(/undefined/g,'false');
     //var makeJson = JSON.stringify(newJson);
     fsw.writeFile(filecache, makeJson, function (err) {
         if (err) 
