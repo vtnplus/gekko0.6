@@ -140,6 +140,14 @@ app.post("/setstatus", function(req, res){
    var filecache = __dirname + "/markets/" + asset+currency + ".json";
    if (fs.existsSync(filecache)) {
        var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+       if(cmd == "resettbuy"){
+         readCache.buyPrice == 0;
+       }
+
+       if(cmd == "resetsell"){
+         readCache.sellPrice == 0;
+       }
+
        if(cmd == "restartbuy"){
          readCache.stopbuy == false;
        }
@@ -159,7 +167,7 @@ app.post("/setstatus", function(req, res){
        fs.writeFileSync(filecache, JSON.stringify(readCache));
 
       res.send(JSON.stringify({status: true}));
-      res.end();
+      res.end("");
    }
 });
 app.post("/status", function(req, res, next){
