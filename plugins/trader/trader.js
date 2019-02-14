@@ -119,23 +119,25 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
 
     
     var makeJson = '';
-    
-    makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+readCache.amount+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+(readCache.stopbuy === undefined ? "false" : readCache.stopbuy)+', "stopsell" : '+(readCache.stopsell === undefined ? "false" : readCache.stopsell)+'}';
+    readCache.stopbuy = (readCache.stopbuy === true ? "true" : "false");
+    readCache.stopsell = (readCache.stopsell === true ? "true" : "false");
+
+    makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+readCache.amount+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     if(type === "buy"){
       
-      makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+amount+', "buyPrice" : '+price.toFixed(8)+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+(readCache.stopbuy === undefined ? "false" : readCache.stopbuy)+', "stopsell" : '+(readCache.stopsell === undefined ? "false" : readCache.stopsell)+'}';
+      makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+amount+', "buyPrice" : '+price.toFixed(8)+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
 
     }
 
     if(type === "sell"){
       
-      makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : 0, "buyPrice" : 0, "sellPrice" : '+price.toFixed(8)+', "stopbuy" : '+(readCache.stopbuy === undefined ? "false" : readCache.stopbuy)+', "stopsell" : '+(readCache.stopsell === undefined ? "false" : readCache.stopsell)+'}';
+      makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : 0, "buyPrice" : 0, "sellPrice" : '+price.toFixed(8)+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     }
 
 
     if(type === "balance"){
       
-      makeJson = '{"asset":'+this.portfolio.asset+',"currency" : '+this.portfolio.currency+', "amount" : '+this.portfolio.asset+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+(readCache.stopbuy === undefined ? "false" : readCache.stopbuy)+', "stopsell" : '+(readCache.stopsell === undefined ? "false" : readCache.stopsell)+'}';
+      makeJson = '{"asset":'+this.portfolio.asset+',"currency" : '+this.portfolio.currency+', "amount" : '+this.portfolio.asset+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
 
     }
     //makeJson = makeJson.replace(/undefined/g,'false');
