@@ -64,10 +64,12 @@ const strat = {
 			    
 			    if(readCache.buyPrices > 0){
 			    	this.buyPrices = readCache.buyPrices;
+			    	console.log("Validate Cache Buy Prices ",this.buyPrices);
 			    }
 
 			    if(readCache.sellPrice > 0){
 			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
+			    	console.log("Validate Cache Next Buy ",this.nextBuy);
 			    }
 			   
 
@@ -167,7 +169,7 @@ const strat = {
 
 		}
 		
-		this.test()
+		
 		
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence && buy24h) {
