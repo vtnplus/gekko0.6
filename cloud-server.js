@@ -140,8 +140,9 @@ app.post("/setstatus", function(req, res){
    var filecache = __dirname + "/markets/" + asset+currency + ".json";
    if (fs.existsSync(filecache)) {
        var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
-       if(cmd == "resettbuy"){
+       if(cmd == "resetbuy"){
          readCache.buyPrice = 0;
+
        }
 
        if(cmd == "resetsell"){
@@ -163,6 +164,9 @@ app.post("/setstatus", function(req, res){
        if(cmd == "stopsell"){
          readCache.stopsell = true;
        }
+
+        console.log(cmd);
+        console.log(readCache);
 
        fs.writeFileSync(filecache, JSON.stringify(readCache));
 
