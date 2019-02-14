@@ -101,8 +101,13 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
     var readCache = {};
     var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
     if (fsw.existsSync(filecache)) {
-        
-        readCache = JSON.parse(fsw.readFileSync(filecache,"utf8"));
+        var data = fsw.readFileSync(filecache,"utf8");
+        if(data.length > 10){
+          defaultData = data;
+        }else{
+          defaultData = '{"asset":0,"currency" : 0, "amount" : 0, "buyPrice" : 0, "sellPrice" : 0, "stopbuy" : false, "stopsell" : false}';
+        }
+        readCache = JSON.parse(defaultData);
         
     }else{
         defaultData = '{"asset":0,"currency" : 0, "amount" : 0, "buyPrice" : 0, "sellPrice" : 0, "stopbuy" : false, "stopsell" : false}';
