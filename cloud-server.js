@@ -141,27 +141,27 @@ app.post("/setstatus", function(req, res){
    if (fs.existsSync(filecache)) {
        var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
        if(cmd == "resettbuy"){
-         readCache.buyPrice == 0;
+         readCache.buyPrice = 0;
        }
 
        if(cmd == "resetsell"){
-         readCache.sellPrice == 0;
+         readCache.sellPrice = 0;
        }
 
        if(cmd == "restartbuy"){
-         readCache.stopbuy == false;
+         readCache.stopbuy = false;
        }
 
        if(cmd == "restartsell"){
-         readCache.stopsell == false;
+         readCache.stopsell = false;
        }
 
        if(cmd == "stopbuy"){
-         readCache.stopbuy == true;
+         readCache.stopbuy = true;
        }
 
        if(cmd == "stopsell"){
-         readCache.stopsell == true;
+         readCache.stopsell = true;
        }
 
        fs.writeFileSync(filecache, JSON.stringify(readCache));
