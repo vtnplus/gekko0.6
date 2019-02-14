@@ -167,7 +167,7 @@ const strat = {
 
 		}
 		
-		
+		this.test()
 		
 		//console.log('Check : ' + rsi + " Prices : "+this.candle.close);
 		if( rsi < rsi_low && this.BBtrend.zone == 'low' && this.BBtrend.duration >= this.settings.BBtrend.persistence && buy24h) {
@@ -226,6 +226,23 @@ const strat = {
 
 			this.nextBuy = 0;
 		}
+
+	},
+	test : function(){
+		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
+		if (fs.existsSync(filecache)) {
+		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+		    if(readCache.stopsell === true){
+		    	console.log("Detach Stop Sell");
+		    	return false;
+		    }
+		    if(readCache.buyPrices > 0){
+			    buyPrices = readCache.buyPrices;
+			}
+		}
+
+		var commiss = ((buyPrices * this.settings.valProfit)/100) + buyPrices;
+		console.log(buyPrices, commiss);
 
 	},
 	short : function(){
