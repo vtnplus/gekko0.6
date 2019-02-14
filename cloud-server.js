@@ -61,11 +61,7 @@ app.post('/genconfig', function (req, res) {
    configReadData = replaceString(configReadData,"{apiReportKey}","'"+apiReportKey+"'");
 
 
-   fs.writeFile(asset+currency+'-config.js', configReadData, function (err) {
-	    if (err) 
-	        return console.log(err);
-	    console.log('Config ',asset+currency);
-	});
+   fs.writeFileSync(asset+currency+'-config.js', configReadData);
 
    res.end("");
 });
@@ -131,11 +127,7 @@ app.post('/system', function (req, res) {
 
 app.post('/apikeys', function (req, res) {
    var data = '{"binance":{"key":"'+req.body.keys+'","secret":"'+req.body.secret+'"}}';
-   fs.writeFile('SECRET-api-keys.json', data, function (err) {
-       if (err) 
-           return console.log(err);
-       console.log('Write api-keys');
-   });
+   fs.writeFileSync('SECRET-api-keys.json', data);
 
    res.end("");
 });
@@ -145,7 +137,7 @@ app.post("/setstatus", function(req, res){
    var currency = req.body.currency;
    var asset = req.body.asset;
 
-   var filecache = __dirname + "/markets/savedata/" + asset+currency + ".json";
+   var filecache = __dirname + "/markets/" + asset+currency + ".json";
    if (fs.existsSync(filecache)) {
        var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
        if(cmd == "restartbuy"){
@@ -164,11 +156,7 @@ app.post("/setstatus", function(req, res){
          readCache.stopsell == true;
        }
 
-       fs.writeFile(filecache, JSON.stringify(readCache), function (err) {
-          if (err) 
-              return console.log(err);
-          console.log('Write api-keys');
-      });
+       fs.writeFileSync(filecache, JSON.stringify(readCache));
 
       res.send(JSON.stringify({status: true}));
       res.end();
