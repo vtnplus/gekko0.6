@@ -202,18 +202,16 @@ const strat = {
 		    	return false;
 		    }
 
-		    if(readCache.sellPrice > 0){
+		    if(readCache.sellPrice > 0 && config.detachbuy === true){
 		    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
 		    }
 		}
 
-		var canBuy = false;
-		if(this.nextBuy === 0){
-			canBuy = true;
-		}else if(config.detachbuy === true){
+		var canBuy = true;
+		if(config.detachbuy === true){
 			if(this.candle.close < this.nextBuy){
 				canBuy = true;
-			}else if(this.candle.close >= this.nextBuy){
+			}else if(this.candle.close >= this.nextBuy && this.nextBuy > 0){
 				canBuy = false;
 			}
 		}
@@ -222,31 +220,13 @@ const strat = {
 			this.resetTrend();
 			this.trend.direction = 'up';
 			this.advice('long');
-			//this.buyPrices = this.candle.close;
+			this.buyPrices = this.candle.close;
 
 			this.nextBuy = 0;
 		}
 
 	},
-	test : function(){
-		var buyPrices = 0;
-		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
-		if (fs.existsSync(filecache)) {
-		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
-		    console.log(readCache);
-		    if(readCache.stopsell === true){
-		    	console.log("Detach Stop Sell");
-		    	return false;
-		    }
-		    if(readCache.buyPrices > 0){
-			    buyPrices = readCache.buyPrices;
-			}
-		}
 
-		var commiss = ((buyPrices * this.settings.valProfit)/100) + buyPrices;
-		console.log(buyPrices, commiss);
-
-	},
 	short : function(){
 		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 		if (fs.existsSync(filecache)) {
@@ -260,7 +240,7 @@ const strat = {
 			}
 		}
 
-		var canSell = false;
+		var canSell = true;
 		if(this.settings.valPrices > 0){
 			
 			var commiss = ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
@@ -272,8 +252,6 @@ const strat = {
 			}else{
 				canSell = false;
 			}
-		}else{
-			canSell = true;
 		}
 
 
