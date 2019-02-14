@@ -33,6 +33,7 @@ const strat = {
 	      persisted: false
 	    }
 
+	    this.debug = true;
 
 	    // RSI
 		this.addIndicator('BULL_RSI', 'RSI', { interval: this.settings.BULL.rsi });
@@ -64,13 +65,13 @@ const strat = {
 			    
 			    if(readCache.buyPrices > 0){
 			    	this.buyPrices = readCache.buyPrices;
-			    	fs.appendFileSync(__dirname + "/../debug.log", "[CACHE]["+config.watch.asset+config.watch.currency+"] Read Cache Buy Price : "+this.buyPrices, encoding='utf8');
+			    	if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[CACHE]["+config.watch.asset+config.watch.currency+"] Read Cache Buy Price : "+this.buyPrices+ "\n", encoding='utf8');
 			    	console.log("Validate Cache Buy Prices ",this.buyPrices);
 			    }
 
 			    if(readCache.sellPrice > 0){
 			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
-			    	fs.appendFileSync(__dirname + "/../debug.log", "[CACHE]["+config.watch.asset+config.watch.currency+"] Read Cache Buy nextbuy : "+this.nextBuy+" Sell Price : "+readCache.sellPrice, encoding='utf8');
+			    	if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[CACHE]["+config.watch.asset+config.watch.currency+"] Read Cache Buy nextbuy : "+this.nextBuy+" Sell Price : "+readCache.sellPrice+ "\n", encoding='utf8');
 			    	console.log("Validate Cache Next Buy ",this.nextBuy);
 			    }
 			   
@@ -188,7 +189,7 @@ const strat = {
 			var markets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
 			data = _.first(_.filter(markets, {symbol : config.watch.asset+config.watch.currency}));
 			if(data.status !== "Stopbuy"){
-				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop market24h", encoding='utf8');
+				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop market24h"+ "\n", encoding='utf8');
 				return true;
 			}
 			return false;
@@ -203,7 +204,7 @@ const strat = {
 		if (fs.existsSync(filecache)) {
 		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
 		    if(readCache.stopbuy === true){
-		    	fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop buy", encoding='utf8');
+		    	fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop buy"+ "\n", encoding='utf8');
 		    	return false;
 		    }
 
@@ -217,7 +218,7 @@ const strat = {
 			if(this.candle.close < this.nextBuy){
 				canBuy = true;
 			}else if(this.candle.close >= this.nextBuy && this.nextBuy > 0){
-				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop because Prices :"+this.candle.close+", Validate Next buy : "+this.nextBuy, encoding='utf8');
+				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop because Prices :"+this.candle.close+", Validate Next buy : "+this.nextBuy+ "\n", encoding='utf8');
 				canBuy = false;
 			}
 		}
@@ -238,12 +239,12 @@ const strat = {
 		if (fs.existsSync(filecache)) {
 		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
 		    if(readCache.stopsell === true){
-		    	fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Detach sell Stop", encoding='utf8');
+		    	if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Detach sell Stop"+ "\n", encoding='utf8');
 		    	return false;
 		    }
 		    if(readCache.buyPrices > 0){
 			    this.buyPrices = readCache.buyPrices;
-			    fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Read buyPrices "+this.buyPrices, encoding='utf8');
+			    if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Read buyPrices "+this.buyPrices+ "\n", encoding='utf8');
 			}
 		}
 
@@ -253,7 +254,7 @@ const strat = {
 			var commiss = ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
 
 			if(this.candle.close > commiss && this.buyPrices > 0){
-				fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Price : "+this.candle.close+" buyPrices "+this.buyPrices+" commiss : "+commiss, encoding='utf8');
+				if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Price : "+this.candle.close+" buyPrices "+this.buyPrices+" commiss : "+commiss+ "\n", encoding='utf8');
 				canSell = true;
 			}else if(this.buyPrices == 0){
 				canSell = true;
