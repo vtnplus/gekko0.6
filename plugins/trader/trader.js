@@ -118,35 +118,28 @@ Trader.prototype.writeCacheTrader = function(type,price,amount){
     
 
     
-    var newJson = {};
-    newJson.asset = readCache.asset;
-    newJson.currency = readCache.currency;
-    newJson.amount = readCache.amount;
-    newJson.buyPrice = readCache.buyPrice;
-    newJson.sellPrice = readCache.sellPrice;
-    newJson.stopbuy = readCache.stopbuy;
-    newJson.stopsell = readCache.stopsell;
-
+    var makeJson = {};
+    
+    makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+readCache.amount+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     if(type === "buy"){
-      newJson.buyPrice = price.toFixed(8);
-      newJson.amount = amount;
+      
+      makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : '+amount+', "buyPrice" : '+price.toFixed(8)+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
+
     }
 
     if(type === "sell"){
-      newJson.buyPrice = 0;
-      newJson.sellPrice = price.toFixed(8);
-      //readCache.sellAmount = amount;
-      newJson.amount = 0;
+      
+      makeJson = '{"asset":'+readCache.asset+',"currency" : '+readCache.currency+', "amount" : 0, "buyPrice" : 0, "sellPrice" : '+price.toFixed(8)+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
     }
 
 
     if(type === "balance"){
-          newJson.asset = this.portfolio.asset;
-          newJson.currency = this.portfolio.currency;
-          newJson.amount = this.portfolio.asset;
+      
+      makeJson = '{"asset":'+this.portfolio.asset+',"currency" : '+this.portfolio.currency+', "amount" : '+this.portfolio.asset+', "buyPrice" : '+readCache.buyPrice+', "sellPrice" : '+readCache.sellPrice+', "stopbuy" : '+readCache.stopbuy+', "stopsell" : '+readCache.stopsell+'}';
+
     }
 
-    var makeJson = JSON.stringify(newJson);
+    //var makeJson = JSON.stringify(newJson);
     fsw.writeFile(filecache, makeJson, function (err) {
         if (err) 
             return console.log(err);
