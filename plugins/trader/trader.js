@@ -86,7 +86,7 @@ Trader.prototype.sync = function(next) {
     // balance is relayed every minute
     // no need to do it here.
 
-    this.writeCacheTrader("balance");
+    this.writeCacheTrader("balance",0,0);
 
     if(next) {
       next();
@@ -94,7 +94,7 @@ Trader.prototype.sync = function(next) {
   });
 }
 
-Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
+Trader.prototype.writeCacheTrader = function(type,price,amount){
     /*
     Write Cache Balance
     */
@@ -422,11 +422,11 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
         */
 
         if(side === "buy"){
-            this.writeCacheTrader("buy",summary.price, summary.amount, grreadtime);
-            this.senRemote(0,summary.price,summary.amount, "buy",grreadtime,advice.id)
+            this.writeCacheTrader("buy",summary.price, summary.amount);
+            this.senRemote(summary.price,summary.amount, "buy",advice.id)
         }else if(side === "sell"){
-            this.writeCacheTrader("sell",summary.price, summary.amount, grreadtime);
-            this.senRemote(0,summary.price,summary.amount, "sell",grreadtime,advice.id)
+            this.writeCacheTrader("sell",summary.price, summary.amount);
+            this.senRemote(summary.price,summary.amount, "sell",advice.id)
         }
         
 
@@ -571,16 +571,14 @@ Trader.prototype.processCommand = function (cmd) {
   }
 }
 
-Trader.prototype.senRemote = function(sellPrice,buyPrices,amount,trend, gdate, genderid){
+Trader.prototype.senRemote = function(prices,amount,trend, genderid){
     var propertiesObject = {
       "symbol": config.watch.asset+config.watch.currency, 
       "trend" : trend, 
-      "buyPrices" : buyPrices, 
-      "sellPrices" : sellPrice, 
+      "prices" : prices,  
       "access_id" : config.apiReportKey,
       "strategies" : config.tradingAdvisor.method,
       "period" : config.tradingAdvisor.candleSize,
-      "gdate" : gdate,
       "genderid" : genderid,
       "amount" : amount
     };
@@ -588,7 +586,7 @@ Trader.prototype.senRemote = function(sellPrice,buyPrices,amount,trend, gdate, g
     
     request(url, function(err, response, body) {
       if(err) { console.log(err); return; }
-      console.log("Get response: ", body, response);
+      console.log("Get response");
     });
     /*
     console.log(this.trend);
