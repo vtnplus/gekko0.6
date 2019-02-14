@@ -1,5 +1,6 @@
 var log = require('../core/log.js');
 var config = require('../core/util.js').getConfig();
+const fs = require('fs');
 module.exports = strat = {
 	
 	/* INIT */
@@ -24,6 +25,11 @@ module.exports = strat = {
 			direction : "none",
 			buyPrices : 0
 		}
+
+		if(config.valProfit){
+			this.settings.valProfit = config.valProfit;
+		}
+
 	},
 	update :  function(){
 		this.ema_yellow = this.indicators.ema_yellow.result;
@@ -86,8 +92,18 @@ module.exports = strat = {
 		
 	},
 	validatePrice : function(){
+		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
+		if (fs.existsSync(filecache)) {
+		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+		    if(readCache.buyPrices > 0){
+			    this.trend.buyPrices = readCache.buyPrices;
+			    if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Read buyPrices "+this.buyPrices+ "\n", encoding='utf8');
+			}
+		}
+
+
 		if(this.trend.buyPrices == 0) return true;
-		var calBuy = ((this.trend.buyPrices * 0.75)/100) + this.trend.buyPrices;
+		var calBuy = ((this.trend.buyPrices * this.settings.valProfit)/100) + this.trend.buyPrices;
 		if(this.candle.close >= calBuy){
 			return true;
 		}
