@@ -217,7 +217,7 @@ const strat = {
 			if(this.candle.close < this.nextBuy){
 				canBuy = true;
 			}else if(this.candle.close >= this.nextBuy && this.nextBuy > 0){
-				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop because Prices :"+this.candle.close.", Validate Next buy : "+this.nextBuy, encoding='utf8');
+				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop because Prices :"+this.candle.close+", Validate Next buy : "+this.nextBuy, encoding='utf8');
 				canBuy = false;
 			}
 		}
