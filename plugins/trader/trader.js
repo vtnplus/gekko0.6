@@ -100,12 +100,12 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
     */
     var readCache = {};
     var filecache = "./markets/" + config.watch.asset+config.watch.currency+".json";
-    if (fsw.existsSync(filecache) && fsw.readFileSync(filecache,"utf8") !== "") {
+    if (fsw.existsSync(filecache)) {
         
         readCache = JSON.parse(fsw.readFileSync(filecache,"utf8"));
         
     }else{
-        defaultData = '{"asset":0,"currency" : 0, "amount" : 0, "buyPrice" : 0, "buyAmount" : 0,  "sellPrice" : 0, "sellAmount" : 0}';
+        defaultData = '{"asset":0,"currency" : 0, "amount" : 0, "buyPrice" : 0, "sellPrice" : 0, "stopbuy" : false, "stopsell" : false}';
         console.log('Create File Config');
         readCache = JSON.parse(defaultData);
     }
@@ -113,29 +113,36 @@ Trader.prototype.writeCacheTrader = function(type,price,amount, gtdate){
     
 
     
+    var newJson = {};
+    newJson.asset = readCache.asset;
+    newJson.currency = readCache.currency;
+    newJson.amount = readCache.amount;
+    newJson.buyPrice = readCache.buyPrice;
+    newJson.sellPrice = readCache.sellPrice;
+    newJson.stopbuy = readCache.stopbuy;
+    newJson.stopsell = readCache.stopsell;
 
     if(type === "buy"){
-      readCache.buyPrice = price;
-      readCache.buyAmount = amount;
-      readCache.amount = amount;
+      newJson.buyPrice = price.toFixed(8);
+      newJson.amount = amount;
     }
 
     if(type === "sell"){
-      readCache.buyPrice = 0;
-      readCache.sellPrice = price;
-      readCache.sellAmount = amount;
-      readCache.amount = 0;
+      newJson.buyPrice = 0;
+      newJson.sellPrice = price.toFixed(8);
+      //readCache.sellAmount = amount;
+      newJson.amount = 0;
     }
 
 
     if(type === "balance"){
-          readCache.asset = this.portfolio.asset;
-          readCache.currency = this.portfolio.currency;
-          readCache.amount = this.portfolio.asset;
+          newJson.asset = this.portfolio.asset;
+          newJson.currency = this.portfolio.currency;
+          newJson.amount = this.portfolio.asset;
     }
 
-
-    fsw.writeFile(filecache, JSON.stringify(readCache), function (err) {
+    var makeJson = JSON.stringify(newJson);
+    fsw.writeFile(filecache, makeJson, function (err) {
         if (err) 
             return console.log(err);
         console.log('Save Cache Buy');
