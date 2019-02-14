@@ -53,7 +53,7 @@ const strat = {
 
 		
 
-		this.checkNumber = 0
+		this.checkNumber = 0;
 
 		if(config.valPrices){
 			this.settings.valPrices = config.valPrices;
