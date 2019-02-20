@@ -1,6 +1,6 @@
 
 [Unit]
-Description=Node.js Example Server
+Description=AI Tradery
 
 [Service]
 ExecStart=/usr/bin/node /opt/aitrader/cloud-server.js
