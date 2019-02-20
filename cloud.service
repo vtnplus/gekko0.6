@@ -1,0 +1,21 @@
+
+[Unit]
+Description=Node.js Example Server
+
+[Service]
+ExecStart=/usr/bin/node /opt/aitrader/cloud-server.js
+# Required on some systems
+WorkingDirectory=/root/aitrader
+Restart=always
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+# Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=nodejs-example
+User=root
+#Group=<alternate group>
+Environment=NODE_ENV=production PORT=8910
+
+[Install]
+WantedBy=multi-user.target
