@@ -33,7 +33,7 @@ const strat = {
 	      persisted: false
 	    }
 
-	    this.debug = true;
+	    this.debug = false;
 
 	    // RSI
 		this.addIndicator('BULL_RSI', 'RSI', { interval: this.settings.BULL.rsi });
@@ -51,28 +51,29 @@ const strat = {
 		this.startTime = new Date();
 		this.buyPrices = 0;
 		this.nextBuy = 0;
-
+		this._downPricesBuy = 1.75;//% down
 		
 
 		this.checkNumber = 0;
 
+		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
+
+
 		if(config.valPrices){
 			this.settings.valPrices = config.valPrices;
-			var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
-			if (fs.existsSync(filecache)) {
-				var readJson = fs.readFileSync(filecache,"utf8");
+			
+			if (fs.existsSync(this.filecache)) {
+				var readJson = fs.readFileSync(this.filecache,"utf8");
 				var readCache = JSON.parse(readJson);
 			    
-			    if(readCache.buyPrices > 0){
-			    	this.buyPrices = readCache.buyPrices;
-			    	if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[CACHE]["+config.watch.asset+config.watch.currency+"] Read Cache Buy Price : "+this.buyPrices+ "\n", encoding='utf8');
-			    	console.log("Validate Cache Buy Prices ",this.buyPrices);
+			    if(readCache.buyPrice > 0){
+			    	this.buyPrices = readCache.buyPrice;
+			    	
 			    }
 
 			    if(readCache.sellPrice > 0){
-			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
-			    	if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[CACHE]["+config.watch.asset+config.watch.currency+"] Read Cache Buy nextbuy : "+this.nextBuy+" Sell Price : "+readCache.sellPrice+ "\n", encoding='utf8');
-			    	console.log("Validate Cache Next Buy ",this.nextBuy);
+			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*this._downPricesBuy)/100);
+			    	
 			    }
 			   
 
@@ -189,7 +190,6 @@ const strat = {
 			var markets = JSON.parse(fs.readFileSync(__dirname + "/../markets/cloud.json","utf8"));
 			data = _.first(_.filter(markets, {symbol : config.watch.asset+config.watch.currency}));
 			if(data.status !== "Stopbuy"){
-				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop market24h"+ "\n", encoding='utf8');
 				return true;
 			}
 			return false;
@@ -200,16 +200,15 @@ const strat = {
 	},
 	long : function(){
 
-		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
-		if (fs.existsSync(filecache)) {
-		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+		
+		if (fs.existsSync(this.filecache)) {
+		    var readCache = JSON.parse(fs.readFileSync(this.filecache,"utf8"));
 		    if(readCache.stopbuy === true){
-		    	fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop buy"+ "\n", encoding='utf8');
 		    	return false;
 		    }
 
 		    if(readCache.sellPrice > 0 && config.detachbuy === true){
-		    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*1.75)/100);
+		    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*this._downPricesBuy)/100);
 		    }
 		}
 
@@ -218,7 +217,6 @@ const strat = {
 			if(this.candle.close < this.nextBuy){
 				canBuy = true;
 			}else if(this.candle.close >= this.nextBuy && this.nextBuy > 0){
-				fs.appendFileSync(__dirname + "/../debug.log", "[BUY]["+config.watch.asset+config.watch.currency+"] Detach buy Stop because Prices :"+this.candle.close+", Validate Next buy : "+this.nextBuy+ "\n", encoding='utf8');
 				canBuy = false;
 			}
 		}
@@ -227,24 +225,21 @@ const strat = {
 			this.resetTrend();
 			this.trend.direction = 'up';
 			this.advice('long');
-			this.buyPrices = this.candle.close;
-
-			this.nextBuy = 0;
+			
 		}
 
 	},
 
 	short : function(){
-		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
-		if (fs.existsSync(filecache)) {
-		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
+	
+		if (fs.existsSync(this.filecache)) {
+		    var readCache = JSON.parse(fs.readFileSync(this.filecache,"utf8"));
 		    if(readCache.stopsell === true){
-		    	if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Detach sell Stop"+ "\n", encoding='utf8');
 		    	return false;
 		    }
-		    if(readCache.buyPrices > 0){
-			    this.buyPrices = readCache.buyPrices;
-			    if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Read buyPrices "+this.buyPrices+ "\n", encoding='utf8');
+		    if(readCache.buyPrice > 0){
+			    this.buyPrices = readCache.buyPrice;
+			    
 			}
 		}
 
@@ -254,7 +249,6 @@ const strat = {
 			var commiss = ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
 
 			if(this.candle.close > commiss && this.buyPrices > 0){
-				if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Price : "+this.candle.close+" buyPrices "+this.buyPrices+" commiss : "+commiss+ "\n", encoding='utf8');
 				canSell = true;
 			}else if(this.buyPrices == 0){
 				canSell = true;
@@ -269,14 +263,34 @@ const strat = {
 			this.resetTrend();
 			this.trend.direction = 'down';
 			this.advice('short');
-			//this.senRemote()
+			
+		}
+	},
+	onTrade : function(trade){
 
-			//console.log('========================================================================');
-			//console.log('Trip in Buy : ' + this.buyPrices + " Sell : "+this.candle.close);
-			//console.log('========================================================================');
-
+		if(trade.action == "sell"){
+			console.log("Ontrade Sell");
 			this.buyPrices = 0;
-			this.nextBuy = this.candle.close - ((this.candle.close*1.75)/100);
+			this.nextBuy = trade.price - ((trade.price*this._downPricesBuy)/100);
+		}
+
+		if(trade.action == "buy"){
+			console.log("Ontrade Buy");
+			this.buyPrices = trade.price;
+			this.nextBuy = 0;
+		}
+	},
+	getProfit : function(type){
+		if(type === "stoplost"){
+			return this.buyPrices - ((this.stoplost * 100)/this.buyPrices)
+		}
+
+		if(type === "commiss"){
+			return ((this.buyPrices * this.settings.valProfit)/100) + this.buyPrices;
+		}
+
+		if(type === "nextbuy"){
+			return this.sellPrice - ((this.sellPrice * this._downPricesBuy)/100);
 		}
 	},
 	end: function()
@@ -297,51 +311,3 @@ const strat = {
 	}
 }
 module.exports = strat;
-/*
-long : function(){
-		if(this.settings.ticket24h != 0){
-			etf = this;
-			var options = {
-			    uri: 'https://api.binance.com/api/v1/ticker/24hr',
-			    
-			    headers: {
-			        'User-Agent': 'Request-Promise'
-			    },
-			    json: true // Automatically parses the JSON string in the response
-			};
-
-			rp(options).then(function (body) {
-		        data = _.first(_.filter(body, {symbol: config.watch.asset+config.watch.currency}));
-	        	openPrice = data.openPrice;
-		        calPrice = (etf.candle.close * 100) / data.openPrice
-		        
-		        if(data.priceChangePercent < config.ticket24h){
-		        	if(etf.trend.direction !== "up"){
-						etf.resetTrend();
-						etf.trend.direction = 'up';
-						etf.advice('long');
-						etf.buyPrices = etf.candle.close;
-						
-					}
-		        }else{
-		        	
-		        	console.log("Ready Pump Stop Buy")
-		        }
-		        
-		    })
-		    .catch(function (err) {
-		        console.log(err);
-		    });
-		    
-		}else{
-			if(this.trend.direction !== "up"){
-				this.resetTrend();
-				this.trend.direction = 'up';
-				this.advice('long');
-				this.buyPrices = this.candle.close;
-				
-			}
-		}
-
-	},
-*/

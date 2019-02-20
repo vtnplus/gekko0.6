@@ -25,6 +25,32 @@ module.exports = strat = {
 			direction : "none",
 			buyPrices : 0
 		}
+		this.nextBuy = 0;
+		this._downPricesBuy = 1.75;
+		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
+
+
+		if(config.valPrices){
+			this.settings.valPrices = config.valPrices;
+			
+			if (fs.existsSync(this.filecache)) {
+				var readJson = fs.readFileSync(this.filecache,"utf8");
+				var readCache = JSON.parse(readJson);
+			    
+			    if(readCache.buyPrice > 0){
+			    	this.buyPrices = readCache.buyPrice;
+			    	
+			    }
+
+			    if(readCache.sellPrice > 0){
+			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*this._downPricesBuy)/100);
+			    	
+			    }
+			   
+
+			}
+
+		}
 
 		if(config.valProfit){
 			this.settings.valProfit = config.valProfit;
@@ -79,25 +105,42 @@ module.exports = strat = {
 
 
 		if( rsi < rsi_low && this.trend.direction !== "up" && zone == "low") {
-			this.advice('long');
-			this.trend.buyPrices = this.candle.close;
-			this.trend.direction = "up";
-			console.log(this.trend.emaTrend,rsi)
+			if(this.nextBuy == 0 || price < this.nextBuy){
+				this.advice('long');
+				this.trend.direction = "up";
+				console.log(this.trend.emaTrend,rsi)
+			}else{
+				console.log("Detach Buy not execute")
+			}
+			
 		}else if( rsi > rsi_hi && this.validatePrice() && this.trend.direction !== "down") {
 			this.advice('short');
-			this.trend.buyPrices = 0;
 			this.trend.direction = "down";
 		}
 		
 		
 	},
+	onTrade : function(trade){
+
+		if(trade.action == "sell"){
+			console.log("Ontrade Sell");
+			this.trend.buyPrices = 0;
+			this.nextBuy = trade.price - ((trade.price*this._downPricesBuy)/100);
+		}
+
+		if(trade.action == "buy"){
+			console.log("Ontrade Buy");
+			this.trend.buyPrices = trade.price;
+			this.nextBuy = 0;
+		}
+	},
 	validatePrice : function(){
-		var filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
-		if (fs.existsSync(filecache)) {
+		
+		if (fs.existsSync(this.filecache)) {
 		    var readCache = JSON.parse(fs.readFileSync(filecache,"utf8"));
-		    if(readCache.buyPrices > 0){
-			    this.trend.buyPrices = readCache.buyPrices;
-			    if(this.debug) fs.appendFileSync(__dirname + "/../debug.log", "[SELL]["+config.watch.asset+config.watch.currency+"] Read buyPrices "+this.buyPrices+ "\n", encoding='utf8');
+		    if(readCache.buyPrice > 0){
+			    this.trend.buyPrices = readCache.buyPrice;
+			    
 			}
 		}
 

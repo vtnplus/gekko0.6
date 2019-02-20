@@ -35,6 +35,10 @@ const strat = {
 
 	    this.debug = false;
 
+	    if(this.debug){
+	    	config.valPrices = 1;
+	    	config.valProfit = 1.85;
+	    }
 	    // RSI
 		this.addIndicator('BULL_RSI', 'RSI', { interval: this.settings.BULL.rsi });
 		this.addIndicator('BEAR_RSI', 'RSI', { interval: this.settings.BEAR.rsi });
@@ -59,21 +63,31 @@ const strat = {
 
 		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 
-
-		if(config.valPrices){
+		
+		if(config.valProfit){
 			this.settings.valPrices = config.valPrices;
+			this.settings.valProfit = config.valProfit;
 			
 			if (fs.existsSync(this.filecache)) {
 				var readJson = fs.readFileSync(this.filecache,"utf8");
 				var readCache = JSON.parse(readJson);
-			    
-			    if(readCache.buyPrices > 0){
-			    	this.buyPrices = readCache.buyPrices;
+			   
+			    if(readCache.buyPrice > 0){
+			    	this.buyPrices = readCache.buyPrice;
+			    	console.log("First Buy",this.buyPrices)
 			    }
 
 			    if(readCache.sellPrice > 0){
 			    	this.nextBuy = readCache.sellPrice - ((readCache.sellPrice*this._downPricesBuy)/100);
 			    	
+			    }
+
+			    /*
+				Add Debug
+			    */
+			    if(this.debug){
+			    	config.paperTrader.simulationBalance.asset = readCache.asset;
+			    	config.paperTrader.simulationBalance.currency = readCache.currency;
 			    }
 			   
 
@@ -81,9 +95,7 @@ const strat = {
 
 		}
 
-		if(config.valProfit){
-			this.settings.valProfit = config.valProfit;
-		}
+		//console.log(this.buyPrices);
 
 		
 	},
@@ -259,20 +271,18 @@ const strat = {
 		    if(readCache.stopsell === true){
 		    	return false;
 		    }
-		    if(readCache.buyPrices > 0){
-			    this.buyPrices = readCache.buyPrices;
+		    if(readCache.buyPrice > 0){
+			    this.buyPrices = readCache.buyPrice;
 			}
 		}
 
 		var canSell = true;
 
-		if(this.settings.valPrices > 0){
+		if(this.settings.valPrices > 0 && this.buyPrices > 0){
 			
 			var commiss = this.getProfit("commiss");
 
-			if(this.candle.close > commiss && this.buyPrices > 0){
-				canSell = true;
-			}else if(this.buyPrices == 0){
+			if(this.candle.close > commiss && this.candle.close > this.buyPrices){
 				canSell = true;
 			}else{
 				canSell = false;
