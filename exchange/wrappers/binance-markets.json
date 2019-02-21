@@ -100,6 +100,7 @@
     "NEBL",
     "NPXS",
     "NXS",
+    "ONG",
     "ONT",
     "OST",
     "PAX",
@@ -2246,6 +2247,17 @@
     },
     {
       "pair": [
+        "BNB",
+        "HOT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
         "BTC",
         "HOT"
       ],
@@ -2264,6 +2276,17 @@
         "amount": 1,
         "price": 1e-8,
         "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "HOT"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-7,
+        "order": 10
       }
     },
     {
@@ -3133,6 +3156,39 @@
         "amount": 1,
         "price": 1e-8,
         "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "ONG"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "ONG"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "ONG"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
+        "order": 10
       }
     },
     {
@@ -4948,6 +5004,17 @@
         "amount": 1,
         "price": 1e-8,
         "order": 0.01
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "ZIL"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 10
       }
     },
     {
