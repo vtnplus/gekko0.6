@@ -1,7 +1,7 @@
 # Validate Prices By
 # (0 = disabled)
 valPrices = 1
-valProfit = 1.75
+valProfit = 0.75
 #validate ticket 24h pumd
 ticket24h=0
 cloud=0
@@ -28,7 +28,7 @@ rsi = 14.6
 
 [BEAR]
 high = 60.4
-low = 18.2
+low = 20.2
 mod_high = 1.4
 mod_low = -1.5
 rsi = 10.5
