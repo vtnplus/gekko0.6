@@ -4,7 +4,6 @@
     "BNB",
     "NEO",
     "LINK",
-    "SALT",
     "IOTA",
     "ETC",
     "AST",
@@ -50,7 +49,6 @@
     "BTS",
     "BTT",
     "CDT",
-    "CLOAK",
     "CMT",
     "CND",
     "CVC",
@@ -90,7 +88,6 @@
     "MDA",
     "MFT",
     "MITH",
-    "MOD",
     "MTH",
     "MTL",
     "NANO",
@@ -126,7 +123,6 @@
     "STEEM",
     "STORJ",
     "STORM",
-    "SUB",
     "SYS",
     "THETA",
     "TNB",
@@ -142,7 +138,6 @@
     "WABI",
     "WAN",
     "WAVES",
-    "WINGS",
     "WPR",
     "XEM",
     "XLM",
@@ -229,17 +224,6 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.001
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "SALT"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 1e-7,
         "order": 0.001
       }
     },
@@ -652,17 +636,6 @@
     },
     {
       "pair": [
-        "ETH",
-        "SALT"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 0.000001,
-        "order": 0.01
-      }
-    },
-    {
-      "pair": [
         "BNB",
         "ADA"
       ],
@@ -1494,28 +1467,6 @@
       "minimalOrder": {
         "amount": 1,
         "price": 1e-8,
-        "order": 0.01
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "CLOAK"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 1e-7,
-        "order": 0.001
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "CLOAK"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 0.000001,
         "order": 0.01
       }
     },
@@ -2820,28 +2771,6 @@
     {
       "pair": [
         "BTC",
-        "MOD"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 1e-7,
-        "order": 0.001
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "MOD"
-      ],
-      "minimalOrder": {
-        "amount": 0.01,
-        "price": 0.000001,
-        "order": 0.01
-      }
-    },
-    {
-      "pair": [
-        "BTC",
         "MTH"
       ],
       "minimalOrder": {
@@ -3954,28 +3883,6 @@
       "pair": [
         "ETH",
         "STORM"
-      ],
-      "minimalOrder": {
-        "amount": 1,
-        "price": 1e-8,
-        "order": 0.01
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "SUB"
-      ],
-      "minimalOrder": {
-        "amount": 1,
-        "price": 1e-8,
-        "order": 0.001
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "SUB"
       ],
       "minimalOrder": {
         "amount": 1,
@@ -4564,28 +4471,6 @@
         "amount": 0.01,
         "price": 0.0001,
         "order": 10
-      }
-    },
-    {
-      "pair": [
-        "BTC",
-        "WINGS"
-      ],
-      "minimalOrder": {
-        "amount": 1,
-        "price": 1e-8,
-        "order": 0.001
-      }
-    },
-    {
-      "pair": [
-        "ETH",
-        "WINGS"
-      ],
-      "minimalOrder": {
-        "amount": 1,
-        "price": 1e-7,
-        "order": 0.01
       }
     },
     {

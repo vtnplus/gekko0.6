@@ -10,7 +10,7 @@ const Broker = require(dirs.broker + '/gekkoBroker');
 const request = require('request');
 
 var headerset = '';
-var currentBalance = (config.TradeLimit < 0.2 ? config.TradeLimit : 0.1);
+var currentBalance = (config.TradeLimit < 1.01 ? config.TradeLimit : 0.1);
 
 require(dirs.gekko + '/exchange/dependencyCheck');
 
