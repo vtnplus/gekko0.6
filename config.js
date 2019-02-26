@@ -42,6 +42,7 @@ config.TradeLimit = {TradeLimit};
 config.market24h = {market24h};
 config.detachbuy = {detachbuy};
 config.stoplost = {stoplost};
+config.workflowmod = {workflowmod};
 
 config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only

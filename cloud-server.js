@@ -42,6 +42,8 @@ app.post('/genconfig', function (req, res) {
    var market24h = (req.body.market24h !== undefined && req.body.market24h > 0 ? "true" : "false");
    var detachbuy = (req.body.detachbuy !== undefined && req.body.detachbuy > 0 ? "true" : "false");
    var stoplost = (req.body.stoplost !== undefined ? req.body.stoplost : "0");
+   var workflowmod = (req.body.workflowmod !== undefined ? req.body.workflowmod : "medium");
+   
 
    //var data = JSON.stringify(config);
    //console.log(valPrices);
