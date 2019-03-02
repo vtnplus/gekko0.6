@@ -1,0 +1,503 @@
+const log = require('../core/log.js');
+const config = require('../core/util.js').getConfig();
+const rp = require('request-promise');
+const _ = require('lodash');
+const request = require('request');
+const fs = require('fs');
+var moment = require('moment');
+const strat = {
+	
+	/* INIT */
+	init: function()
+	{
+		this.trend = {
+			duration: 0,
+			direction: 'none',
+			longPos: false,
+			persisted: false,
+			adviced: false,
+			buy_price : 0,
+			sell_price : 0,
+			block_buy : 0,
+			date : 0,
+			fixPriceBuy : 0,
+			fixPriceSell : 0,
+			block_pump_price : 0
+		};
+		this.makePriceCache = [];
+
+		this.debug = false;
+
+		if(config.profit === undefined) config.profit = 5.75;
+		if(config.stoplost === undefined) config.stoplost = 5.55;
+		if(this.debug){
+			config.profit = 5.15;
+			config.stoplost = 5.55;
+			//config.tradingAdvisor.candleSize = 15;
+			//config.tradingAdvisor.historySize = 240;
+		}
+		this.logDebug = [];
+		this.addTalibIndicator('rsi', 'rsi', {optInTimePeriod : 14});
+		this.addTalibIndicator('macd', 'macd', {optInFastPeriod : 12, optInSlowPeriod: 26, optInSignalPeriod: 9});
+		this.addTalibIndicator('cci', 'cci', {optInTimePeriod : 14});
+		this.addTalibIndicator('srsi', 'stochrsi', {optInTimePeriod : 3, optInFastK_Period : 14, optInFastD_Period : 14, optInFastD_MAType : 0});
+		this.addTalibIndicator('mfi', 'mfi', {optInTimePeriod : 3});
+		this.addTalibIndicator('bbands', 'bbands', {optInTimePeriod : 21, optInNbDevUp : 2, optInNbDevDn : 2, optInMAType : 0});
+
+		this.addTalibIndicator('ema55', 'ema', {optInTimePeriod : 55});
+		this.addTalibIndicator('ema200', 'ema', {optInTimePeriod : 200});
+
+		this.addTalibIndicator('ema500', 'ema', {optInTimePeriod : 500});
+		
+		this.addTalibIndicator('ma7', 'ma', {optInTimePeriod : 7, optInMAType : 0});
+		this.addTalibIndicator('ma25', 'ma', {optInTimePeriod : 25, optInMAType : 0});
+
+		this.addTalibIndicator('maSlow', 'sma', {optInTimePeriod : 1000} );
+		this.addTalibIndicator('maFast', 'sma', {optInTimePeriod : 50} );
+		//this.addTalibIndicator('emaPumb', 'ema', {optInTimePeriod : 200});
+		
+		this.aiBot = ["rsi","macd","mfi","cci","srsi","bbands","ma_trend"];//"profit"
+		this.logicAction = ["pump_dump","profit","buyatsell"];
+
+
+		/*
+		Read Cache
+		*/
+
+		this.cache = this.readConfig();
+		if(this.cache.fixBuy > 0) this.trend.fixPriceBuy = this.cache.fixBuy;
+		if(this.cache.fixSell > 0) this.trend.fixPriceBuy = this.cache.fixPriceSell;
+		if(this.cache.buyPrice > 0) this.trend.buy_price = this.cache.buyPrice;
+		if(this.cache.sellPrice > 0) this.trend.sell_price = this.cache.sellPrice;
+		
+		//console.log(this.cache)
+
+		
+	},
+	update : function(){
+		var price = this.candle.close;
+		this.maSlow = this.talibIndicators.maSlow.result.outReal;
+		this.maFast = this.talibIndicators.maFast.result.outReal;
+		this.ema500 = this.talibIndicators.ema500.result.outReal;
+		this.ema200 = this.talibIndicators.ema200.result.outReal;
+		
+	},
+	check : function(){
+		this.trend.date = this.candle.start;
+		this.logDebug = [];
+		var switchTrend = this.moveCheck();
+		
+		
+		
+		if(switchTrend == "buy"){
+			
+			this.long();
+		}else if(switchTrend == "sell"){
+			
+			this.short();
+		}
+		
+	},
+
+	long : function(){
+		/*
+		Buy
+		*/
+		
+		if(this.trend.direction !== "up"){
+			this.trend.direction = 'up';
+			this.advice('long');
+		}
+	},
+	short : function(){
+		/*
+		Sell
+		*/
+
+		if(this.trend.direction !== "down"){
+			this.trend.direction = 'down';
+
+			
+			this.advice('short');
+		}
+	},
+
+
+	onTrade : function(trade){
+		
+		if(trade.action === "sell"){
+			this.trend.buy_price = 0;
+			this.trend.sell_price = trade.price;
+
+		}
+
+		if(trade.action === "buy"){
+			this.trend.buy_price = trade.price;
+			this.trend.sell_price = 0;
+		}
+		
+
+		console.log(this.logDebug);
+	},
+	readConfig : function(){
+		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
+		if (fs.existsSync(this.filecache)) {
+			var readJson = fs.readFileSync(this.filecache,"utf8");
+			return  JSON.parse(readJson);
+		}
+		return {};
+	},
+	readMarkets : function(){
+		cloudService = __dirname + "/../markets/cloud.json";
+
+		if (fs.existsSync(cloudService) && config.market24h === true) {
+			var markets = JSON.parse(fs.readFileSync(cloudService));
+			data = _.first(_.filter(markets, {symbol : config.watch.asset+config.watch.currency}));
+
+			btcusdt = _.first(_.filter(markets, {symbol : "BTCUSDT"}));
+
+			if(btcusdt.priceChangePercent > 5){
+				return "stopbuy";
+			}
+
+			if(btcusdt.priceChangePercent > -5){
+				return "sellall";
+			}
+
+			if(data.priceChangePercent > 25){
+				return "stopbuy";
+			}
+			if(data.priceChangePercent > 35){
+				return "sellall";
+			}
+			if(data.priceChangePercent < -20){
+				return "unlockbuy";
+			}
+		}
+
+		return false;
+
+	},
+	pump_dump : function(){
+		var price = this.candle.close;
+		var markets = this.readMarkets();
+
+
+	},
+	exittime : function(){
+
+	},
+
+	LogicBot : function(action){
+		var price = this.candle.close;
+		var markets = this.readMarkets();// Pump and dump
+		var getConfig = this.readConfig();
+
+		//var emaUp200 = 100 - (( price/this.lastPrice24) * 100);
+		var emaUp55 = 100 - (( price/this.ema500) * 100);
+		var unixtime = 60 * (config.tradingAdvisor.historySize * config.tradingAdvisor.candleSize) * (config.tradingAdvisor.candleSize < 15 ? 2 : 1);
+
+		if(markets === "stopbuy"){
+			this.trend.block_buy = this.trend.date.unix() + unixtime;
+		}else if(markets === "unlockbuy"){
+			this.trend.block_buy = 0;
+		}else if(markets === "sellall"){
+			this.trend.block_buy = this.trend.date.unix() + (unixtime * 1.5);// x1.5 Unlock time
+			return "sell";
+		}
+
+
+		if(action === "sell"){
+			
+			var profit = this.trend.buy_price + (this.trend.buy_price * (config.profit / 100));
+			var stoplost = this.trend.buy_price - (this.trend.buy_price * (config.stoplost / 100));
+			
+			if(getConfig.stopsell === true){
+				return 'N/A';
+			}
+
+			
+			//console.log(emaUp55.toFixed(2), emaUp200.toFixed(2))
+			
+
+			
+
+			if(price < stoplost && this.trend.buy_price > 0){
+				console.log("Stoplost Buy " + this.trend.date)
+				this.trend.block_buy = this.trend.date.unix() + unixtime;
+
+				return action;
+			}
+
+			if(price > profit && config.valPrices > 0){
+				//this.trend.block_buy = this.trend.date.unix() + (config.tradingAdvisor.candleSize * 5 * 60);
+				return action;
+			}else{
+				return action;
+			}
+
+
+			return "N/A";
+			
+		}
+
+		
+
+		if(action === "buy"){
+			if(getConfig.stopbuy === true){
+				return 'N/A';
+			}
+			if(this.trend.block_buy > this.trend.date.unix()){
+					//console.log("Block Buy " + this.trend.date)
+					return "N/A";
+			}
+			return action;
+		}
+	},
+	moveCheck : function(){
+		//'use strict';
+		/*
+		Xat xuat thong ke
+		*/
+		var obj = this;
+		var target = [];
+		this.aiBot.forEach(function(item){
+			target.push(eval("obj."+item+"(false)"));
+		});
+		
+
+		var numLength = target.length;
+		//console.log(target);
+		var sell = 0, buy= 0, na = 0;
+		target.forEach(function(item){
+			if(item === "sell"){
+				sell = sell + 1
+			}else if(item === "buy"){
+				buy = buy + 1
+			}else if(item === "N/A"){
+				na = na + 1
+			}
+		})
+
+		var max = _.max([sell, buy, na]);
+
+		//console.log(sell, buy, na, max);
+		var action = "N/A";
+		if(max === sell){
+			this.logDebug.push("[SELL] "+(100/sell).toFixed(2) + "% " + "[BUY] "+(100/buy).toFixed(2) + "% " + "[WAIT] "+(100/na).toFixed(2) + "% ");
+			action = "sell"
+		}else if(max === buy){
+			this.logDebug.push("[SELL] "+(100/sell).toFixed(2) + "% " + "[BUY] "+(100/buy).toFixed(2) + "% " + "[WAIT] "+(100/na).toFixed(2) + "% ");
+			action = "buy"
+		}else{
+			action = "N/A"
+		}
+		
+		return this.LogicBot(action);
+	},
+
+	rsi : function(debug){
+		var hight = 70;
+		var low = 30;
+
+		/*
+		Switch Trend
+		*/
+
+		if(this.maSlow > this.maFast){
+			hight = 55.2;
+			low = 18.2
+		}else if(this.maSlow < this.maFast){
+			hight = 86.2;
+			low = 42.2
+		}
+
+
+
+		var rsi = this.talibIndicators.rsi.result.outReal;
+
+		
+		if(rsi > hight){
+			
+			if(debug === true){
+				this.logDebug.push("[SELL] RSI : "+rsi)
+			}
+
+			return "sell"
+
+		}else if(rsi < low){
+			if(debug  === true){
+				this.logDebug.push("[BUY] RSI : "+rsi)
+			}
+			return "buy"
+		}
+
+		return "N/A"
+
+	},
+	macd : function(debug){
+		
+		var macd = this.talibIndicators.macd.result;
+		
+		
+
+		if(macd.outMACDSignal > macd.outMACD){
+			if(debug === true){
+				this.logDebug.push("[SELL] MACD : "+macd.outMACD)
+			}
+			return "sell"
+		}else if(macd.outMACDSignal < macd.outMACD){
+			if(debug === true){
+				this.logDebug.push("[BUY] MACD : "+macd.outMACD)
+			}
+			return "buy"
+		}
+		return "N/A"
+	},
+
+	cci : function(debug){
+
+		var hight = 100;
+		var low = -100;
+		var cci = this.talibIndicators.cci.result.outReal;
+		
+		
+
+		if(cci > hight){
+			if(debug === true){
+				this.logDebug.push("[SELL] CCI : "+cci)
+			}
+			return "sell"
+		}else if(cci < low){
+			if(debug === true){
+				this.logDebug.push("[BUY] CCI : "+cci)
+			}
+			return "buy"
+		}
+		return "N/A"
+		
+	},
+	srsi : function(debug){
+		var srsi = this.talibIndicators.srsi.result;
+		
+		
+
+		if(srsi.outFastD > srsi.outFastK){
+			if(debug === true){
+				this.logDebug.push("[SELL] SRSI : "+srsi.outFastD + " - "+srsi.outFastK)
+			}
+			return "sell"
+		}else if(srsi.outFastD < srsi.outFastK){
+			if(debug === true){
+				
+				this.logDebug.push("[BUY] SRSI : "+srsi.outFastD + " - "+srsi.outFastK)
+			}
+			return "buy"
+		}
+		return "N/A"
+	},
+	mfi : function(debug){
+		var hight = 80;
+		var low = 20;
+		var mfi = this.talibIndicators.mfi.result.outReal;
+		
+		if(mfi > hight){
+			if(debug === true){
+				this.logDebug.push("SELL MFI : "+mfi)
+				
+			}
+			return "sell"
+		}else if(mfi < low){
+			if(debug === true){
+				this.logDebug.push("BUY MFI : "+mfi)
+				
+			}
+			return "buy"
+		}
+		return "N/A"
+	},
+	bbands : function(debug){
+		var bbands = this.talibIndicators.bbands.result;
+		var price = this.candle.close;
+		
+		if(price > bbands.outRealUpperBand){
+			if(debug === true){
+				this.logDebug.push("[SELL] BB "+price +" - "+ bbands.outRealUpperBand)
+			}
+			return "sell";
+		}else if(price < bbands.outRealLowerBand){
+			if(debug === true){
+				this.logDebug.push("[BUY] BB "+price +" - "+ bbands.outRealUpperBand)
+			}
+			return "buy";
+		}else{
+			return "N/A";
+		}
+		//console.log(bbands);
+	},
+	sma : function(){
+
+	},
+	ema : function(){
+
+	},
+	ma_trend : function(debug){
+		var ma7 = this.talibIndicators.ma7.result.outReal;
+		var ma25 = this.talibIndicators.ma25.result.outReal;
+		if(ma25 > ma7){
+			if(debug === true){
+				this.logDebug.push("SELL MA : "+ma25+" - "+ma7)
+				
+			}
+			return "sell";
+		}else if(ma25 < ma7){
+			if(debug === true){
+				this.logDebug.push("BUY MA : "+ma25+" - "+ma7)
+				
+			}
+			return "buy";
+		}else{
+			return "N/A";
+		}
+		
+	},
+	check_price : function(debug){
+		var price = this.candle.close;
+		if(price > this.trend.buy_price){
+			if(debug === true){
+				this.logDebug.push("[SELL] Price : "+price)
+			}
+			return "sell";
+		}else if(this.trend.buy_price === 0){
+			if(debug === true){
+				this.logDebug.push("[BUY] Price : "+price)
+			}
+			return "buy";
+		}
+		return "N/A";
+		
+	},
+	profit : function(debug){
+		var price = this.candle.close;
+		var profit = this.trend.buy_price + (this.trend.buy_price * (config.profit / 100));
+		if(price > profit){
+			if(debug === true){
+				this.logDebug.push("[SELL] Profit : "+(price - profit))
+			}
+			return "sell";
+		}
+		return "N/A";
+	},
+	down_buy : function(){
+		var price = this.candle.close;
+		var profit = this.trend.sell_price - (this.trend.sell_price * (config.profit / 100));
+		if(price < profit){
+			return "buy";
+		}
+		return "N/A";
+	}
+
+
+}
+
+module.exports = strat;

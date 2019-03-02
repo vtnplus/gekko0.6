@@ -64,6 +64,7 @@
     "ENG",
     "ENJ",
     "EVX",
+    "FET",
     "FUEL",
     "GNT",
     "GO",
@@ -1989,6 +1990,39 @@
     },
     {
       "pair": [
+        "BNB",
+        "FET"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "BTC",
+        "FET"
+      ],
+      "minimalOrder": {
+        "amount": 1,
+        "price": 1e-8,
+        "order": 0.001
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "FET"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
+        "order": 10
+      }
+    },
+    {
+      "pair": [
         "BTC",
         "FUEL"
       ],
@@ -4899,6 +4933,28 @@
       "minimalOrder": {
         "amount": 0.1,
         "price": 0.00001,
+        "order": 10
+      }
+    },
+    {
+      "pair": [
+        "BNB",
+        "ZRX"
+      ],
+      "minimalOrder": {
+        "amount": 0.1,
+        "price": 0.00001,
+        "order": 1
+      }
+    },
+    {
+      "pair": [
+        "USDT",
+        "ZRX"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
         "order": 10
       }
     },

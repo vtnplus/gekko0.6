@@ -65,9 +65,41 @@ app.post('/genconfig', function (req, res) {
 
    fs.writeFileSync(asset+currency+'-config.js', configReadData);
 
+
+
+   /*
+    Creade Sample File Config
+   */
+
+   
+
    res.end("");
 });
 
+app.post("/config", function (req, res) {
+   var cmd = req.body.cmd;
+   var currency = req.body.currency;
+   var asset = req.body.asset;
+   var contents = JSON.parse(req.body.contents);
+   
+
+  var fileCache = "markets/"+asset+currency+".json";
+  if (fs.existsSync(fileCache)) {
+    var readJson = fs.readFileSync(fileCache,"utf8");
+    var readCache = JSON.parse(readJson);
+    
+    if(contents.buyPrice) readCache.buyPrice = contents.buyPrice;
+    if(contents.sellPrice) readCache.sellPrice = contents.sellPrice;
+    if(contents.stopbuy) readCache.stopbuy = contents.stopbuy;
+    if(contents.stopsell) readCache.stopsell = contents.stopsell;
+    if(contents.fixbuy) readCache.fixbuy = contents.fixbuy;
+    if(contents.fixsell) readCache.fixsell = contents.fixsell;
+    var makeJson = JSON.stringify(readCache);
+    fsw.writeFileSync(fileCache, makeJson);
+    
+  }
+  res.end("");
+});
 /*
 Created Start or Stop Trader
 */
@@ -245,77 +277,6 @@ app.post("/status", function(req, res, next){
       //res.end();
 });
 
-/*
-app.post("/status", function(req, res){
-   var cmd = req.body.cmd;
-   var currency = req.body.currency;
-   var asset = req.body.asset;
-   var data = [];
-
-   if(cmd == "on"){
-
-      pm2.connect(function(err) {
-        
-              if (err) {
-                  console.error(err);
-                  process.exit(0);
-                  return;
-              }
-                  
-              
-
-             data.push(new Promise(function (resolve, reject) {
-                pm2.list(function(err, process){
-                  resolve(process);
-                });
-              }));
-
-              Promise.all(data).then(function(result){
-
-              return _.first(result);
-           
-           }).then(function(data){
-
-                var obj = []
-                _.forEach(data, function(value, key){
-                  var readdata = {};
-                  readdata.pid = value.pid;
-                  readdata.name = value.name;
-                  readdata.status = value.pm2_env.status;
-                  obj.push(readdata);
-                  
-                });
-                
-                pm2.disconnect();
-
-                return obj;
-
-           }).then(function(data){
-
-              pm2list = data;
-              
-           });
-          
-      });
-
-     
-      var filecache = __dirname + "/markets/" + asset+currency + ".json";
-      var _fixData = _.filter(pm2list, {name: asset+currency});
-      console.log(pm2list);
-      if (fs.existsSync(filecache)) {
-          res.send(fs.readFileSync(filecache,"utf8"));
-      }
-      res.send(JSON.stringify({status: false}));
-   }
-
-
-   if(cmd == "log"){
-      res.send(JSON.stringify({status: true}));
-   }
-
-
-});
-*/
 var server = app.listen(port, function () {
    var host = server.address().address
    var port = server.address().port

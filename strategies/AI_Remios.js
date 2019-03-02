@@ -105,7 +105,7 @@ const strat = {
 				this.settings.BULL.low = 32.3;
 
 				this.settings.BEAR.high = 55.4;
-				this.settings.BEAR.low = 8.2;
+				this.settings.BEAR.low = 10.2;
 				this._downPricesBuy = 1.85;
 
 			}
@@ -113,7 +113,7 @@ const strat = {
 			if(config.workflowmod === "high"){
 				
 				this.settings.BULL.high = 85.6;
-				this.settings.BULL.low = 42.3;
+				this.settings.BULL.low = 45.3;
 
 				this.settings.BEAR.high = 60.4;
 				this.settings.BEAR.low = 28.2;
