@@ -54,7 +54,7 @@ app.post('/genconfig', function (req, res) {
    configReadData = replaceString(configReadData,'{market24h}',market24h);
    configReadData = replaceString(configReadData,'{detachbuy}',detachbuy);
    configReadData = replaceString(configReadData,'{stoplost}',stoplost);
-
+   configReadData = replaceString(configReadData,'{workflowmod}',workflowmod);
 
    configReadData = replaceString(configReadData,'{method}',method);
    configReadData = replaceString(configReadData,'{valPrices}',valPrices);
