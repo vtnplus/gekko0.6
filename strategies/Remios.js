@@ -82,7 +82,7 @@ const strat = {
 		this.ema500 = this.talibIndicators.ema500.result.outReal;
 		this.ema200 = this.talibIndicators.ema200.result.outReal;
 		this.bbands = this.talibIndicators.bbands.result;
-		console.log(this.bbands)
+		//console.log(this.bbands)
 	},
 	check : function(){
 		this.trend.date = this.candle.start;
@@ -159,7 +159,7 @@ const strat = {
 		}
 		
 		var propertiesObject = this.debugJson;
-	    var url = {url:'http://127.0.0.1/trader/api/report', qs:propertiesObject}
+	    var url = {url:'http://smartweb.live/trader/api/report', qs:propertiesObject}
 	    
 	    request(url, function(err, response, body) {
 	      if(err) { console.log(err); return; }
