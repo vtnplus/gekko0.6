@@ -22,20 +22,19 @@ const strat = {
 			date : 0,
 			fixPriceBuy : 0,
 			fixPriceSell : 0,
-			block_pump_price : 0
+			block_pump_price : 0,
+			balance : 0,
+			sell_amount : 0,
+			unlock_buy : 0
 		};
 		this.makePriceCache = [];
 
 		this.debug = false;
 
-		if(config.profit === undefined) config.profit = 5.75;
+		if(config.profit === undefined) config.profit = 1.75;
 		if(config.stoplost === undefined) config.stoplost = 5.55;
-		if(this.debug){
-			config.profit = 5.15;
-			config.stoplost = 5.55;
-			//config.tradingAdvisor.candleSize = 15;
-			//config.tradingAdvisor.historySize = 240;
-		}
+		
+		config.valPrices = true;
 		this.debugJson = {};
 
 		this.logDebug = [];
@@ -58,7 +57,7 @@ const strat = {
 		this.addTalibIndicator('maFast', 'sma', {optInTimePeriod : 50} );
 		//this.addTalibIndicator('emaPumb', 'ema', {optInTimePeriod : 200});
 		
-		this.aiBot = ["rsi","macd","mfi","cci","srsi","bbands","ma_trend"];//"profit"
+		this.aiBot = ["rsi","macd","mfi","cci","srsi","bbands_trend","ma_trend"];//"profit"
 		this.logicAction = ["pump_dump","profit","buyatsell"];
 
 
@@ -82,7 +81,8 @@ const strat = {
 		this.maFast = this.talibIndicators.maFast.result.outReal;
 		this.ema500 = this.talibIndicators.ema500.result.outReal;
 		this.ema200 = this.talibIndicators.ema200.result.outReal;
-		
+		this.bbands = this.talibIndicators.bbands.result;
+		console.log(this.bbands)
 	},
 	check : function(){
 		this.trend.date = this.candle.start;
@@ -127,22 +127,46 @@ const strat = {
 
 	onTrade : function(trade){
 		
-		this.debugJson.trade = trade;
+		this.debugJson.action = trade.action;
+		this.debugJson.amount = trade.amount;
+		this.debugJson.price = trade.price;
+		this.debugJson.date = trade.date.unix();
+		this.debugJson.asset = config.watch.asset;
+		this.debugJson.currency = config.watch.currency;
+
+		this.debugJson.period = config.tradingAdvisor.candleSize;
+		this.debugJson.strategies = config.tradingAdvisor.method;
 		
+		this.debugJson.fee = trade.feePercent;
+		this.debugJson.api = config.apiReportKey;
+
+		this.debugJson.trend = (this.debugJson.ma7 > this.debugJson.ma25 ? "up" : "down");
+
 		if(trade.action === "sell"){
 			this.trend.buy_price = 0;
 			this.trend.sell_price = trade.price;
+			this.trend.balance = (trade.amount * trade.price) - ((trade.price * (trade.feePercent * 100)) * trade.price);
+			this.trend.sell_amount = trade.amount + (trade.price * (trade.feePercent * 100));
 
+			this.debugJson.balance = trade.balance;
 
 		}
 
 		if(trade.action === "buy"){
 			this.trend.buy_price = trade.price;
+			this.debugJson.balance = trade.balance;
 			this.trend.sell_price = 0;
 		}
 		
-
-		console.log(this.debugJson);
+		var propertiesObject = this.debugJson;
+	    var url = {url:'http://127.0.0.1/trader/api/report', qs:propertiesObject}
+	    
+	    request(url, function(err, response, body) {
+	      if(err) { console.log(err); return; }
+	      console.log(body);
+	    });
+		//console.log(trade);
+		this.debugJson = {};
 	},
 	readConfig : function(){
 		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
@@ -212,7 +236,19 @@ const strat = {
 		}
 
 
-		if(action === "sell"){
+		
+		var zone = 'none';
+		var priceUpperBB = this.bbands.outRealLowerBand + (this.bbands.outRealUpperBand - this.bbands.outRealLowerBand) / 100 * this.settings.BBtrend.upperThreshold;
+		var priceLowerBB = this.bbands.outRealLowerBand + (this.bbands.outRealUpperBand - this.bbands.outRealLowerBand) / 100 * this.settings.BBtrend.lowerThreshold;
+		
+		
+
+		if (price >= priceUpperBB) zone = 'high';
+		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
+		if (price <= priceLowerBB) zone = 'low';
+
+
+		if(action === "sell" && this.trend.direction !== "down"){
 			
 			var profit = this.trend.buy_price + (this.trend.buy_price * (config.profit / 100));
 			var stoplost = this.trend.buy_price - (this.trend.buy_price * (config.stoplost / 100));
@@ -236,13 +272,24 @@ const strat = {
 				return action;
 			}
 
-			if(price > profit && config.valPrices > 0){
-				//this.trend.block_buy = this.trend.date.unix() + (config.tradingAdvisor.candleSize * 5 * 60);
-				return action;
-			}else{
+
+			/*
+			Run Sell With Fix Price
+			*/
+			if(this.cache.fixPriceSell > 0 && price >= this.cache.fixPriceSell){
 				return action;
 			}
 
+			if(zone === "high"){
+
+
+				if(price > profit && config.valPrices > 0){
+					//this.trend.block_buy = this.trend.date.unix() + (config.tradingAdvisor.candleSize * 5 * 60);
+					return action;
+				}else if(config.valPrices === false){
+					return action;
+				}
+			}
 
 			return "N/A";
 			
@@ -250,7 +297,7 @@ const strat = {
 
 		
 
-		if(action === "buy"){
+		if(action === "buy" && this.trend.direction !== "up"){
 			if(getConfig.stopbuy === true){
 				return 'N/A';
 			}
@@ -258,7 +305,37 @@ const strat = {
 					//console.log("Block Buy " + this.trend.date)
 					return "N/A";
 			}
-			return action;
+			
+			/*
+			Unlock Next Buy
+			
+			if(this.trend.date.unix() > this.trend.unlock_buy && this.trend.unlock_buy > 0){
+				this.trend.unlock_buy = 0;
+				return action;
+			}
+			*/
+
+			/*
+			Run with Fix Price
+			*/
+
+			if(zone === "low"){
+				if(this.trend.fixPriceBuy > 0 && price <= this.trend.fixPriceBuy){
+					
+					return action;
+
+				}
+
+
+				if((this.trend.balance / price) >= this.trend.sell_amount){
+					return action;
+				}else{
+					this.trend.unlock_buy = this.trend.date.unix() + unixtime;
+				}
+			}
+			
+			
+			return "N/A";
 		}
 	},
 	moveCheck : function(){
@@ -345,8 +422,8 @@ const strat = {
 	macd : function(debug){
 		
 		var macd = this.talibIndicators.macd.result;
-		
-		this.debugJson.macd = macd;
+		//console.log(macd);
+		this.debugJson.macd = macd.outMACDHist;
 
 		if(macd.outMACDSignal > macd.outMACD){
 			if(debug === true){
@@ -388,7 +465,8 @@ const strat = {
 		var srsi = this.talibIndicators.srsi.result;
 		
 		
-		this.debugJson.srsi = srsi;
+		this.debugJson.srsi = srsi.outFastD > srsi.outFastK ? srsi.outFastD : srsi.outFastK;
+
 		if(srsi.outFastD > srsi.outFastK){
 			if(debug === true){
 				this.logDebug.push("[SELL] SRSI : "+srsi.outFastD + " - "+srsi.outFastK)
@@ -425,11 +503,16 @@ const strat = {
 		}
 		return "N/A"
 	},
-	bbands : function(debug){
-		var bbands = this.talibIndicators.bbands.result;
+	bbands_trend : function(debug){
+		var bbands = this.bbands;
 		var price = this.candle.close;
 		
-		this.debugJson.bbands = bbands;
+		if(price > bbands.outRealMiddle){
+			this.debugJson.bbands = (((price - bbands.outRealUpperBand)/ bbands.outRealUpperBand) * 100) + 100;
+		}else{
+			this.debugJson.bbands = (((price - bbands.outRealLowerBand) / bbands.outRealLowerBand) * 100) - 100;
+		}
+		
 
 		if(price > bbands.outRealUpperBand){
 			if(debug === true){
