@@ -71,8 +71,6 @@ app.post('/genconfig', function (req, res) {
     Creade Sample File Config
    */
 
-   
-
    res.end("");
 });
 

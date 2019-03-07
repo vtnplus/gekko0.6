@@ -36,6 +36,8 @@ const strat = {
 			//config.tradingAdvisor.candleSize = 15;
 			//config.tradingAdvisor.historySize = 240;
 		}
+		this.debugJson = {};
+
 		this.logDebug = [];
 		this.addTalibIndicator('rsi', 'rsi', {optInTimePeriod : 14});
 		this.addTalibIndicator('macd', 'macd', {optInFastPeriod : 12, optInSlowPeriod: 26, optInSignalPeriod: 9});
@@ -125,9 +127,12 @@ const strat = {
 
 	onTrade : function(trade){
 		
+		this.debugJson.trade = trade;
+		
 		if(trade.action === "sell"){
 			this.trend.buy_price = 0;
 			this.trend.sell_price = trade.price;
+
 
 		}
 
@@ -137,7 +142,7 @@ const strat = {
 		}
 		
 
-		console.log(this.logDebug);
+		console.log(this.debugJson);
 	},
 	readConfig : function(){
 		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
@@ -225,6 +230,8 @@ const strat = {
 			if(price < stoplost && this.trend.buy_price > 0){
 				console.log("Stoplost Buy " + this.trend.date)
 				this.trend.block_buy = this.trend.date.unix() + unixtime;
+
+				this.debugJson.stoplost = {price : price, lost : stoplost, blocktime : this.trend.block_buy};
 
 				return action;
 			}
@@ -315,7 +322,7 @@ const strat = {
 
 
 		var rsi = this.talibIndicators.rsi.result.outReal;
-
+		this.debugJson.rsi = rsi;
 		
 		if(rsi > hight){
 			
@@ -339,7 +346,7 @@ const strat = {
 		
 		var macd = this.talibIndicators.macd.result;
 		
-		
+		this.debugJson.macd = macd;
 
 		if(macd.outMACDSignal > macd.outMACD){
 			if(debug === true){
@@ -361,7 +368,7 @@ const strat = {
 		var low = -100;
 		var cci = this.talibIndicators.cci.result.outReal;
 		
-		
+		this.debugJson.cci = cci;
 
 		if(cci > hight){
 			if(debug === true){
@@ -381,7 +388,7 @@ const strat = {
 		var srsi = this.talibIndicators.srsi.result;
 		
 		
-
+		this.debugJson.srsi = srsi;
 		if(srsi.outFastD > srsi.outFastK){
 			if(debug === true){
 				this.logDebug.push("[SELL] SRSI : "+srsi.outFastD + " - "+srsi.outFastK)
@@ -401,6 +408,8 @@ const strat = {
 		var low = 20;
 		var mfi = this.talibIndicators.mfi.result.outReal;
 		
+		this.debugJson.mfi = mfi;
+
 		if(mfi > hight){
 			if(debug === true){
 				this.logDebug.push("SELL MFI : "+mfi)
@@ -420,6 +429,8 @@ const strat = {
 		var bbands = this.talibIndicators.bbands.result;
 		var price = this.candle.close;
 		
+		this.debugJson.bbands = bbands;
+
 		if(price > bbands.outRealUpperBand){
 			if(debug === true){
 				this.logDebug.push("[SELL] BB "+price +" - "+ bbands.outRealUpperBand)
@@ -444,6 +455,10 @@ const strat = {
 	ma_trend : function(debug){
 		var ma7 = this.talibIndicators.ma7.result.outReal;
 		var ma25 = this.talibIndicators.ma25.result.outReal;
+		
+		this.debugJson.ma7 = ma7;
+		this.debugJson.ma25 = ma25;
+
 		if(ma25 > ma7){
 			if(debug === true){
 				this.logDebug.push("SELL MA : "+ma25+" - "+ma7)
