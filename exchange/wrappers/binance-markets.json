@@ -1011,6 +1011,17 @@
     },
     {
       "pair": [
+        "USDT",
+        "BAT"
+      ],
+      "minimalOrder": {
+        "amount": 0.01,
+        "price": 0.0001,
+        "order": 10
+      }
+    },
+    {
+      "pair": [
         "BTC",
         "BCD"
       ],
