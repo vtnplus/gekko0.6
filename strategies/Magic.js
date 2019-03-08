@@ -172,6 +172,9 @@ var strat = {
 		//var amount_next = this.order.amount * 0.01;
 		//console.log(this.order.buy_price, profix);
 
+		var readConfig = this.readConfig();
+
+
 		/*
 		Target Markets Sell All
 		*/
@@ -226,6 +229,10 @@ var strat = {
 
 		if(type === "sell"){
 			
+			if(readConfig.stopsell === true){
+				return true;
+			}
+
 			if(this.order.date > this.order.exit_time && this.order.exit_time > 0){
 				this.order.exit_time = 0;
 				this.short();
@@ -251,7 +258,10 @@ var strat = {
 		if(type === "buy"){
 			
 			
-			
+			if(readConfig.stopbuy === true){
+				return true;
+			}
+
 			if(this.order.balance == 0 || config.auto_buy === true){
 				this.long();
 				return true;
