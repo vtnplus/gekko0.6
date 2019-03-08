@@ -185,11 +185,9 @@ const strat = {
 
 			btcusdt = _.first(_.filter(markets, {symbol : "BTCUSDT"}));
 
-			if(btcusdt.priceChangePercent > 5){
-				return "stopbuy";
-			}
+			
 
-			if(btcusdt.priceChangePercent > -5){
+			if(btcusdt.priceChangePercent < -5 || btcusdt.priceChangePercent > 5){
 				return "sellall";
 			}
 
