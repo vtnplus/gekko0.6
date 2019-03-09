@@ -45,7 +45,7 @@ var strat = {
 		if(config.stoplost === undefined) config.stoplost = 0.00;
 
 		config.downwillbuy =  0.0275;
-		config.auto_buy = false;
+		config.auto_buy = config.detachbuy === undefined ? false : config.detachbuy;
 		rconfig = this.readConfig();
 		if(rconfig.buyPrice > 0) this.order.buy_price = rconfig.buyPrice;
 		if(rconfig.sellPrice > 0) this.order.sell_price = rconfig.sellPrice;
