@@ -21,7 +21,9 @@ var strat = {
 			"balance" : 0,
 			"date" : 0,
 			"block_time" : 0,
-			"block_stoplost_number" : 1
+			"block_stoplost_number" : 1,
+			"fixbuy" : 0,
+			"fixsell" : 0
 		}
 
 		this.addTalibIndicator('maSlow', 'sma', {optInTimePeriod :this.settings.SMA.long });
@@ -44,11 +46,17 @@ var strat = {
 		if(config.valProfit === undefined) config.valProfit = 1.75;
 		if(config.stoplost === undefined) config.stoplost = 0.00;
 
-		config.downwillbuy =  0.0275;
+		config.downwillbuy =  (config.downbuy !== undefined && config.downbuy > 0 ? config.downbuy / 100 : 0.0275);
 		config.auto_buy = config.detachbuy === undefined ? false : config.detachbuy;
+
 		rconfig = this.readConfig();
 		if(rconfig.buyPrice > 0) this.order.buy_price = rconfig.buyPrice;
 		if(rconfig.sellPrice > 0) this.order.sell_price = rconfig.sellPrice;
+		if(rconfig.fixbuy > 0) this.order.fixbuy = rconfig.fixbuy;
+		if(rconfig.fixsell > 0) this.order.fixsell = rconfig.fixsell;
+
+
+		
 
 	},
 	update : function(){
@@ -187,6 +195,7 @@ var strat = {
 		}
 
 		if(readMarkets === "stopbuy" && type == "buy"){
+			this.order.block_time = this.candle.start.unix() + 84000;
 			return false;
 		}
 		if(readMarkets === "unlockbuy" && type == "buy"){
@@ -233,23 +242,37 @@ var strat = {
 				return true;
 			}
 
-			if(this.order.date > this.order.exit_time && this.order.exit_time > 0){
-				this.order.exit_time = 0;
-				this.short();
-				return true;
-			}
-			if(config.valProfit > 0 && this.order.buy_price  > 0){
+			if(this.order.fixsell > 0){
 
-				if(price > profix && this.order.buy_price > 0){
+				if(price > this.order.fixsell ){
 					this.short();
 					return true;
 				}
 
+
 			}else{
 
-				this.short();
-				return true;
+				if(this.order.date > this.order.exit_time && this.order.exit_time > 0){
+					this.order.exit_time = 0;
+					this.short();
+					return true;
+				}
+				if(config.valProfit > 0 && this.order.buy_price  > 0){
+
+					if(price > profix && this.order.buy_price > 0){
+						this.short();
+						return true;
+					}
+
+				}else{
+
+					this.short();
+					return true;
+				}
+
 			}
+
+			
 			
 
 		}
@@ -262,16 +285,30 @@ var strat = {
 				return true;
 			}
 
-			if(this.order.balance == 0 || config.auto_buy === true){
-				this.long();
-				return true;
-			}
 
-			if(amount > this.order.amount && this.order.balance > 0){
-				//console.log(this.order.amount, amount);
-				this.long();
-				return true;
+			if(this.order.fixbuy > 0){
+				/*
+				Fix Buy Prices
+				*/
+				if(price < this.order.fixbuy){
+					this.long();
+					return true;
+				}
+
+			}else{
+
+				if(this.order.balance == 0 || config.auto_buy === true){
+					this.long();
+					return true;
+				}
+
+				if(amount > this.order.amount && this.order.balance > 0){
+					//console.log(this.order.amount, amount);
+					this.long();
+					return true;
+				}
 			}
+			
 		}
 	},
 	long : function(){

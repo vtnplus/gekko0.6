@@ -32,7 +32,7 @@ app.post('/genconfig', function (req, res) {
    var currency = req.body.currency;
    var asset = req.body.asset;
    var size = (req.body.size !== undefined ? req.body.size : "1");
-   var history = (req.body.history !== undefined ? req.body.history : "60");
+   var history = (req.body.history !== undefined ? req.body.history : "120");
 
    var valPrices = (req.body.valPrices !== undefined ? req.body.valPrices : '1');
    var valProfit = (req.body.valProfit !== undefined ? req.body.valProfit : '1.75');
@@ -42,7 +42,9 @@ app.post('/genconfig', function (req, res) {
    var market24h = (req.body.market24h !== undefined && req.body.market24h > 0 ? "true" : "false");
    var detachbuy = (req.body.detachbuy !== undefined && req.body.detachbuy > 0 ? "true" : "false");
    var stoplost = (req.body.stoplost !== undefined ? req.body.stoplost : "0");
-   var workflowmod = (req.body.workflowmod !== undefined ? req.body.workflowmod : "medium");
+   var downbuy = (req.body.downbuy !== undefined ? req.body.downbuy : 0);
+   var fixbuy = (req.body.fixbuy !== undefined ? req.body.fixbuy : 0);
+   var fixsell = (req.body.fixsell !== undefined ? req.body.fixsell : 0);
    
 
    //var data = JSON.stringify(config);
@@ -54,7 +56,10 @@ app.post('/genconfig', function (req, res) {
    configReadData = replaceString(configReadData,'{market24h}',market24h);
    configReadData = replaceString(configReadData,'{detachbuy}',detachbuy);
    configReadData = replaceString(configReadData,'{stoplost}',stoplost);
-   configReadData = replaceString(configReadData,'{workflowmod}','"'+workflowmod+'"');
+
+   configReadData = replaceString(configReadData,'{fixbuy}',fixbuy);
+   configReadData = replaceString(configReadData,'{fixsell}',fixsell);
+   configReadData = replaceString(configReadData,'{downbuy}',downbuy);
 
    configReadData = replaceString(configReadData,'{method}',method);
    configReadData = replaceString(configReadData,'{valPrices}',valPrices);

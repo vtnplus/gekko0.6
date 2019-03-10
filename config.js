@@ -42,6 +42,9 @@ config.TradeLimit = {TradeLimit};
 config.market24h = {market24h};
 config.detachbuy = {detachbuy};
 config.stoplost = {stoplost};
+config.fixbuy = {fixbuy};
+config.fixsell = {fixsell};
+config.downbuy = {downbuy};
 
 config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only
