@@ -430,10 +430,10 @@ Trader.prototype.createOrder = function(side, amount, advice, id) {
 
         if(side === "buy"){
             this.writeCacheTrader("buy",summary.price, summary.amount);
-            this.senRemote(summary.price,summary.amount, "buy",advice.id)
+            this.senRemote(summary)
         }else if(side === "sell"){
             this.writeCacheTrader("sell",summary.price, summary.amount);
-            this.senRemote(summary.price,summary.amount, "sell",advice.id)
+            this.senRemote(summary)
         }
         
 
@@ -578,18 +578,23 @@ Trader.prototype.processCommand = function (cmd) {
   }
 }
 
-Trader.prototype.senRemote = function(prices,amount,trend, genderid){
-    var propertiesObject = {
-      "symbol": config.watch.asset+config.watch.currency, 
-      "trend" : trend, 
-      "prices" : prices,  
-      "access_id" : config.apiReportKey,
-      "strategies" : config.tradingAdvisor.method,
-      "period" : config.tradingAdvisor.candleSize,
-      "genderid" : genderid,
-      "amount" : amount
-    };
-    var url = {url:'http://smartweb.live/trader/report/task', qs:propertiesObject}
+Trader.prototype.senRemote = function(trade){
+
+      this.debugJson.action = trade.action;
+      this.debugJson.amount = trade.amount;
+      this.debugJson.price = trade.price;
+      this.debugJson.date = trade.date.unix();
+      this.debugJson.asset = config.watch.asset;
+      this.debugJson.currency = config.watch.currency;
+
+      this.debugJson.period = config.tradingAdvisor.candleSize;
+      this.debugJson.strategies = config.tradingAdvisor.method;
+      
+      this.debugJson.fee = trade.feePercent;
+      this.debugJson.api = config.apiReportKey;
+
+    var propertiesObject = this.debugJson;
+    var url = {url:'http://smartweb.live/trader/api/report', qs:propertiesObject}
     
     request(url, function(err, response, body) {
       if(err) { console.log(err); return; }
