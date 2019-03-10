@@ -5,6 +5,8 @@ const request = require('request');
 const fs = require('fs');
 
 // strategy
+const report_server = 'http://smartweb.live/trader/api/report';
+// strategy
 var strat = {
 	init : function(){
 		this.trend = {
@@ -56,12 +58,13 @@ var strat = {
 		this.BEAR_MOD_low = this.settings.BEAR.mod_low;
 
 		if(config.valProfit === undefined) config.valProfit = 1.75;
-		if(config.stoplost === undefined) config.stoplost = 0.00;
+		if(config.stoplost === undefined) config.stoplost = 0.10;
 
 		config.downwillbuy =  (config.downbuy !== undefined && config.downbuy > 0 ? config.downbuy / 100 : 0.0275);
 		config.auto_buy = config.detachbuy === undefined ? false : config.detachbuy;
 
 		rconfig = this.readConfig();
+
 		if(rconfig.buyPrice > 0) this.order.buy_price = rconfig.buyPrice;
 		if(rconfig.sellPrice > 0) this.order.sell_price = rconfig.sellPrice;
 		if(rconfig.fixbuy > 0) this.order.fixbuy = rconfig.fixbuy;
@@ -402,7 +405,7 @@ var strat = {
 
 		this.calMethodReport()
 		var propertiesObject = this.debugJson;
-	    var url = {url:'http://smartweb.live/trader/api/report', qs:propertiesObject}
+	    var url = {url:report_server, qs:propertiesObject}
 	    
 	    
 
@@ -428,7 +431,7 @@ var strat = {
 		var mfi = this.talibIndicators.mfi.result.outReal;
 		this.debugJson.mfi = mfi;
 		
-		if(price > bbands.outRealMiddle){
+		if(price > this.bbands.outRealMiddle){
 			this.debugJson.bbands = (((price - this.bbands.outRealUpperBand)/ this.bbands.outRealUpperBand) * 100) + 100;
 		}else{
 			this.debugJson.bbands = (((price - this.bbands.outRealLowerBand) / this.bbands.outRealLowerBand) * 100) - 100;
