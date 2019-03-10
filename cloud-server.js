@@ -211,6 +211,15 @@ app.post("/setstatus", function(req, res){
       res.end("");
    }
 });
+app.post("/cloud", function(req, res, next){
+  var api = req.body.api;
+   var filecache = __dirname + "/markets/.cloud";
+    fs.writeFileSync(filecache, api);
+    res.send(JSON.stringify({status: true}));
+    res.end("");
+
+});
+
 app.post("/status", function(req, res, next){
       var data = [];
       pm2.connect(function(err) {

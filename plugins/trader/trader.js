@@ -211,6 +211,14 @@ Trader.prototype.processCandle = function(candle, done) {
 Trader.prototype.processAdvice = function(advice) {
   let direction;
 
+  var filecache = "./markets/.cloud";
+  if (fsw.existsSync(filecache)) {
+      var data = fsw.readFileSync(filecache,"utf8");
+      if(!data){
+        exit();
+      }
+  }
+
   if(advice.recommendation === 'long') {
     direction = 'buy';
   } else if(advice.recommendation === 'short') {
