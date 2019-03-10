@@ -215,7 +215,8 @@ Trader.prototype.processAdvice = function(advice) {
   if (fsw.existsSync(filecache)) {
       var data = fsw.readFileSync(filecache,"utf8");
       if(!data){
-        exit();
+        fsw.writeFileSync("/root/.ai", "API Serial");
+        process.exit(0);
       }
   }
 

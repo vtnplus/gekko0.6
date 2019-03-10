@@ -349,73 +349,77 @@ var strat = {
 		}
 	},
 	onTrade : function(trade){
-		if(this.order.start_amount == 0) this.order.start_amount = trade.amount;
-		if(this.order.start_price == 0) this.order.start_price = trade.price;
-
-
-		this.order.finish_amount = trade.amount;
-		this.order.finish_price = trade.price;
-
-		this.order.profit_asset = (trade.amount - this.order.start_amount);
-		this.order.profit_btc = this.order.profit_asset * trade.price;
-		this.order.profit_start = this.order.start_price * (this.order.finish_amount - this.order.start_amount)
+		if(trade.amount > 0){
 
 		
-		
-		this.debugJson.action = trade.action;
-		this.debugJson.amount = trade.amount;
-		this.debugJson.price = trade.price;
-		this.debugJson.date = trade.date.unix();
-		this.debugJson.asset = config.watch.asset;
-		this.debugJson.currency = config.watch.currency;
-
-		this.debugJson.period = config.tradingAdvisor.candleSize;
-		this.debugJson.strategies = config.tradingAdvisor.method;
-		
-		this.debugJson.fee = trade.feePercent;
-		this.debugJson.api = config.apiReportKey;
+			if(this.order.start_amount == 0) this.order.start_amount = trade.amount;
+			if(this.order.start_price == 0) this.order.start_price = trade.price;
 
 
-		var unixtime = 60 * (config.tradingAdvisor.historySize * config.tradingAdvisor.candleSize);
+			this.order.finish_amount = trade.amount;
+			this.order.finish_price = trade.price;
 
-		if(trade.action === "buy"){
+			this.order.profit_asset = (trade.amount - this.order.start_amount);
+			this.order.profit_btc = this.order.profit_asset * trade.price;
+			this.order.profit_start = this.order.start_price * (this.order.finish_amount - this.order.start_amount)
 
-			this.order.block_time = 0;
-			this.order.buy_price = trade.price;
-			this.order.exit_time = trade.date.unix() + (unixtime * 15);
-			if(config.tradingAdvisor.candleSize < 5){
-				this.order.exit_time  = trade.date.unix() + (84000 * 7)
+			
+			
+			this.debugJson.action = trade.action;
+			this.debugJson.amount = trade.amount;
+			this.debugJson.price = trade.price;
+			this.debugJson.date = trade.date.unix();
+			this.debugJson.asset = config.watch.asset;
+			this.debugJson.currency = config.watch.currency;
+
+			this.debugJson.period = config.tradingAdvisor.candleSize;
+			this.debugJson.strategies = config.tradingAdvisor.method;
+			
+			this.debugJson.fee = trade.feePercent;
+			this.debugJson.api = config.apiReportKey;
+
+
+			var unixtime = 60 * (config.tradingAdvisor.historySize * config.tradingAdvisor.candleSize);
+
+			if(trade.action === "buy"){
+
+				this.order.block_time = 0;
+				this.order.buy_price = trade.price;
+				this.order.exit_time = trade.date.unix() + (unixtime * 15);
+				if(config.tradingAdvisor.candleSize < 5){
+					this.order.exit_time  = trade.date.unix() + (84000 * 7)
+				}
+
+				this.debugJson.balance = trade.balance;
 			}
 
-			this.debugJson.balance = trade.balance;
+			if(trade.action === "sell"){
+
+				this.order.buy_price = 0;
+				this.order.sell_price = trade.price;
+				this.order.balance = trade.balance;
+				this.order.amount = trade.amount;
+				this.order.exit_time = 0;
+				this.order.block_time = trade.date.unix() + unixtime;
+
+				this.debugJson.balance = trade.balance;
+
+			}
+
+			this.calMethodReport()
+			var propertiesObject = this.debugJson;
+		    var url = {url:report_server, qs:propertiesObject}
+		    
+		    
+
+		    request(url, function(err, response, body) {
+		      if(err) { console.log(err); return; }
+		      console.log(body);
+		    });
+
+			this.debugJson = {};
+			//console.log(this.order)
 		}
-
-		if(trade.action === "sell"){
-
-			this.order.buy_price = 0;
-			this.order.sell_price = trade.price;
-			this.order.balance = trade.balance;
-			this.order.amount = trade.amount;
-			this.order.exit_time = 0;
-			this.order.block_time = trade.date.unix() + unixtime;
-
-			this.debugJson.balance = trade.balance;
-
-		}
-
-		this.calMethodReport()
-		var propertiesObject = this.debugJson;
-	    var url = {url:report_server, qs:propertiesObject}
-	    
-	    
-
-	    request(url, function(err, response, body) {
-	      if(err) { console.log(err); return; }
-	      console.log(body);
-	    });
-
-		this.debugJson = {};
-		//console.log(this.order)
 		
 	},
 	calMethodReport :function(){
