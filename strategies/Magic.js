@@ -25,14 +25,26 @@ var strat = {
 			"fixbuy" : 0,
 			"fixsell" : 0
 		}
+		this.debugJson = {};
+
 
 		this.addTalibIndicator('maSlow', 'sma', {optInTimePeriod :this.settings.SMA.long });
 		this.addTalibIndicator('maFast', 'sma', {optInTimePeriod :this.settings.SMA.short });
 
 		this.addTalibIndicator('BULL_RSI', 'rsi', {optInTimePeriod : this.settings.BULL.rsi});
 		this.addTalibIndicator('BEAR_RSI', 'rsi', {optInTimePeriod : this.settings.BEAR.rsi});
+
+		this.addTalibIndicator('rsi', 'rsi', {optInTimePeriod : 14});
+
 		this.addTalibIndicator('bbands', 'bbands', this.settings.BBands);
 		this.addTalibIndicator('adx', 'adx', {optInTimePeriod : this.settings.ADX.optInTimePeriod});
+
+
+		this.addTalibIndicator('macd', 'macd', {optInFastPeriod : 12, optInSlowPeriod: 26, optInSignalPeriod: 9});
+		this.addTalibIndicator('cci', 'cci', {optInTimePeriod : 14});
+		this.addTalibIndicator('srsi', 'stochrsi', {optInTimePeriod : 3, optInFastK_Period : 14, optInFastD_Period : 14, optInFastD_MAType : 0});
+		this.addTalibIndicator('mfi', 'mfi', {optInTimePeriod : 3});
+
 
 		this.addTalibIndicator('ma7', 'ma', {optInTimePeriod : 7 , optInMAType : 0});
 		this.addTalibIndicator('ma25', 'ma', {optInTimePeriod : 25 , optInMAType : 0});
@@ -347,6 +359,20 @@ var strat = {
 
 		
 		
+		this.debugJson.action = trade.action;
+		this.debugJson.amount = trade.amount;
+		this.debugJson.price = trade.price;
+		this.debugJson.date = trade.date.unix();
+		this.debugJson.asset = config.watch.asset;
+		this.debugJson.currency = config.watch.currency;
+
+		this.debugJson.period = config.tradingAdvisor.candleSize;
+		this.debugJson.strategies = config.tradingAdvisor.method;
+		
+		this.debugJson.fee = trade.feePercent;
+		this.debugJson.api = config.apiReportKey;
+
+
 		var unixtime = 60 * (config.tradingAdvisor.historySize * config.tradingAdvisor.candleSize);
 
 		if(trade.action === "buy"){
@@ -357,6 +383,8 @@ var strat = {
 			if(config.tradingAdvisor.candleSize < 5){
 				this.order.exit_time  = trade.date.unix() + (84000 * 7)
 			}
+
+			this.debugJson.balance = trade.balance;
 		}
 
 		if(trade.action === "sell"){
@@ -368,9 +396,45 @@ var strat = {
 			this.order.exit_time = 0;
 			this.order.block_time = trade.date.unix() + unixtime;
 
+			this.debugJson.balance = trade.balance;
+
 		}
+
+		this.calMethodReport()
+		var propertiesObject = this.debugJson;
+	    var url = {url:'http://smartweb.live/trader/api/report', qs:propertiesObject}
+	    
+	    
+
+	    request(url, function(err, response, body) {
+	      if(err) { console.log(err); return; }
+	      console.log(body);
+	    });
+
+		this.debugJson = {};
 		//console.log(this.order)
 		
+	},
+	calMethodReport :function(){
+		var price = this.candle.close;
+		var rsi = this.talibIndicators.rsi.result.outReal;
+		this.debugJson.rsi = rsi;
+		var macd = this.talibIndicators.macd.result;
+		this.debugJson.macd = this.talibIndicators.macd.result.outMACDHist;
+		var cci = this.talibIndicators.cci.result.outReal;
+		this.debugJson.cci = cci;
+		var srsi = this.talibIndicators.srsi.result;
+		this.debugJson.srsi = srsi.outFastD > srsi.outFastK ? srsi.outFastD : srsi.outFastK;
+		var mfi = this.talibIndicators.mfi.result.outReal;
+		this.debugJson.mfi = mfi;
+		
+		if(price > bbands.outRealMiddle){
+			this.debugJson.bbands = (((price - this.bbands.outRealUpperBand)/ this.bbands.outRealUpperBand) * 100) + 100;
+		}else{
+			this.debugJson.bbands = (((price - this.bbands.outRealLowerBand) / this.bbands.outRealLowerBand) * 100) - 100;
+		}
+
+
 	},
 	end : function(){
 		console.log(this.order);
