@@ -140,7 +140,8 @@ app.post('/task', function (req, res) {
 app.post('/system', function (req, res) {
   var cmd = req.body.cmd;
     if(cmd === "update"){
-      if(shell.exec('git pull').code !== 0){
+      
+      if(shell.exec('cd /opt/aitrader && rm -rf package.json && rm -rf ./markets/cloud.json && git pull && systemctl restart cloud').code !== 0){
          res.send(JSON.stringify({status: true}));
       }
     }
