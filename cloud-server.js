@@ -38,11 +38,11 @@ app.post('/genconfig', function (req, res) {
    var valProfit = (req.body.valProfit !== undefined ? req.body.valProfit : '1.75');
    var TradeLimit = (req.body.TradeLimit !== undefined ? req.body.TradeLimit : '0.1');
    var apiReportKey = (req.body.apiReportKey !== undefined ? req.body.apiReportKey : "");
-   var method = (req.body.methodAI !== undefined ? req.body.methodAI : "BNB_Trader");
+   var method = (req.body.methodAI !== undefined && req.body.methodAI != "" ? req.body.methodAI : "Magic");
    var market24h = (req.body.market24h !== undefined && req.body.market24h > 0 ? "true" : "false");
    var detachbuy = (req.body.detachbuy !== undefined && req.body.detachbuy > 0 ? "true" : "false");
    var stoplost = (req.body.stoplost !== undefined ? req.body.stoplost : "0");
-   var downbuy = (req.body.downbuy !== undefined ? req.body.downbuy : "1.75");
+   var downbuy = (req.body.downbuy !== undefined && req.body.downbuy > 0 ? req.body.downbuy : "1.75");
    var fixbuy = (req.body.fixbuy !== undefined && req.body.fixbuy > 0 ? req.body.fixbuy : "0");
    var fixsell = (req.body.fixsell !== undefined && req.body.fixsell > 0 ? req.body.fixsell : "0");
    
