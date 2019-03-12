@@ -98,7 +98,7 @@ app.post("/config", function (req, res) {
     if(contents.fixbuy) readCache.fixbuy = contents.fixbuy;
     if(contents.fixsell) readCache.fixsell = contents.fixsell;
     var makeJson = JSON.stringify(readCache);
-    fsw.writeFileSync(fileCache, makeJson);
+    fs.writeFileSync(fileCache, makeJson);
     
   }
   res.end("");
