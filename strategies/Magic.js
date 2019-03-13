@@ -89,7 +89,7 @@ var strat = {
 
 
 		this.order.date = this.candle.start.unix();
-		
+		console.log("Update");
 	},
 	check : function(){
 		var price = this.candle.close;
