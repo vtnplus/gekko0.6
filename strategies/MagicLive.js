@@ -80,6 +80,10 @@ var strat = {
 
 		this.order.date = this.candle.start.unix();
 		
+		
+		
+	},
+	check : function(){
 		var sellPrice = this.buyprice + (this.buyprice * this.profit);
 
 		var readMarkets = this.readMarkets();
@@ -95,10 +99,6 @@ var strat = {
 			}
 		}
 
-		
-	},
-	check : function(){
-		
 	},
 
 	readConfig : function(){
