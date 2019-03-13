@@ -138,10 +138,7 @@ var strat = {
 			}
 		}
 
-		var targetAll = this.readTargetsAll();
-		if(targetAll.targets !== undefined && targetAll.targets === "sellall"){
-			return "sellall";
-		}
+		
 		
 
 		return false;
