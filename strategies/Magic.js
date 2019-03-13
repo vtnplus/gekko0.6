@@ -89,7 +89,11 @@ var strat = {
 
 
 		this.order.date = this.candle.start.unix();
-		console.log("Update");
+		var targetAll = this.readTargetsAll();
+		if(targetAll.targets !== undefined && targetAll.targets === "sellnow"){
+			this.order.block_time = this.candle.start.unix() + 84000;
+			this.short();
+		}
 	},
 	check : function(){
 		var price = this.candle.close;
@@ -134,14 +138,7 @@ var strat = {
 		}
 
 
-		var targetAll = this.readTargetsAll();
-		if(targetAll.targets !== undefined && targetAll.targets === "sellnow"){
-			this.order.block_time = this.candle.start.unix() + 84000;
-			this.advice('short');
-			return true;
-		}
-
-		console.log(targetAll)
+		
 
 		if(rsi > rsi_hi && zone === "high"){
 			//console.log("Sell : ",rsi, isTrend)
