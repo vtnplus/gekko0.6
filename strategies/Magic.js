@@ -137,7 +137,7 @@ var strat = {
 		var targetAll = this.readTargetsAll();
 		if(targetAll.targets !== undefined && targetAll.targets === "sellnow"){
 			this.order.block_time = this.candle.start.unix() + 84000;
-			this.short();
+			this.advice('short');
 			return true;
 		}
 
@@ -229,7 +229,7 @@ var strat = {
 
 			//var unixtime = 60 * (240 * config.tradingAdvisor.candleSize);
 			this.order.block_time = this.candle.start.unix() + 84000;
-			this.short();
+			this.advice('short');
 			return true;
 		}
 
