@@ -141,7 +141,7 @@ var strat = {
 			return true;
 		}
 
-		//console.log(rsi)
+		console.log(targetAll)
 
 		if(rsi > rsi_hi && zone === "high"){
 			//console.log("Sell : ",rsi, isTrend)
