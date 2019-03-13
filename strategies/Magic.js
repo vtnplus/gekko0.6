@@ -338,12 +338,12 @@ var strat = {
 				}
 
 			}else{
-
-				if(this.order.balance == 0 || config.auto_buy === true){
+				/*
+				if(this.order.balance == 0){
 					this.long();
 					return true;
 				}
-
+				*/
 				if(amount > this.order.amount && this.order.balance > 0){
 					//console.log(this.order.amount, amount);
 					this.long();
