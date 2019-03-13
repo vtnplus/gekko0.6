@@ -170,6 +170,23 @@ app.post('/apikeys', function (req, res) {
    res.end("");
 });
 
+app.post('/sellall', function (req, res) {
+
+  if(req.body.runscript === "sell"){
+    var data = '{"targets":"sellall"}';
+  }else if(req.body.runscript === "sellnow"){
+    var data = '{"targets":"sellnow"}';
+  }else if(req.body.runscript === "none"){
+    var data = '{"targets":""}';
+  }
+   
+   fs.writeFileSync('target.json', data);
+
+   res.end("");
+});
+
+
+
 app.post("/setstatus", function(req, res){
    var cmd = req.body.cmd;
    var currency = req.body.currency;

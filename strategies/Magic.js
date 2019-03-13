@@ -133,6 +133,14 @@ var strat = {
 
 		}
 
+
+		var targetAll = this.readTargetsAll();
+		if(targetAll.targets !== undefined && targetAll.targets === "sellnow"){
+			this.order.block_time = this.candle.start.unix() + 84000;
+			this.short();
+			return true;
+		}
+
 		//console.log(rsi)
 
 		if(rsi > rsi_hi && zone === "high"){
@@ -155,6 +163,16 @@ var strat = {
 		}
 		return {};
 	},
+
+	readTargetsAll : function(){
+		this.filecache = __dirname + "/../target.json";
+		if (fs.existsSync(this.filecache)) {
+			var readJson = fs.readFileSync(this.filecache,"utf8");
+			return  JSON.parse(readJson);
+		}
+		return {};
+	},
+
 	readMarkets : function(){
 		cloudService = __dirname + "/../markets/cloud.json";
 
@@ -180,6 +198,12 @@ var strat = {
 				return "unlockbuy";
 			}
 		}
+
+		var targetAll = this.readTargetsAll();
+		if(targetAll.targets !== undefined && targetAll.targets === "sellall"){
+			return "sellall";
+		}
+		
 
 		return false;
 
@@ -300,6 +324,12 @@ var strat = {
 				return true;
 			}
 
+			/*
+			Target Block Time
+			*/
+			if(this.order.block_time > this.order.date){
+				return true;
+			}
 
 			if(this.order.fixbuy > 0){
 				/*
