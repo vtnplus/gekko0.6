@@ -29,22 +29,32 @@ config.watch = {
 
 config.tradingAdvisor = {
   enabled: true,
-  method: '{method}',
+  method: 'Magic',
   candleSize: {size},
   historySize: {history},
 }
 
-config.{method} = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
+config.Magic = toml.parse(fs.readFileSync(__dirname + "/config/strategies/"+config.tradingAdvisor.method+".toml", 'utf8'));
 
-config.valPrices = {valPrices};
-config.valProfit = {valProfit};// Default 1.75
+
+config.profit = {profit}/100;// Default 1.75
 config.TradeLimit = {TradeLimit};
 config.market24h = {market24h};
-config.detachbuy = {detachbuy};
-config.stoplost = {stoplost};
-config.fixbuy = {fixbuy};
-config.fixsell = {fixsell};
-config.downbuy = {downbuy};
+
+config.stoplost = {stoplost}/100;//%%
+config.stoplostexit = {stoplostexit};//days
+
+config.fixsell = {fixsell};//price
+config.exitsell = {exitsell};//days
+
+config.fixbuy = {fixbuy};//prices
+config.downbuy = {downbuy}/100;//%%
+config.exitbuy = {exitbuy};// days
+config.exitbuyfix = {exitbuyfix};//days
+config.buydump = {buydump}/100;// %%
+
+config.convercurrency = {convercurrency};
+config.converbtc = {converbtc};
 
 config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only

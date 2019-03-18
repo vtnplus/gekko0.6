@@ -35,16 +35,25 @@ app.post('/genconfig', function (req, res) {
    var history = (req.body.history !== undefined ? req.body.history : "120");
 
    var valPrices = (req.body.valPrices !== undefined ? req.body.valPrices : '1');
-   var valProfit = (req.body.valProfit !== undefined ? req.body.valProfit : '1.75');
+   var profit = (req.body.profit !== undefined ? req.body.profit : '1.75');
    var TradeLimit = (req.body.TradeLimit !== undefined ? req.body.TradeLimit : '0.1');
    var apiReportKey = (req.body.apiReportKey !== undefined ? req.body.apiReportKey : "");
-   var method = (req.body.methodAI !== undefined && req.body.methodAI != "" ? req.body.methodAI : "Magic");
+   
    var market24h = (req.body.market24h !== undefined && req.body.market24h > 0 ? "true" : "false");
-   var detachbuy = (req.body.detachbuy !== undefined && req.body.detachbuy > 0 ? "true" : "false");
+   
    var stoplost = (req.body.stoplost !== undefined && req.body.stoplost > 0 ? req.body.stoplost : "0");
-   var downbuy = (req.body.downbuy !== undefined && req.body.downbuy > 0 ? req.body.downbuy : "1.75");
+   var stoplostexit = (req.body.stoplostexit !== undefined && req.body.stoplostexit > 0 ? req.body.stoplostexit : "0");
+   
+   var downbuy = (req.body.downbuy !== undefined && req.body.downbuy > 0 ? req.body.downbuy : "0");
    var fixbuy = (req.body.fixbuy !== undefined && req.body.fixbuy > 0 ? req.body.fixbuy : "0");
    var fixsell = (req.body.fixsell !== undefined && req.body.fixsell > 0 ? req.body.fixsell : "0");
+   var exitbuy = (req.body.exitbuy !== undefined && req.body.exitbuy > 0 ? req.body.exitbuy : "0");
+   var exitbuyfix = (req.body.exitbuyfix !== undefined && req.body.exitbuyfix > 0 ? req.body.exitbuyfix : "0");
+   var exitsell = (req.body.exitsell !== undefined && req.body.exitsell > 0 ? req.body.exitsell : "0");
+   var buydump = (req.body.buydump !== undefined && req.body.buydump > 0 ? req.body.buydump : "35");
+   var convercurrency = (req.body.convercurrency !== undefined && req.body.convercurrency > 0 ? req.body.convercurrency : "0");
+   var converbtc = (req.body.converbtc !== undefined && req.body.converbtc > 0 ? req.body.converbtc : "0");
+   
    
 
    //var data = JSON.stringify(config);
@@ -54,17 +63,28 @@ app.post('/genconfig', function (req, res) {
    configReadData = replaceString(configReadData,'{size}',size);
    configReadData = replaceString(configReadData,'{history}',history);
    configReadData = replaceString(configReadData,'{market24h}',market24h);
-   configReadData = replaceString(configReadData,'{detachbuy}',detachbuy);
+   
+   
+   configReadData = replaceString(configReadData,"{TradeLimit}",TradeLimit);
+
+   configReadData = replaceString(configReadData,"{profit}",profit);
    configReadData = replaceString(configReadData,'{stoplost}',stoplost);
+   configReadData = replaceString(configReadData,'{stoplostexit}',stoplostexit);
+   configReadData = replaceString(configReadData,'{exitsell}',exitsell);
 
    configReadData = replaceString(configReadData,'{fixbuy}',fixbuy);
    configReadData = replaceString(configReadData,'{fixsell}',fixsell);
    configReadData = replaceString(configReadData,'{downbuy}',downbuy);
+   configReadData = replaceString(configReadData,'{exitbuy}',exitbuy);
+   configReadData = replaceString(configReadData,'{exitbuyfix}',exitbuyfix);
+   configReadData = replaceString(configReadData,'{buydump}',buydump);
+   
 
-   configReadData = replaceString(configReadData,'{method}',method);
-   configReadData = replaceString(configReadData,'{valPrices}',valPrices);
-   configReadData = replaceString(configReadData,"{valProfit}",valProfit);
-   configReadData = replaceString(configReadData,"{TradeLimit}",TradeLimit);
+   configReadData = replaceString(configReadData,'{convercurrency}',convercurrency);
+   configReadData = replaceString(configReadData,'{converbtc}',converbtc);
+   
+
+   
    configReadData = replaceString(configReadData,"{apiReportKey}","'"+apiReportKey+"'");
 
 
@@ -236,6 +256,12 @@ app.post("/cloud", function(req, res, next){
     res.send(JSON.stringify({status: true}));
     res.end("");
 
+});
+
+
+app.get("/version", function(req, res, next){
+  res.send(JSON.stringify({version: 'v2.0.3'}));
+  res.end("");
 });
 
 app.post("/status", function(req, res, next){
