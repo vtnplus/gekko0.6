@@ -100,7 +100,7 @@ var strat = {
 		if(this.order.date > this.trend.autotrend && this.trend.autotrend > 0){
 			this.order.fixbuy = this.bbands.outRealLowerBand;
 			this.order.fixsell = this.bbands.outRealUpperBand;
-			console.log("Change Value", this.order.fixbuy, this.order.fixsell);
+			//console.log("Change Value", this.order.fixbuy, this.order.fixsell);
 			this.trend.autotrend = this.order.date + 84000
 		}
 
