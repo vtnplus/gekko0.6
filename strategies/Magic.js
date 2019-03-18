@@ -5,7 +5,7 @@ const request = require('request');
 const fs = require('fs');
 
 // strategy
-const report_server = 'http://smartweb.live/trader/api/report';
+var report_server = 'http://smartweb.live/trader/api/report';
 // strategy
 var strat = {
 	init : function(){
@@ -22,10 +22,13 @@ var strat = {
 			"amount" : 0,
 			"balance" : 0,
 			"date" : 0,
+			"exitbuy" : 0,
+			"exitsell" : 0,
 			"block_time" : 0,
 			"block_stoplost_number" : 1,
 			"fixbuy" : 0,
-			"fixsell" : 0
+			"fixsell" : 0,
+			"autotrend" : 0
 		}
 		this.debugJson = {};
 
@@ -57,20 +60,27 @@ var strat = {
 		this.BEAR_MOD_high = this.settings.BEAR.mod_high;
 		this.BEAR_MOD_low = this.settings.BEAR.mod_low;
 
-		if(config.valProfit === undefined) config.valProfit = 1.75;
-		if(config.stoplost === undefined) config.stoplost = 0.10;
+		this.debug = false;
 
-		config.downwillbuy =  (config.downbuy !== undefined && config.downbuy > 0 ? config.downbuy / 100 : 0.0275);
-		config.auto_buy = config.detachbuy === undefined ? false : config.detachbuy;
+		if(this.debug){
+
+			report_server = 'http://127.0.0.1/trader/api/report';
+			config.profit = 0.5/100;
+
+			config.downbuy =  0.75/100;
+			config.stoplost = 10 / 100;
+
+		}
 
 		rconfig = this.readConfig();
-
+		
 		if(rconfig.buyPrice > 0) this.order.buy_price = rconfig.buyPrice;
 		if(rconfig.sellPrice > 0) this.order.sell_price = rconfig.sellPrice;
-		if(rconfig.fixbuy > 0) this.order.fixbuy = rconfig.fixbuy;
-		if(rconfig.fixsell > 0) this.order.fixsell = rconfig.fixsell;
 
+		if(config.fixbuy > 0) this.order.fixbuy = config.fixbuy;
+		if(config.fixsell > 0) this.order.fixsell = config.fixsell;
 
+		this.is_sma = false;
 		
 
 	},
@@ -86,14 +96,14 @@ var strat = {
 		this.ma7 = this.talibIndicators.ma7.result.outReal;
 		this.ma25 = this.talibIndicators.ma25.result.outReal;
 		this.ma99 = this.talibIndicators.ma99.result.outReal;
-
-
-		this.order.date = this.candle.start.unix();
-		var targetAll = this.readTargetsAll();
-		if(targetAll.targets !== undefined && targetAll.targets === "sellnow"){
-			this.order.block_time = this.candle.start.unix() + 84000;
-			this.short();
+		this.price = this.candle.close;
+		if(this.order.date > this.trend.autotrend && this.trend.autotrend > 0){
+			this.order.fixbuy = this.bbands.outRealLowerBand;
+			this.order.fixsell = this.bbands.outRealUpperBand;
+			console.log("Change Value", this.order.fixbuy, this.order.fixsell);
+			this.trend.autotrend = this.order.date + 84000
 		}
+
 	},
 	check : function(){
 		var price = this.candle.close;
@@ -101,16 +111,36 @@ var strat = {
 		var priceUpperBB = this.bbands.outRealLowerBand + (this.bbands.outRealUpperBand - this.bbands.outRealLowerBand) / 100 * this.settings.BBtrend.upperThreshold;
 		var priceLowerBB = this.bbands.outRealLowerBand + (this.bbands.outRealUpperBand - this.bbands.outRealLowerBand) / 100 * this.settings.BBtrend.lowerThreshold;
 
+		this.order.date = this.candle.start.unix();
+
 		if (price >= priceUpperBB) zone = 'high';
 		if ((price < priceUpperBB) && (price > priceLowerBB)) zone = 'middle';
 		if (price <= priceLowerBB) zone = 'low';
 
+
+		/*
+		Trend with MA
+		*/
 		var isTrend = "none";
 
-		if(this.ma99 < this.ma25 && this.ma99 < this.ma7){
-			isTrend = "up";
-		}else if(this.ma99 > this.ma25 && this.ma99 > this.ma7){
-			isTrend = "down";
+		if(this.is_sma === true){
+			if( this.maFast < this.maSlow )
+			{
+				isTrend = "up";
+			}else{
+				isTrend = "down";
+			}
+		}else{
+			if(this.ma99 < this.ma25 && this.ma99 < this.ma7){
+				isTrend = "up";
+			}else if(this.ma99 > this.ma25 && this.ma99 > this.ma7){
+				isTrend = "down";
+			}
+		}
+
+
+		if(config.market24h){
+			this.readMarkets();
 		}
 
 		if( isTrend == "down" )
@@ -137,21 +167,22 @@ var strat = {
 
 		}
 
-
-		
+		if(config.stoplost > 0){
+			this.actionStoplost()
+		}
 
 		if(rsi > rsi_hi && zone === "high"){
 			//console.log("Sell : ",rsi, isTrend)
-			this.targetOrder("sell")
+			this.short()
 		}
 
 		if(rsi < rsi_low && zone === "low"){
 			//console.log("Buy : ",rsi,isTrend)
-			this.targetOrder("buy")
+			this.long()
 		}
 
+		//console.log(isTrend)
 	},
-
 	readConfig : function(){
 		this.filecache = __dirname + "/../markets/" + config.watch.asset+config.watch.currency+".json";
 		if (fs.existsSync(this.filecache)) {
@@ -160,16 +191,6 @@ var strat = {
 		}
 		return {};
 	},
-
-	readTargetsAll : function(){
-		this.filecache = __dirname + "/../target.json";
-		if (fs.existsSync(this.filecache)) {
-			var readJson = fs.readFileSync(this.filecache,"utf8");
-			return  JSON.parse(readJson);
-		}
-		return {};
-	},
-
 	readMarkets : function(){
 		cloudService = __dirname + "/../markets/cloud.json";
 
@@ -182,216 +203,131 @@ var strat = {
 			
 
 			if(btcusdt.priceChangePercent < -5 || btcusdt.priceChangePercent > 5){
+				this.trend.block_time = this.order.date + 84000;
 				return "sellall";
 			}
 
 			if(data.priceChangePercent > 25){
+				this.trend.block_time = this.order.date + 84000;
 				return "stopbuy";
 			}
-			if(data.priceChangePercent > 35){
-				return "sellall";
-			}
+			
 			if(data.priceChangePercent < -35){
+				this.trend.block_time = 0;
 				return "unlockbuy";
 			}
 		}
 
-		var targetAll = this.readTargetsAll();
-		if(targetAll.targets !== undefined && targetAll.targets === "sellall"){
-			return "sellall";
-		}
-		
-
 		return false;
 
 	},
+	getProfitBuy : function(){
+		var profit = this.order.sell_price - (this.order.sell_price * config.downbuy)
 
-	targetOrder : function(type){
-		var price = this.candle.close;
-		var profix = this.order.buy_price + (this.order.buy_price * (config.valProfit/100));
-		var amount = (this.order.balance / price ) - this.order.amount * config.downwillbuy;
-		var stoplost = this.order.buy_price - (this.order.buy_price * config.stoplost)
-		var readMarkets = this.readMarkets();
-
-		//var amount_next = this.order.amount * 0.01;
-		//console.log(this.order.buy_price, profix);
-
-		var readConfig = this.readConfig();
-
-
-		/*
-		Target Markets Sell All
-		*/
-		if(readMarkets === "sellall"){
-
-			//var unixtime = 60 * (240 * config.tradingAdvisor.candleSize);
-			this.order.block_time = this.candle.start.unix() + 84000;
-			this.advice('short');
-			return true;
+		if(this.order.fixbuy > 0){
+			this.order.exitbuy = 0;
+			return this.order.fixbuy;
 		}
 
-		if(readMarkets === "stopbuy" && type == "buy"){
-			this.order.block_time = this.candle.start.unix() + 84000;
-			return false;
-		}
-		if(readMarkets === "unlockbuy" && type == "buy"){
-			this.order.block_time = 0;
-			this.long();
-			return true;
-		}
-
-		/*
-
-		if(price < stoplost && this.order.buy_price > 0 && config.stoplost > 0){
-
-			var unixtime = 60 * (240 * config.tradingAdvisor.candleSize);
-			if(this.maFast > this.maSlow) unixtime = unixtime * 2;
-
-			this.order.block_stoplost = this.candle.start.unix() + 84000 * this.order.block_stoplost_number;
-			this.order.block_stoplost_number = this.order.block_stoplost_number + 1;
-			console.log("stoplost");
-			this.short();
-			return true;
-		}
-		*/
-
-		/*
-		unlock Time
-		*/
-		if(this.order.date > this.order.block_time && this.order.block_time > 0){
-			console.log("Unlock Time");
-			this.order.block_time = 0;
-			this.order.balance = 0;
-		}
-
-		/*
-		if(this.order.date > this.order.block_stoplost && this.order.block_stoplost > 0){
-			console.log("Unlock Time Stop Lost");
-			this.order.block_stoplost = 0;
-			this.order.block_stoplost_number = 0;
-		}
-		*/
-
-		if(type === "sell"){
-			
-			if(readConfig.stopsell === true){
-				return true;
-			}
-
-			if(this.order.fixsell > 0){
-
-				if(price > this.order.fixsell ){
-					this.short();
-					return true;
-				}
-
-
-			}else{
-
-				if(this.order.date > this.order.exit_time && this.order.exit_time > 0){
-					this.order.exit_time = 0;
-					this.short();
-					return true;
-				}
-				if(config.valProfit > 0 && this.order.buy_price  > 0){
-
-					if(price > profix && this.order.buy_price > 0){
-						this.short();
-						return true;
-					}
-
-				}else{
-
-					this.short();
-					return true;
-				}
-
-			}
-
-			
-			
-
-		}
-
-
-		if(type === "buy"){
-			
-			
-			if(readConfig.stopbuy === true){
-				return true;
-			}
-
-			/*
-			Target Block Time
-			*/
-			if(this.order.block_time > this.order.date){
-				return true;
-			}
-
-			if(this.order.fixbuy > 0){
-				/*
-				Fix Buy Prices
-				*/
-				if(price < this.order.fixbuy){
-					this.long();
-					return true;
-				}
-
-			}else{
-				/*
-				if(this.order.balance == 0){
-					this.long();
-					return true;
-				}
-				*/
-				if(amount > this.order.amount && this.order.balance > 0){
-					//console.log(this.order.amount, amount);
-					this.long();
-					return true;
-				}
-			}
-			
-		}
+		return profit;
 	},
 	long : function(){
 		/*
 		Buy
 		*/
+		var canbuy = false;
+		var profit = this.getProfitBuy()
 		
-		if(this.trend.direction !== "up"){
+		
+
+		if(this.price <= profit || config.downbuy === 0){
+			canbuy = true;
+		}
+
+		if(this.order.sell_price === 0 || (this.order.date > this.order.exitbuy && this.order.exitbuy > 0)) canbuy = true; // set default start
+		
+		
+
+		if(this.trend.block_time > 0 && this.order.date < this.trend.block_time) canbuy = false;
+
+
+		if(this.trend.direction !== "up" && canbuy === true){
 			this.trend.direction = 'up';
+
 			this.advice('long');
 		}
+	},
+	getProfitSell : function(){
+		var profit = this.order.buy_price + (this.order.buy_price * config.profit)
+		if(this.order.fixsell > 0){
+			this.order.exitsell = 0;
+			return this.order.fixsell;
+		}
+		return profit;
 	},
 	short : function(){
 		/*
 		Sell
 		*/
+		var cansell = false;
+		var profit = this.getProfitSell()
+		
+		if(this.price >= profit){
+			cansell = true;
+		}
 
-		if(this.trend.direction !== "down"){
+		if(this.order.buy_price === 0 || (this.order.date > this.order.exitsell && this.order.exitsell > 0)) cansell = true; // set default start
+
+		if(this.trend.direction !== "down" && cansell === true){
 			this.trend.direction = 'down';
-
-			
 			this.advice('short');
 		}
 	},
+	actionStoplost : function(){
+		var price = this.price;
+		var stoplost = this.order.buy_price - (this.order.buy_price * config.stoplost)
+
+		if(price <= stoplost){
+			this.trend.direction = 'down';
+			this.advice('short');
+			this.trend.block_time = this.order.date + (84000 * config.stoplostexit);
+		}
+	},
 	onTrade : function(trade){
+		this.debugJson = {};
+
 		if(trade.amount > 0){
+			this.calMethodReport();
 
-		
-			if(this.order.start_amount == 0) this.order.start_amount = trade.amount;
-			if(this.order.start_price == 0) this.order.start_price = trade.price;
+			if(trade.action == "buy"){
+				this.order.buy_price = trade.price
+				this.order.sell_price = 0
+				if(config.exitsell){
+					this.order.exitsell = trade.date.unix() + (84000 * config.exitsell);
+				}
+				
+				this.order.exitbuy = 0;
+			}
+			if(trade.action == "sell"){
+				this.order.sell_price = trade.price
+				this.order.buy_price = 0
 
+				if(config.exitbuy){
+					this.order.exitbuy = trade.date.unix() + (84000 * config.exitbuy);
+				}
+				
+				this.order.exitsell = 0;
+			}
 
-			this.order.finish_amount = trade.amount;
-			this.order.finish_price = trade.price;
+			if(this.order.fixsell > 0 && this.order.fixbuy > 0){
+				if(this.trend.autotrend > 0){
+					this.trend.autotrend = 0
+				}else{
+					this.trend.autotrend = trade.date.unix() + 3600;
+				}
+				
+			}
 
-			this.order.profit_asset = (trade.amount - this.order.start_amount);
-			this.order.profit_btc = this.order.profit_asset * trade.price;
-			this.order.profit_start = this.order.start_price * (this.order.finish_amount - this.order.start_amount)
-
-			
-			
 			this.debugJson.action = trade.action;
 			this.debugJson.amount = trade.amount;
 			this.debugJson.price = trade.price;
@@ -404,36 +340,6 @@ var strat = {
 			
 			this.debugJson.fee = trade.feePercent;
 			this.debugJson.api = config.apiReportKey;
-
-
-			var unixtime = 60 * (config.tradingAdvisor.historySize * config.tradingAdvisor.candleSize);
-
-			if(trade.action === "buy"){
-
-				this.order.block_time = 0;
-				this.order.buy_price = trade.price;
-				this.order.exit_time = trade.date.unix() + (unixtime * 15);
-				if(config.tradingAdvisor.candleSize < 5){
-					this.order.exit_time  = trade.date.unix() + (84000 * 7)
-				}
-
-				this.debugJson.balance = trade.balance;
-			}
-
-			if(trade.action === "sell"){
-
-				this.order.buy_price = 0;
-				this.order.sell_price = trade.price;
-				this.order.balance = trade.balance;
-				this.order.amount = trade.amount;
-				this.order.exit_time = 0;
-				this.order.block_time = trade.date.unix() + unixtime;
-
-				this.debugJson.balance = trade.balance;
-
-			}
-
-			this.calMethodReport()
 			var propertiesObject = this.debugJson;
 		    var url = {url:report_server, qs:propertiesObject}
 		    
@@ -443,14 +349,12 @@ var strat = {
 		      if(err) { console.log(err); return; }
 		      console.log(body);
 		    });
-
-			this.debugJson = {};
-			//console.log(this.order)
+			
 		}
-		
+		//console.log(trade)
 	},
 	calMethodReport :function(){
-		var price = this.candle.close;
+		var price = this.price;
 		var rsi = this.talibIndicators.rsi.result.outReal;
 		this.debugJson.rsi = rsi;
 		var macd = this.talibIndicators.macd.result;
@@ -470,10 +374,5 @@ var strat = {
 
 
 	},
-	end : function(){
-		console.log(this.order);
-	}
-};
-
-
+}
 module.exports = strat;
