@@ -55,6 +55,7 @@ config.buydump = {buydump}/100;// %%
 
 config.convercurrency = {convercurrency};
 config.converbtc = {converbtc};
+config.channel = {channel};
 
 config.apiReportKey = {apiReportKey}; // API KEY Cloud Server
 // settings for other strategies can be found at the bottom, note that only

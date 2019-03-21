@@ -79,6 +79,17 @@ var strat = {
 
 		if(config.fixbuy > 0) this.order.fixbuy = config.fixbuy;
 		if(config.fixsell > 0) this.order.fixsell = config.fixsell;
+		
+
+		this.channel = "auto";
+
+		if(config.channel === "auto"){
+			this.channel = "auto";
+		}else if(config.channel === "profit"){
+			this.channel = "profit";
+		}else if(config.channel === "sellexit"){
+			this.channel = "sellexit";
+		}
 
 		this.is_sma = false;
 		
@@ -171,15 +182,41 @@ var strat = {
 			this.actionStoplost()
 		}
 
-		if(rsi > rsi_hi && zone === "high"){
-			//console.log("Sell : ",rsi, isTrend)
-			this.short()
-		}
+		if(this.channel === "auto"){
+			if(rsi > rsi_hi && zone === "high"){
+				//console.log("Sell : ",rsi, isTrend)
+				this.short()
+			}
 
-		if(rsi < rsi_low && zone === "low"){
-			//console.log("Buy : ",rsi,isTrend)
-			this.long()
+			if(rsi < rsi_low && zone === "low"){
+				//console.log("Buy : ",rsi,isTrend)
+				this.long()
+			}
+		}else if(this.channel === "profit"){
+			var buyp = this.getProfitBuy()
+			var sellp = this.getProfitSell()
+			if(this.price <= buyp){
+				if(this.trend.direction !== "up"){
+					this.trend.direction = 'up';
+					this.advice('long');
+				}
+			}
+			if(this.price >= sellp){
+				if(this.trend.direction !== "down"){
+					this.trend.direction = 'down';
+					this.advice('short');
+				}
+			}
+
+		}else if(this.channel === "sellexit"){
+			var profit = this.getProfitSell()
+		
+			if(this.trend.direction !== "down"){
+				this.trend.direction = 'down';
+				this.advice('short');
+			}
 		}
+		
 
 		//console.log(isTrend)
 	},
@@ -317,6 +354,10 @@ var strat = {
 				}
 				
 				this.order.exitsell = 0;
+				
+				if(this.channel === "sellexit"){
+					this.debugJson.exitProject = "exit";
+				}
 			}
 
 			if(this.order.fixsell > 0 && this.order.fixbuy > 0){

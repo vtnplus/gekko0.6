@@ -53,6 +53,7 @@ app.post('/genconfig', function (req, res) {
    var buydump = (req.body.buydump !== undefined && req.body.buydump > 0 ? req.body.buydump : "35");
    var convercurrency = (req.body.convercurrency !== undefined && req.body.convercurrency > 0 ? req.body.convercurrency : "0");
    var converbtc = (req.body.converbtc !== undefined && req.body.converbtc > 0 ? req.body.converbtc : "0");
+   var channel = (req.body.channel !== undefined && req.body.channel > 0 ? req.body.channel : "auto");
    
    
 
@@ -82,6 +83,7 @@ app.post('/genconfig', function (req, res) {
 
    configReadData = replaceString(configReadData,'{convercurrency}',convercurrency);
    configReadData = replaceString(configReadData,'{converbtc}',converbtc);
+   configReadData = replaceString(configReadData,'{channel}',channel);
    
 
    
