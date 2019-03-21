@@ -195,12 +195,14 @@ var strat = {
 		}else if(this.channel === "profit"){
 			var buyp = this.getProfitBuy()
 			var sellp = this.getProfitSell()
-			if(this.price <= buyp){
+			if(this.price <= buyp && rsi < rsi_low && zone === "low"){
 				if(this.trend.direction !== "up"){
 					this.trend.direction = 'up';
 					this.advice('long');
 				}
 			}
+
+
 			if(this.price >= sellp){
 				if(this.trend.direction !== "down"){
 					this.trend.direction = 'down';
@@ -354,7 +356,7 @@ var strat = {
 				}
 				
 				this.order.exitsell = 0;
-				
+
 				if(this.channel === "sellexit"){
 					this.debugJson.exitProject = "exit";
 				}
